@@ -1,6 +1,6 @@
 import './globals.css'
-import Providers from '@/components/providers'
 import { ReactNode } from 'react'
+import { SessionProvider } from 'next-auth/react'
 
 export const metadata = {
   title: 'Orasync',
@@ -11,7 +11,7 @@ export default function RootLayout({ children }: { children: ReactNode }) {
   return (
     <html lang="en">
       <body>
-        <Providers>{children}</Providers>
+        <SessionProvider>{children}</SessionProvider>
       </body>
     </html>
   )
