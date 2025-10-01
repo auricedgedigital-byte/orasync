@@ -71,12 +71,12 @@ export default function Sidebar() {
       <nav
         className={`
                 fixed inset-y-0 left-0 z-[70] w-64 bg-background transform transition-transform duration-200 ease-in-out
-                lg:translate-x-0 lg:static lg:w-64 border-r border-border
+                lg:translate-x-0 lg:static lg:w-64 border-r border
                 ${isMobileMenuOpen ? "translate-x-0" : "-translate-x-full"}
             `}
       >
         <div className="h-full flex flex-col">
-          <div className="h-16 px-6 flex items-center border-b border-border">
+          <div className="h-16 px-6 flex items-center border-b border">
             <div className="flex items-center gap-3">
               <div className="w-8 h-8 bg-primary rounded-lg flex items-center justify-center">
                 <Stethoscope className="w-4 h-4 text-primary-foreground" />
@@ -174,7 +174,7 @@ export default function Sidebar() {
             </div>
           </div>
 
-          <div className="px-4 py-4 border-t border-border">
+          <div className="px-4 py-4 border-t border">
             <div className="space-y-1">
               <NavItem href="#" icon={Settings}>
                 Settings

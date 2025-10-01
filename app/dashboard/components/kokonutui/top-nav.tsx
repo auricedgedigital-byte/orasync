@@ -19,7 +19,7 @@ export default function TopNav() {
   ]
 
   return (
-    <nav className="px-3 sm:px-6 flex items-center justify-between bg-background border-b border-border h-full">
+    <nav className="px-3 sm:px-6 flex items-center justify-between bg-background border-b border h-full">
       <div className="font-medium text-sm hidden sm:flex items-center space-x-1 truncate max-w-[300px]">
         {breadcrumbs.map((item, index) => (
           <div key={item.label} className="flex items-center">
@@ -64,7 +64,7 @@ export default function TopNav() {
           <DropdownMenuContent
             align="end"
             sideOffset={8}
-            className="w-[280px] sm:w-80 bg-background border-border rounded-lg shadow-lg"
+            className="w-[280px] sm:w-80 bg-background border rounded-lg shadow-lg"
           >
             <Profile01 avatar="" />
           </DropdownMenuContent>
