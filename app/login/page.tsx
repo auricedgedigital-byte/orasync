@@ -1,18 +1,22 @@
 'use client'
-import React from 'react'
-import { useSearchParams } from 'next/navigation'
+import React, { useMemo } from 'react'
 import { signIn } from 'next-auth/react'
 
 export default function LoginPage() {
-  const searchParams = useSearchParams()
-  const error = searchParams?.get('error')
+  // Avoid next/navigation hooks during build by using window at runtime:
+  const error = useMemo(() => {
+    if (typeof window === 'undefined') return null
+    return new URLSearchParams(window.location.search).get('error')
+  }, [])
 
   return (
     <main className="min-h-screen flex items-center justify-center px-4">
       <div className="w-full max-w-md">
         <div className="mb-6 text-center">
           <h1 className="text-2xl font-semibold">Sign in to Orasync</h1>
-          <p className="text-sm text-gray-500 mt-2">Welcome back — continue with Google or create a free account.</p>
+          <p className="text-sm text-gray-500 mt-2">
+            Welcome — sign in with Google or create a free account.
+          </p>
         </div>
 
         {error && (
