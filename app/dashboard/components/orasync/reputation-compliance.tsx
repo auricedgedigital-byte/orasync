@@ -605,7 +605,7 @@ export function ReputationCompliance() {
                 {auditLog.map((log, index) => (
                   <div key={index} className="flex items-start justify-between p-3 border rounded-lg">
                     <div className="flex items-start gap-3">
-                      <div className="w-2 h-2 rounded-full bg-primary mt-2"></div>
+                      <div className="w-2 h-2 rounded-full bg-indigo-600 mt-2"></div>
                       <div>
                         <p className="font-medium">{log.action}</p>
                         <p className="text-sm text-muted-foreground">{log.details}</p>

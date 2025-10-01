@@ -127,7 +127,7 @@ export default function PatientEngagement() {
               ].map((campaign) => (
                 <div key={campaign.id} className="flex items-center justify-between p-4 rounded-lg border">
                   <div className="flex items-center gap-4">
-                    <div className="w-10 h-10 bg-primary/10 rounded-lg flex items-center justify-center">
+                    <div className="w-10 h-10 bg-indigo-600/10 rounded-lg flex items-center justify-center">
                       <Megaphone className="w-5 h-5 text-primary" />
                     </div>
                     <div>
@@ -235,7 +235,7 @@ export default function PatientEngagement() {
                   <div
                     key={index}
                     className={`p-3 rounded-lg cursor-pointer transition-colors ${
-                      conversation.unread ? "bg-primary/5 border-primary/20" : "hover:bg-muted/50"
+                      conversation.unread ? "bg-indigo-600/5 border-primary/20" : "hover:bg-muted/50"
                     } border`}
                   >
                     <div className="flex items-center justify-between mb-1">
@@ -244,7 +244,7 @@ export default function PatientEngagement() {
                         <Badge variant="outline" className="text-xs">
                           {conversation.channel}
                         </Badge>
-                        {conversation.unread && <div className="w-2 h-2 bg-primary rounded-full" />}
+                        {conversation.unread && <div className="w-2 h-2 bg-indigo-600 rounded-full" />}
                       </div>
                     </div>
                     <div className="text-sm text-muted-foreground truncate">{conversation.message}</div>
@@ -261,7 +261,7 @@ export default function PatientEngagement() {
               <CardContent className="space-y-4">
                 <div className="space-y-3 h-64 overflow-y-auto">
                   <div className="flex justify-end">
-                    <div className="bg-primary text-primary-foreground p-3 rounded-lg max-w-xs">
+                    <div className="bg-indigo-600 text-primary-foreground p-3 rounded-lg max-w-xs">
                       Hi Sarah! Your cleaning appointment is scheduled for tomorrow at 2 PM. Please reply CONFIRM to
                       confirm.
                     </div>
@@ -327,23 +327,23 @@ export default function PatientEngagement() {
               <CardContent>
                 <div className="bg-muted/30 rounded-lg p-4 space-y-3 h-80 overflow-y-auto">
                   <div className="flex items-start gap-3">
-                    <div className="w-8 h-8 bg-primary rounded-full flex items-center justify-center">
+                    <div className="w-8 h-8 bg-indigo-600 rounded-full flex items-center justify-center">
                       <Bot className="w-4 h-4 text-primary-foreground" />
                     </div>
-                    <div className="bg-background p-3 rounded-lg shadow-sm max-w-xs">
+                    <div className="bg-white p-3 rounded-lg shadow-sm max-w-xs">
                       Hi! I'm your virtual dental assistant. How can I help you today?
                     </div>
                   </div>
                   <div className="flex justify-end">
-                    <div className="bg-primary text-primary-foreground p-3 rounded-lg max-w-xs">
+                    <div className="bg-indigo-600 text-primary-foreground p-3 rounded-lg max-w-xs">
                       I'd like to schedule a cleaning appointment
                     </div>
                   </div>
                   <div className="flex items-start gap-3">
-                    <div className="w-8 h-8 bg-primary rounded-full flex items-center justify-center">
+                    <div className="w-8 h-8 bg-indigo-600 rounded-full flex items-center justify-center">
                       <Bot className="w-4 h-4 text-primary-foreground" />
                     </div>
-                    <div className="bg-background p-3 rounded-lg shadow-sm max-w-xs">
+                    <div className="bg-white p-3 rounded-lg shadow-sm max-w-xs">
                       Great! I can help you schedule a cleaning. What's your preferred date and time?
                     </div>
                   </div>

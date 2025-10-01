@@ -144,7 +144,7 @@ export default function Content() {
               { type: "call", message: "Missed call from potential patient", time: "3 hours ago", icon: Phone },
             ].map((activity, index) => (
               <div key={index} className="flex items-start gap-3 p-3 rounded-lg hover:bg-muted/50 transition-colors">
-                <div className="w-8 h-8 rounded-full bg-primary/10 flex items-center justify-center flex-shrink-0">
+                <div className="w-8 h-8 rounded-full bg-indigo-600/10 flex items-center justify-center flex-shrink-0">
                   <activity.icon className="w-4 h-4 text-primary" />
                 </div>
                 <div className="flex-1 min-w-0">

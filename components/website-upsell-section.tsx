@@ -27,7 +27,7 @@ export function WebsiteUpsellSection() {
     <section className="py-16 lg:py-24 bg-gradient-to-br from-primary/5 to-secondary/10">
       <div className="container px-6 mx-auto">
         <div className="text-center mb-12 lg:mb-16">
-          <div className="inline-flex items-center gap-2 bg-primary/10 text-primary px-4 py-2 rounded-full text-sm font-medium mb-4">
+          <div className="inline-flex items-center gap-2 bg-indigo-600/10 text-primary px-4 py-2 rounded-full text-sm font-medium mb-4">
             <Globe className="w-4 h-4" />
             Website Add-On
           </div>
@@ -43,7 +43,7 @@ export function WebsiteUpsellSection() {
             return (
               <Card key={index} className="border-2 hover:border-primary/20 transition-colors">
                 <CardContent className="p-6 text-center">
-                  <div className="w-12 h-12 bg-primary/10 rounded-full flex items-center justify-center mx-auto mb-4">
+                  <div className="w-12 h-12 bg-indigo-600/10 rounded-full flex items-center justify-center mx-auto mb-4">
                     <Icon className="w-6 h-6 text-primary" />
                   </div>
                   <h3 className="text-lg font-semibold text-foreground mb-2">{service.title}</h3>
@@ -54,7 +54,7 @@ export function WebsiteUpsellSection() {
           })}
         </div>
 
-        <div className="bg-background rounded-2xl p-8 lg:p-12 border shadow-lg">
+        <div className="bg-white rounded-2xl p-8 lg:p-12 border shadow-lg">
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 lg:gap-12 items-center">
             <div>
               <h3 className="text-2xl font-bold text-foreground mb-4">Complete Website Solution</h3>
@@ -64,19 +64,19 @@ export function WebsiteUpsellSection() {
               </p>
               <ul className="space-y-3 mb-8">
                 <li className="flex items-center gap-3 text-sm">
-                  <div className="w-2 h-2 bg-primary rounded-full"></div>
+                  <div className="w-2 h-2 bg-indigo-600 rounded-full"></div>
                   <span>Mobile-responsive dental website templates</span>
                 </li>
                 <li className="flex items-center gap-3 text-sm">
-                  <div className="w-2 h-2 bg-primary rounded-full"></div>
+                  <div className="w-2 h-2 bg-indigo-600 rounded-full"></div>
                   <span>Local SEO optimization for dental practices</span>
                 </li>
                 <li className="flex items-center gap-3 text-sm">
-                  <div className="w-2 h-2 bg-primary rounded-full"></div>
+                  <div className="w-2 h-2 bg-indigo-600 rounded-full"></div>
                   <span>Integrated booking system and chatbot</span>
                 </li>
                 <li className="flex items-center gap-3 text-sm">
-                  <div className="w-2 h-2 bg-primary rounded-full"></div>
+                  <div className="w-2 h-2 bg-indigo-600 rounded-full"></div>
                   <span>Professional branding and design</span>
                 </li>
               </ul>
@@ -93,17 +93,17 @@ export function WebsiteUpsellSection() {
             <div className="relative">
               <div className="bg-muted/50 rounded-xl p-6 border">
                 <div className="space-y-4">
-                  <div className="h-4 bg-primary/20 rounded w-3/4"></div>
+                  <div className="h-4 bg-indigo-600/20 rounded w-3/4"></div>
                   <div className="h-3 bg-muted-foreground/20 rounded w-full"></div>
                   <div className="h-3 bg-muted-foreground/20 rounded w-5/6"></div>
                   <div className="grid grid-cols-2 gap-4 mt-6">
-                    <div className="h-20 bg-primary/10 rounded border-2 border-dashed border-primary/30"></div>
+                    <div className="h-20 bg-indigo-600/10 rounded border-2 border-dashed border-primary/30"></div>
                     <div className="h-20 bg-secondary/20 rounded border-2 border-dashed border-secondary/30"></div>
                   </div>
-                  <div className="h-8 bg-primary rounded w-1/2 mt-4"></div>
+                  <div className="h-8 bg-indigo-600 rounded w-1/2 mt-4"></div>
                 </div>
               </div>
-              <div className="absolute -top-2 -right-2 w-6 h-6 bg-primary rounded-full flex items-center justify-center">
+              <div className="absolute -top-2 -right-2 w-6 h-6 bg-indigo-600 rounded-full flex items-center justify-center">
                 <Globe className="w-3 h-3 text-white" />
               </div>
             </div>

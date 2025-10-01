@@ -48,7 +48,7 @@ export function HeroSection7() {
           </div>
         </div>
 
-        <div className="w-full overflow-hidden rounded-xl border bg-background shadow-xl">
+        <div className="w-full overflow-hidden rounded-xl border bg-white shadow-xl">
           <AspectRatio ratio={16 / 9}>
             <Image
               src="/modern-dental-practice-dashboard-showing-patient-r.jpg"

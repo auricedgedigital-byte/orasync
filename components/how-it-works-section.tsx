@@ -32,7 +32,7 @@ const steps = [
 
 export function HowItWorksSection() {
   return (
-    <section className="py-16 lg:py-24 bg-background" aria-labelledby="how-it-works-heading">
+    <section className="py-16 lg:py-24 bg-white" aria-labelledby="how-it-works-heading">
       <div className="container px-6 mx-auto">
         <div className="text-center mb-12 lg:mb-16">
           <h2 id="how-it-works-heading" className="text-3xl lg:text-4xl font-bold text-foreground mb-4">
@@ -53,7 +53,7 @@ export function HowItWorksSection() {
                     <div className="flex items-center gap-4 mb-6">
                       <div className="flex-shrink-0">
                         <div
-                          className={`w-12 h-12 rounded-full bg-primary/10 flex items-center justify-center ${step.color}`}
+                          className={`w-12 h-12 rounded-full bg-indigo-600/10 flex items-center justify-center ${step.color}`}
                         >
                           <Icon className="w-6 h-6" />
                         </div>

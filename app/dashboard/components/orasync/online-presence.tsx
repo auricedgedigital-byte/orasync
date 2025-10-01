@@ -419,7 +419,7 @@ export function OnlinePresence() {
               <div className="space-y-3">
                 <div className="flex items-center justify-between p-3 border rounded-lg">
                   <div className="flex items-center gap-3">
-                    <div className="w-8 h-8 bg-primary/10 rounded flex items-center justify-center">
+                    <div className="w-8 h-8 bg-indigo-600/10 rounded flex items-center justify-center">
                       <MessageSquare className="h-4 w-4 text-primary" />
                     </div>
                     <div>
@@ -541,7 +541,7 @@ export function OnlinePresence() {
               <div className="space-y-3">
                 <div className="flex items-center justify-between p-3 border rounded-lg">
                   <div className="flex items-center gap-3">
-                    <div className="w-8 h-8 bg-primary/10 rounded-full flex items-center justify-center">
+                    <div className="w-8 h-8 bg-indigo-600/10 rounded-full flex items-center justify-center">
                       <Users className="h-4 w-4 text-primary" />
                     </div>
                     <div>

@@ -325,7 +325,7 @@ export default function BillingFinance() {
                   onClick={() => setSelectedInvoice(invoice.id)}
                 >
                   <div className="flex items-center gap-4">
-                    <div className="w-10 h-10 bg-primary/10 rounded-lg flex items-center justify-center">
+                    <div className="w-10 h-10 bg-indigo-600/10 rounded-lg flex items-center justify-center">
                       <Receipt className="w-5 h-5 text-primary" />
                     </div>
                     <div>
@@ -445,7 +445,7 @@ export default function BillingFinance() {
               ].map((claim, index) => (
                 <div key={index} className="flex items-center justify-between p-4 rounded-lg border">
                   <div className="flex items-center gap-4">
-                    <div className="w-10 h-10 bg-primary/10 rounded-lg flex items-center justify-center">
+                    <div className="w-10 h-10 bg-indigo-600/10 rounded-lg flex items-center justify-center">
                       <Building className="w-5 h-5 text-primary" />
                     </div>
                     <div>

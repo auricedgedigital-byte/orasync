@@ -40,7 +40,7 @@ export function FeatureSection3() {
               const Icon = step.icon
               return (
                 <div key={index} className="flex flex-col sm:flex-row gap-4 sm:gap-5">
-                  <div className="flex justify-center items-center w-10 h-10 shrink-0 rounded-md bg-primary/10 border">
+                  <div className="flex justify-center items-center w-10 h-10 shrink-0 rounded-md bg-indigo-600/10 border">
                     <Icon className="w-5 h-5 text-primary" />
                   </div>
                   <div className="flex flex-col gap-2">
@@ -61,7 +61,7 @@ export function FeatureSection3() {
           </div>
         </div>
         <div className="flex-1 w-full">
-          <div className="overflow-hidden rounded-xl border bg-background shadow-xl">
+          <div className="overflow-hidden rounded-xl border bg-white shadow-xl">
             <AspectRatio ratio={1 / 1}>
               <Image
                 src="/placeholder.svg?height=400&width=400&text=Orasync+Dashboard"

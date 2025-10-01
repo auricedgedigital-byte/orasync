@@ -49,7 +49,7 @@ export default function Sidebar() {
         onClick={handleNavigation}
         className={`flex items-center px-3 py-2.5 text-sm rounded-lg transition-colors ${
           isActive
-            ? "bg-primary text-primary-foreground"
+            ? "bg-indigo-600 text-primary-foreground"
             : "text-muted-foreground hover:text-foreground hover:bg-accent"
         }`}
       >
@@ -63,14 +63,14 @@ export default function Sidebar() {
     <>
       <button
         type="button"
-        className="lg:hidden fixed top-4 left-4 z-[70] p-2 rounded-lg bg-background shadow-md border"
+        className="lg:hidden fixed top-4 left-4 z-[70] p-2 rounded-lg bg-white shadow-md border"
         onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
       >
         <Menu className="h-5 w-5 text-muted-foreground" />
       </button>
       <nav
         className={`
-                fixed inset-y-0 left-0 z-[70] w-64 bg-background transform transition-transform duration-200 ease-in-out
+                fixed inset-y-0 left-0 z-[70] w-64 bg-white transform transition-transform duration-200 ease-in-out
                 lg:translate-x-0 lg:static lg:w-64 border-r border
                 ${isMobileMenuOpen ? "translate-x-0" : "-translate-x-full"}
             `}
@@ -78,7 +78,7 @@ export default function Sidebar() {
         <div className="h-full flex flex-col">
           <div className="h-16 px-6 flex items-center border-b border">
             <div className="flex items-center gap-3">
-              <div className="w-8 h-8 bg-primary rounded-lg flex items-center justify-center">
+              <div className="w-8 h-8 bg-indigo-600 rounded-lg flex items-center justify-center">
                 <Stethoscope className="w-4 h-4 text-primary-foreground" />
               </div>
               <span className="text-xl font-bold text-foreground">Orasync</span>

@@ -34,7 +34,7 @@ const features = [
 
 export function FeatureSection9() {
   return (
-    <section className="bg-background py-16 md:py-24" id="features">
+    <section className="bg-white py-16 md:py-24" id="features">
       <div className="container mx-auto px-6 flex flex-col gap-12 md:gap-16">
         <div className="flex flex-col gap-4 md:gap-5 max-w-2xl mx-auto text-center">
           <p className="text-sm md:text-base font-semibold text-primary">Key Features</p>
@@ -53,7 +53,7 @@ export function FeatureSection9() {
                 key={index}
                 className="flex flex-col gap-5 items-start text-left p-6 rounded-lg border bg-card hover:shadow-md transition-shadow"
               >
-                <div className="flex justify-center items-center w-12 h-12 shrink-0 rounded-md bg-primary/10 border">
+                <div className="flex justify-center items-center w-12 h-12 shrink-0 rounded-md bg-indigo-600/10 border">
                   <Icon className="w-6 h-6 text-primary" />
                 </div>
                 <div className="flex flex-col gap-2">

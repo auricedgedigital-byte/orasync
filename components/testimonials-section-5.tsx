@@ -28,7 +28,7 @@ const testimonials = [
 
 export function TestimonialsSection5() {
   return (
-    <section className="py-16 md:py-24 bg-background" aria-labelledby="testimonial-title">
+    <section className="py-16 md:py-24 bg-white" aria-labelledby="testimonial-title">
       <div className="container mx-auto px-6">
         <div className="flex flex-col gap-12">
           <div className="flex flex-col gap-4 md:gap-5 max-w-2xl text-center mx-auto">
@@ -74,7 +74,7 @@ export function TestimonialsSection5() {
                     <div className="flex flex-col gap-1 md:text-left text-center">
                       <p className="text-foreground text-base font-semibold leading-6">{testimonial.author}</p>
                       <p className="text-muted-foreground text-base leading-6">{testimonial.role}</p>
-                      <div className="inline-flex items-center gap-2 bg-primary/10 text-primary px-3 py-1 rounded-full text-xs font-medium mt-2">
+                      <div className="inline-flex items-center gap-2 bg-indigo-600/10 text-primary px-3 py-1 rounded-full text-xs font-medium mt-2">
                         {testimonial.metric}
                       </div>
                     </div>

@@ -35,7 +35,7 @@ export function LpNavbar1() {
   const toggleMenu = () => setIsMenuOpen((prev) => !prev)
 
   return (
-    <nav className="sticky top-0 z-50 bg-background py-3.5 md:py-4 isolate border-b">
+    <nav className="sticky top-0 z-50 bg-white py-3.5 md:py-4 isolate border-b">
       <div className="container relative px-6 flex flex-col md:flex-row md:items-center justify-between gap-4 md:gap-6 m-auto">
         <div className="flex items-center justify-between">
           <Link href="/">

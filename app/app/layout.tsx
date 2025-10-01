@@ -53,7 +53,7 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en" className={`${onest.variable} font-sans`}>
-      <body className="antialiased bg-background text-foreground">{children}</body>
+      <body className="antialiased bg-white text-foreground">{children}</body>
     </html>
   )
 }

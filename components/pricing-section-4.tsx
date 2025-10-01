@@ -130,13 +130,13 @@ export function PricingSection4() {
             <TabsList className="bg-black/30 h-10 p-1 rounded-[40px]">
               <TabsTrigger
                 value="monthly"
-                className="rounded-full px-3 py-1.5 data-[state=active]:bg-background data-[state=active]:shadow-sm"
+                className="rounded-full px-3 py-1.5 data-[state=active]:bg-white data-[state=active]:shadow-sm"
               >
                 Monthly
               </TabsTrigger>
               <TabsTrigger
                 value="annually"
-                className="rounded-full px-3 py-1.5 data-[state=active]:bg-background data-[state=active]:shadow-sm"
+                className="rounded-full px-3 py-1.5 data-[state=active]:bg-white data-[state=active]:shadow-sm"
               >
                 Annually
               </TabsTrigger>
@@ -148,7 +148,7 @@ export function PricingSection4() {
               <Card key={plan.name} className={`p-8 space-y-8 ${index === 1 ? "border-2 border-primary" : ""}`}>
                 <div className="space-y-6">
                   {plan.badge && (
-                    <div className="inline-flex items-center gap-2 bg-primary text-primary-foreground px-3 py-1 rounded-full text-xs font-medium">
+                    <div className="inline-flex items-center gap-2 bg-indigo-600 text-primary-foreground px-3 py-1 rounded-full text-xs font-medium">
                       {plan.badge}
                     </div>
                   )}
