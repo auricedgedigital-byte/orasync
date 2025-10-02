@@ -52,7 +52,7 @@ export function FeatureSection3() {
             })}
           </div>
           <div className="flex flex-col sm:flex-row gap-3 mt-4">
-            <Link href="https://app.orasync.com/signup">
+            <Link href="/signup">
               <Button size="lg">Get Started Free</Button>
             </Link>
             <Button variant="outline" size="lg">

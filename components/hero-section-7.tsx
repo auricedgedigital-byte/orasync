@@ -22,7 +22,7 @@ export function HeroSection7() {
               </p>
 
               <div className="flex flex-col sm:flex-row gap-3">
-                <Link href="https://app.orasync.com/signup">
+                <Link href="/signup">
                   <Button size="lg" className="w-full sm:w-auto">
                     Get Started Free
                     <ArrowRight className="ml-2 h-4 w-4" />

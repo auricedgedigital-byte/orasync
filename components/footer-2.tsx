@@ -28,7 +28,7 @@ export function Footer2() {
                   Pricing
                 </Link>
                 <Link
-                  href="https://app.orasync.com/login"
+                  href="/login"
                   className="text-muted-foreground hover:text-foreground transition-colors"
                 >
                   Login

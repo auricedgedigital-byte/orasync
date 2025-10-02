@@ -72,7 +72,7 @@ export function FaqSection1() {
             </p>
           </div>
           <div className="flex flex-col sm:flex-row gap-3">
-            <Link href="https://app.orasync.com/signup">
+            <Link href="/signup">
               <Button size="lg" aria-label="Start free trial">
                 Start Free Trial
               </Button>

@@ -54,10 +54,10 @@ export function LpNavbar1() {
         {/* Desktop Navigation */}
         <div className="hidden md:flex flex-row gap-5 w-full justify-end">
           <NavMenuItems />
-          <Link href="https://app.orasync.com/login">
+          <Link href="/login">
             <Button variant="ghost">Login</Button>
           </Link>
-          <Link href="https://app.orasync.com/signup">
+          <Link href="/signup">
             <Button>Get Started Free</Button>
           </Link>
         </div>
@@ -66,12 +66,12 @@ export function LpNavbar1() {
         {isMenuOpen && (
           <div className="md:hidden flex flex-col gap-5 w-full justify-end pb-2.5">
             <NavMenuItems />
-            <Link href="https://app.orasync.com/login">
+            <Link href="/login">
               <Button variant="ghost" className="w-full">
                 Login
               </Button>
             </Link>
-            <Link href="https://app.orasync.com/signup">
+            <Link href="/signup">
               <Button className="w-full">Get Started Free</Button>
             </Link>
           </div>

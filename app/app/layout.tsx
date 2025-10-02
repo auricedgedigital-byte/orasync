@@ -20,7 +20,7 @@ export const metadata: Metadata = {
   openGraph: {
     type: "website",
     locale: "en_US",
-    url: "https://orasync.com",
+    url: SITE_URL,
     title: "Orasync - Dental Practice Growth Platform",
     description: "Turn patients into bookings effortlessly with Orasync's AI-powered patient engagement platform.",
     siteName: "Orasync",

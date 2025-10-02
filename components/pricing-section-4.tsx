@@ -169,7 +169,7 @@ export function PricingSection4() {
                   {plan.trialNote && <p className="text-sm text-muted-foreground">{plan.trialNote}</p>}
                   {plan.addOnNote && <p className="text-sm text-muted-foreground">{plan.addOnNote}</p>}
 
-                  <Link href="https://app.orasync.com/signup">
+                  <Link href="/signup">
                     <Button variant={index === 1 ? "default" : "secondary"} className="w-full">
                       Get Started
                     </Button>
