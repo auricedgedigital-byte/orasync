@@ -1,13 +1,21 @@
-import type React from "react"
-import type { Metadata, Viewport } from "next"
-import { Onest } from "next/font/google"
-import "./globals.css"
+// app/app/layout.tsx
+import type React from "react";
+import type { Metadata, Viewport } from "next";
+import { Onest } from "next/font/google";
+import "./globals.css";
 
 const onest = Onest({
   subsets: ["latin"],
   weight: ["400", "500", "600", "700"],
   variable: "--font-onest",
-})
+});
+
+// Safe SITE_URL fallback so build never throws if env var is missing.
+// Prefer client-safe NEXT_PUBLIC_SITE_URL, then SITE_URL, then a reasonable default.
+const SITE_URL =
+  process.env.NEXT_PUBLIC_SITE_URL ??
+  process.env.SITE_URL ??
+  "https://orasync.vercel.app";
 
 export const metadata: Metadata = {
   title: "Orasync - Turn Patients into Bookings, Effortlessly",
@@ -22,20 +30,22 @@ export const metadata: Metadata = {
     locale: "en_US",
     url: SITE_URL,
     title: "Orasync - Dental Practice Growth Platform",
-    description: "Turn patients into bookings effortlessly with Orasync's AI-powered patient engagement platform.",
+    description:
+      "Turn patients into bookings effortlessly with Orasync's AI-powered patient engagement platform.",
     siteName: "Orasync",
   },
   twitter: {
     card: "summary_large_image",
     title: "Orasync - Dental Practice Growth Platform",
-    description: "Turn patients into bookings effortlessly with Orasync's AI-powered patient engagement platform.",
+    description:
+      "Turn patients into bookings effortlessly with Orasync's AI-powered patient engagement platform.",
   },
   icons: {
     icon: "/favicon.ico",
     apple: "/apple-icon.png",
   },
-    generator: 'v0.app'
-}
+  generator: "v0.app",
+};
 
 export const viewport: Viewport = {
   width: "device-width",
@@ -44,16 +54,17 @@ export const viewport: Viewport = {
     { media: "(prefers-color-scheme: light)", color: "#ffffff" },
     { media: "(prefers-color-scheme: dark)", color: "#0a0a0a" },
   ],
-}
+};
 
 export default function RootLayout({
   children,
 }: Readonly<{
-  children: React.ReactNode
+  children: React.ReactNode;
 }>) {
   return (
     <html lang="en" className={`${onest.variable} font-sans`}>
       <body className="antialiased bg-white text-foreground">{children}</body>
     </html>
-  )
+  );
 }
+
