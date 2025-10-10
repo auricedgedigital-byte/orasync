@@ -3,9 +3,9 @@ import { PrismaClient } from "@prisma/client";
 import type { NextRequest } from "next/server";
 
 declare global {
-  // Reuse a single PrismaClient in serverless environments
+  // Reuse a single PrismaClient in serverless environments.
   // eslint-disable-next-line no-var
-  var __prisma?: PrismaClient;
+  var __prisma: PrismaClient | undefined;
 }
 
 const prisma = global.__prisma ?? (global.__prisma = new PrismaClient());
