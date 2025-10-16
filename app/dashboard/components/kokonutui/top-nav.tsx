@@ -9,7 +9,7 @@ import { ThemeToggle } from "../theme-toggle"
 
 interface BreadcrumbItem {
   label: string
-  href?: string
+  href?: string 
 }
 
 export default function TopNav() {
