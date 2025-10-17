@@ -1,3 +1,6 @@
+// app/dashboard/components/kokonutui/content.tsx
+import AddPatientButton from "./AddPatientButton";
+import PatientList from "./PatientList";
 import {
   Calendar,
   Users,
@@ -9,9 +12,9 @@ import {
   Star,
   Activity,
   Phone,
-} from "lucide-react"
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
-import { Button } from "@/components/ui/button"
+} from "lucide-react";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
 
 export default function Content() {
   return (
@@ -26,14 +29,14 @@ export default function Content() {
             <Calendar className="w-4 h-4 mr-2" />
             Schedule Appointment
           </Button>
-          <Button size="sm">
-            <Users className="w-4 h-4 mr-2" />
-            Add Patient
-          </Button>
+
+          {/* Use the AddPatientButton component here so it runs the add-patient logic */}
+          <AddPatientButton />
         </div>
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+        {/* ... (the 4 stat cards remain unchanged) ... */}
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
             <CardTitle className="text-sm font-medium">Today's Appointments</CardTitle>
@@ -107,8 +110,8 @@ export default function Content() {
                     appointment.status === "confirmed"
                       ? "bg-green-100 text-green-800"
                       : appointment.status === "in-progress"
-                        ? "bg-blue-100 text-blue-800"
-                        : "bg-yellow-100 text-yellow-800"
+                      ? "bg-blue-100 text-blue-800"
+                      : "bg-yellow-100 text-yellow-800"
                   }`}
                 >
                   {appointment.status}
@@ -142,17 +145,20 @@ export default function Content() {
               { type: "review", message: "5-star review received from Emma Davis", time: "1 hour ago", icon: Star },
               { type: "message", message: "New message in unified inbox", time: "2 hours ago", icon: MessageSquare },
               { type: "call", message: "Missed call from potential patient", time: "3 hours ago", icon: Phone },
-            ].map((activity, index) => (
-              <div key={index} className="flex items-start gap-3 p-3 rounded-lg hover:bg-muted/50 transition-colors">
-                <div className="w-8 h-8 rounded-full bg-indigo-600/10 flex items-center justify-center flex-shrink-0">
-                  <activity.icon className="w-4 h-4 text-primary" />
+            ].map((activity, index) => {
+              const Icon = activity.icon; // <- safer
+              return (
+                <div key={index} className="flex items-start gap-3 p-3 rounded-lg hover:bg-muted/50 transition-colors">
+                  <div className="w-8 h-8 rounded-full bg-indigo-600/10 flex items-center justify-center flex-shrink-0">
+                    <Icon className="w-4 h-4 text-primary" />
+                  </div>
+                  <div className="flex-1 min-w-0">
+                    <p className="text-sm font-medium text-foreground">{activity.message}</p>
+                    <p className="text-xs text-muted-foreground">{activity.time}</p>
+                  </div>
                 </div>
-                <div className="flex-1 min-w-0">
-                  <p className="text-sm font-medium text-foreground">{activity.message}</p>
-                  <p className="text-xs text-muted-foreground">{activity.time}</p>
-                </div>
-              </div>
-            ))}
+              );
+            })}
           </CardContent>
         </Card>
       </div>
@@ -180,8 +186,17 @@ export default function Content() {
               <span className="text-sm">Review Requests</span>
             </Button>
           </div>
+
+          <div className="mt-6">
+            <h3 className="text-lg font-semibold mb-2">Patients</h3>
+            <div className="flex gap-2 mb-4">
+              <AddPatientButton />
+            </div>
+            <PatientList />
+          </div>
         </CardContent>
       </Card>
     </div>
-  )
+  );
 }
+
