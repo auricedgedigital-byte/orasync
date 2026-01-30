@@ -23,9 +23,14 @@ export default function Layout({ children }: LayoutProps) {
       setIsDark(isDarkMode)
     }
 
-    // Initial check
-    updateTheme()
-    setMounted(true)
+    // Only run on client side
+    if (typeof window !== "undefined") {
+      // Initial check
+      updateTheme()
+      setMounted(true)
+    } else {
+      setMounted(true)
+    }
 
     // Listen for theme changes
     const observer = new MutationObserver(updateTheme)
