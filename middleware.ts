@@ -47,6 +47,11 @@ export function middleware(request: NextRequest) {
     pathname === route || pathname.startsWith(route + "/")
   )
 
+  // Allow all API routes (for demo purposes)
+  if (pathname.startsWith('/api/')) {
+    return NextResponse.next()
+  }
+
   // If accessing protected route without auth, redirect to login
   if (isProtectedRoute) {
     const userCookie = request.cookies.get('supabase-auth-token')
