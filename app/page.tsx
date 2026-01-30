@@ -1,7 +1,6 @@
 import Link from "next/link"
 import { redirect } from "next/navigation"
-import { getServerSession } from "next-auth/next"
-import { authOptions } from "@/lib/auth-options"
+import { createAuthClient } from "@/lib/auth-helpers"
 import { Button } from "@/components/ui/button"
 import OrasyncLogo from "@/components/orasync/logo"
 import {
@@ -18,7 +17,8 @@ import {
 } from "lucide-react"
 
 export default async function LandingPage() {
-  const session = await getServerSession(authOptions)
+  const supabase = createAuthClient()
+  const { data: { session } } = await supabase.auth.getSession()
 
   if (session) {
     redirect("/dashboard")
