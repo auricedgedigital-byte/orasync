@@ -2,7 +2,7 @@ import { NextResponse } from "next/server"
 import type { NextRequest } from "next/server"
 
 export function middleware(request: NextRequest) {
-  // Get the pathname of the request
+  // Get pathname of the request
   const { pathname } = request.nextUrl
 
   // Protected routes that require authentication
@@ -28,7 +28,7 @@ export function middleware(request: NextRequest) {
     "/hipaa-compliance"
   ]
 
-  // Check if the requested path is protected
+  // Check if requested path is protected
   const isProtectedRoute = protectedRoutes.some(route => 
     pathname.startsWith(route)
   )
@@ -47,7 +47,7 @@ export function middleware(request: NextRequest) {
     pathname === route || pathname.startsWith(route + "/")
   )
 
-  // Allow all API routes (for demo purposes)
+  // Allow all API routes
   if (pathname.startsWith('/api/')) {
     return NextResponse.next()
   }
@@ -59,9 +59,10 @@ export function middleware(request: NextRequest) {
 
   // If accessing protected route without auth, redirect to login
   if (isProtectedRoute) {
-    const userCookie = request.cookies.get('supabase-auth-token')
+    const accessTokenCookie = request.cookies.get('supabase-access-token')
+    const legacyCookie = request.cookies.get('supabase-auth-token')
     
-    if (!userCookie) {
+    if (!accessTokenCookie && !legacyCookie) {
       const loginUrl = new URL("/auth/login", request.url)
       return NextResponse.redirect(loginUrl)
     }
