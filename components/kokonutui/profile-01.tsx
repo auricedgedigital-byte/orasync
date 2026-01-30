@@ -2,7 +2,8 @@
 
 import type React from "react"
 
-import { signOut, useSession } from "next-auth/react"
+import { signOut } from "next-auth/react"
+import { useUser } from "@/hooks/use-user"
 import { LogOut, MoveUpRight, Settings, CreditCard, FileText } from "@/components/icons"
 import NextImage from "next/image"
 import Link from "next/link"
@@ -37,9 +38,9 @@ export default function Profile01({
   subscription = defaultProfile.subscription,
 }: Profile01Props) {
   const router = useRouter()
-  const { data: session } = useSession()
+  const { user, loading } = useUser()
 
-  const name = session?.user?.name || session?.user?.email || initialName || defaultProfile.name
+  const name = user?.name || user?.email || initialName || defaultProfile.name
 
   const menuItems: MenuItem[] = [
     {
