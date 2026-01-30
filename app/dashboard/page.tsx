@@ -1,5 +1,5 @@
-import Dashboard from "@/components/kokonutui/dashboard"
+"use client"
 
 export default function DashboardPage() {
-  return <Dashboard />
+  return <h1>Dashboard loaded</h1>
 }
