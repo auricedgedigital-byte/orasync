@@ -1,6 +1,5 @@
 import { NextRequest, NextResponse } from "next/server"
-import { getServerSession } from "next-auth"
-import { authOptions } from "@/lib/auth-options"
+import { supabase } from "@/lib/supabase"
 
 export async function POST(request: NextRequest) {
   try {
@@ -13,29 +12,37 @@ export async function POST(request: NextRequest) {
       )
     }
 
-    // This is where you would normally check against your database
-    // For now, we'll accept any email/password combo for demo purposes
-    // In production, you'd verify against hashed passwords in your DB
-    
-    // Simple validation for demo
-    if (email && password) {
-      // Create a mock session or token
-      // In production, you'd use NextAuth's signIn function
-      return NextResponse.json({
-        success: true,
-        message: "Login successful",
-        user: {
-          id: "1",
-          email: email,
-          name: email.split('@')[0] // Extract name from email
-        }
+    // Use Supabase Auth for authentication
+    const { data, error } = await supabase.auth.signInWithPassword({
+      email,
+      password,
+    })
+
+    if (error) {
+      return NextResponse.json(
+        { message: error.message || "Invalid credentials" },
+        { status: 401 }
+      )
+    }
+
+    // Set session cookie for browser-based auth
+    const response = NextResponse.json({
+      success: true,
+      message: "Login successful",
+      user: data.user
+    })
+
+    // Set auth cookie if session exists
+    if (data.session) {
+      response.cookies.set('supabase-auth-token', data.session.access_token, {
+        httpOnly: true,
+        secure: process.env.NODE_ENV === 'production',
+        sameSite: 'lax',
+        maxAge: 60 * 60 * 24 * 7 // 7 days
       })
     }
 
-    return NextResponse.json(
-      { message: "Invalid credentials" },
-      { status: 401 }
-    )
+    return response
 
   } catch (error) {
     console.error("Login error:", error)
