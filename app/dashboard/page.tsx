@@ -1,5 +1,12 @@
 "use client"
 
+import Layout from "@/components/kokonutui/layout"
+import Content from "@/components/kokonutui/content"
+
 export default function DashboardPage() {
-  return <h1>Dashboard loaded</h1>
+  return (
+    <Layout>
+      <Content />
+    </Layout>
+  )
 }
