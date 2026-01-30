@@ -2,6 +2,8 @@
 
 import type { ReactNode } from "react"
 import { useEffect, useState } from "react"
+import { useRouter } from "next/navigation"
+import { useUser } from "@/hooks/use-user"
 import Sidebar from "./sidebar"
 import TopNav from "./top-nav"
 
@@ -10,6 +12,8 @@ interface LayoutProps {
 }
 
 export default function Layout({ children }: LayoutProps) {
+  const router = useRouter()
+  const { user, loading } = useUser()
   const [isDark, setIsDark] = useState(false)
   const [mounted, setMounted] = useState(false)
 
@@ -33,7 +37,16 @@ export default function Layout({ children }: LayoutProps) {
     return () => observer.disconnect()
   }, [])
 
-  if (!mounted) {
+  if (!mounted || loading) {
+    return (
+      <div className="flex h-screen items-center justify-center">
+        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary"></div>
+      </div>
+    )
+  }
+
+  if (!user) {
+    router.push('/auth/login')
     return null
   }
 
