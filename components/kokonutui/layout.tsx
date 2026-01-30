@@ -1,0 +1,53 @@
+"use client"
+
+import type { ReactNode } from "react"
+import { useEffect, useState } from "react"
+import Sidebar from "./sidebar"
+import TopNav from "./top-nav"
+
+interface LayoutProps {
+  children: ReactNode
+}
+
+export default function Layout({ children }: LayoutProps) {
+  const [isDark, setIsDark] = useState(false)
+  const [mounted, setMounted] = useState(false)
+
+  useEffect(() => {
+    const updateTheme = () => {
+      const isDarkMode = document.documentElement.classList.contains("dark")
+      setIsDark(isDarkMode)
+    }
+
+    // Initial check
+    updateTheme()
+    setMounted(true)
+
+    // Listen for theme changes
+    const observer = new MutationObserver(updateTheme)
+    observer.observe(document.documentElement, {
+      attributes: true,
+      attributeFilter: ["class"],
+    })
+
+    return () => observer.disconnect()
+  }, [])
+
+  if (!mounted) {
+    return null
+  }
+
+  return (
+    <div className={`flex h-screen ${isDark ? "dark" : ""}`}>
+      <Sidebar />
+      <div className="w-full flex flex-1 flex-col">
+        <header className="h-16 border-b border-gray-200 dark:border-[#1F1F23] text-black bg-primary-foreground">
+          <TopNav />
+        </header>
+        <main className="flex-1 overflow-auto p-6 dark:bg-[#0F0F12] bg-primary-foreground text-foreground">
+          {children}
+        </main>
+      </div>
+    </div>
+  )
+}

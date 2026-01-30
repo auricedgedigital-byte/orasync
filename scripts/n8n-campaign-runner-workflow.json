@@ -1,0 +1,157 @@
+{
+  "name": "Orasync Campaign Runner",
+  "nodes": [
+    {
+      "parameters": {
+        "path": "webhook/campaign-trigger"
+      },
+      "name": "Webhook Trigger",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 1,
+      "position": [250, 300]
+    },
+    {
+      "parameters": {
+        "url": "=`${$env.APP_BASE_URL}/api/v1/clinics/${$json.clinic_id}/trial-check?action=campaigns_started&amount=1`",
+        "authentication": "genericCredentialType",
+        "genericCredentials": {
+          "authenticationType": "bearerToken",
+          "genericCredentials": "={{ $env.API_KEY }}"
+        },
+        "options": {}
+      },
+      "name": "Check Trial Credits",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.1,
+      "position": [450, 300]
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "boolean": [
+            {
+              "value1": "={{ $json.allowed }}",
+              "operation": "equals",
+              "value2": true
+            }
+          ]
+        }
+      },
+      "name": "Credits Available?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 1,
+      "position": [650, 300]
+    },
+    {
+      "parameters": {
+        "query": "SELECT * FROM leads WHERE clinic_id = '{{ $json.clinic_id }}' LIMIT 100"
+      },
+      "name": "Get Campaign Recipients",
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.3,
+      "position": [850, 200]
+    },
+    {
+      "parameters": {
+        "url": "=`${$env.APP_BASE_URL}/api/v1/clinics/${$json.clinic_id}/usage-logs`",
+        "method": "POST",
+        "authentication": "genericCredentialType",
+        "genericCredentials": {
+          "authenticationType": "bearerToken",
+          "genericCredentials": "={{ $env.API_KEY }}"
+        },
+        "body": {
+          "user_id": null,
+          "action_type": "campaign_sent",
+          "amount": "={{ $json.recipients.length }}",
+          "related_id": "={{ $json.campaign_id }}",
+          "details": {
+            "status": "completed"
+          }
+        }
+      },
+      "name": "Log Campaign Completion",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.1,
+      "position": [1050, 200]
+    },
+    {
+      "parameters": {
+        "url": "=`${$env.APP_BASE_URL}/api/v1/clinics/${$json.clinic_id}/usage-logs`",
+        "method": "POST",
+        "authentication": "genericCredentialType",
+        "genericCredentials": {
+          "authenticationType": "bearerToken",
+          "genericCredentials": "={{ $env.API_KEY }}"
+        },
+        "body": {
+          "user_id": null,
+          "action_type": "campaign_paused",
+          "amount": 1,
+          "related_id": "={{ $json.campaign_id }}",
+          "details": {
+            "reason": "insufficient_credits",
+            "status": "paused"
+          }
+        }
+      },
+      "name": "Log Campaign Pause",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.1,
+      "position": [850, 400]
+    }
+  ],
+  "connections": {
+    "Webhook Trigger": {
+      "main": [
+        [
+          {
+            "node": "Check Trial Credits",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Check Trial Credits": {
+      "main": [
+        [
+          {
+            "node": "Credits Available?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Credits Available?": {
+      "main": [
+        [
+          {
+            "node": "Get Campaign Recipients",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Log Campaign Pause",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get Campaign Recipients": {
+      "main": [
+        [
+          {
+            "node": "Log Campaign Completion",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  }
+}

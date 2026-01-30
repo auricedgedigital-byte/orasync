@@ -1,0 +1,9 @@
+tunnel: a219ba1c-8b89-4f5e-9ca1-74a1f0977970
+credentials-file: C:\Users\ADMIN\.cloudflared\a219ba1c-8b89-4f5e-9ca1-74a1f0977970.json
+
+ingress:
+  - hostname: orasync.site
+    service: http://localhost:3000
+  - hostname: www.orasync.site
+    service: http://localhost:3000
+  - service: http_status:404

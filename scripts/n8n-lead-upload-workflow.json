@@ -1,0 +1,50 @@
+{
+  "name": "Orasync Lead Upload Processor",
+  "nodes": [
+    {
+      "parameters": {
+        "path": "webhook/lead-upload"
+      },
+      "name": "Lead Upload Webhook",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 1,
+      "position": [250, 300]
+    },
+    {
+      "parameters": {
+        "url": "=`${$env.APP_BASE_URL}/api/v1/clinics/${$json.clinic_id}/usage-logs`",
+        "method": "POST",
+        "authentication": "genericCredentialType",
+        "genericCredentials": {
+          "authenticationType": "bearerToken",
+          "genericCredentials": "={{ $env.API_KEY }}"
+        },
+        "body": {
+          "user_id": null,
+          "action_type": "lead_upload_processed",
+          "amount": "={{ $json.count }}",
+          "details": {
+            "sample_lead": "={{ $json.sample_lead }}"
+          }
+        }
+      },
+      "name": "Log Lead Upload",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.1,
+      "position": [450, 300]
+    }
+  ],
+  "connections": {
+    "Lead Upload Webhook": {
+      "main": [
+        [
+          {
+            "node": "Log Lead Upload",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  }
+}
