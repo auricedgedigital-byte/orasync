@@ -52,9 +52,14 @@ export default function LoginPage() {
         return
       }
 
-      // For demo purposes, redirect to dashboard
-      // In production, you'd handle session management properly
-      router.push("/dashboard")
+      // Store user session and redirect
+      if (data.success && data.user) {
+        // Store session info in localStorage for demo
+        localStorage.setItem('orasync_user', JSON.stringify(data.user))
+        router.push("/dashboard")
+      } else {
+        setError("Login failed")
+      }
     } catch (err) {
       setError("An error occurred. Please try again.")
       console.error(err)

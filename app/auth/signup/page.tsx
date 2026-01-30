@@ -72,8 +72,14 @@ export default function SignUpPage() {
         return
       }
 
-      // Redirect to dashboard on success
-      router.push("/dashboard")
+      // Store user session and redirect
+      if (data.success && data.user) {
+        // Store session info in localStorage for demo
+        localStorage.setItem('orasync_user', JSON.stringify(data.user))
+        router.push("/dashboard")
+      } else {
+        setError("Sign up failed")
+      }
     } catch (err) {
       setError("An error occurred. Please try again.")
       console.error(err)

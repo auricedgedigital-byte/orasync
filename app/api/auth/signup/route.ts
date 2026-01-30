@@ -1,5 +1,4 @@
 import { NextRequest, NextResponse } from "next/server"
-import { supabase } from "@/lib/supabase"
 
 export async function POST(request: NextRequest) {
   try {
@@ -11,6 +10,21 @@ export async function POST(request: NextRequest) {
         { status: 400 }
       )
     }
+
+    // Check environment variables first
+    if (!process.env.NEXT_PUBLIC_SUPABASE_URL || !process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY) {
+      return NextResponse.json(
+        { message: "Authentication service not configured. Missing environment variables." },
+        { status: 500 }
+      )
+    }
+
+    // Dynamic import to avoid build issues
+    const { createClient } = await import("@supabase/supabase-js")
+    const supabase = createClient(
+      process.env.NEXT_PUBLIC_SUPABASE_URL,
+      process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY
+    )
 
     // Use Supabase Auth for signup
     const { data, error } = await supabase.auth.signUp({
