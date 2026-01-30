@@ -51,6 +51,11 @@ export function middleware(request: NextRequest) {
   if (pathname.startsWith('/api/')) {
     return NextResponse.next()
   }
+  
+  // Allow debug routes
+  if (pathname.startsWith('/debug')) {
+    return NextResponse.next()
+  }
 
   // If accessing protected route without auth, redirect to login
   if (isProtectedRoute) {
