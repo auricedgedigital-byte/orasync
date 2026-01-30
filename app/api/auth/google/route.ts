@@ -15,11 +15,16 @@ export async function GET(request: NextRequest) {
     process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY
   )
 
-  // Generate Google OAuth URL
+  // Generate Google OAuth URL with PKCE flow
   const { data, error } = await supabase.auth.signInWithOAuth({
     provider: 'google',
     options: {
-      redirectTo: `${request.nextUrl.origin}/api/auth/callback/google`
+      redirectTo: `${request.nextUrl.origin}/auth/callback`,
+      skipBrowserRedirect: false,
+      queryParams: {
+        access_type: 'offline',
+        prompt: 'consent',
+      }
     }
   })
 
