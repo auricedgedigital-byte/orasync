@@ -54,8 +54,8 @@ export default function SignUpPage() {
     }
 
     try {
-      // Call demo signup API (temporary)
-      const response = await fetch("/api/auth/signup-demo", {
+      // Call real signup API (Supabase)
+      const response = await fetch("/api/auth/signup", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
