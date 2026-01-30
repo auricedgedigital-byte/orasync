@@ -52,7 +52,8 @@ export default function LoginPage() {
         return
       }
 
-      // Redirect to dashboard on success
+      // For demo purposes, redirect to dashboard
+      // In production, you'd handle session management properly
       router.push("/dashboard")
     } catch (err) {
       setError("An error occurred. Please try again.")

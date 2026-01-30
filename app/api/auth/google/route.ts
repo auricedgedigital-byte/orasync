@@ -1,8 +1,7 @@
-import { type NextRequest, NextResponse } from "next/server"
+import { NextRequest, NextResponse } from "next/server"
 
 export async function GET(request: NextRequest) {
-  // In a real app, this would redirect to Google OAuth
-  // For now, we'll simulate the OAuth flow
-  const redirectUrl = new URL("/dashboard", request.url)
-  return NextResponse.redirect(redirectUrl)
+  // Redirect to NextAuth's Google signin
+  const baseUrl = request.nextUrl.origin
+  return NextResponse.redirect(`${baseUrl}/api/auth/signin/google`)
 }
