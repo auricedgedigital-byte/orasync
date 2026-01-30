@@ -17,10 +17,12 @@ export default function LoginPage() {
   
   // Check for success message from redirect
   React.useEffect(() => {
-    const urlParams = new URLSearchParams(window.location.search)
-    const message = urlParams.get('message')
-    if (message === 'signup_success') {
-      setError("Account created successfully! Please log in.")
+    if (typeof window !== "undefined") {
+      const urlParams = new URLSearchParams(window.location.search)
+      const message = urlParams.get('message')
+      if (message === 'signup_success') {
+        setError("Account created successfully! Please log in.")
+      }
     }
   }, [])
   const [formData, setFormData] = useState({
