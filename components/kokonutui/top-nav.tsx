@@ -7,7 +7,7 @@ import { Bell, ChevronRight, Search } from "@/components/icons"
 import Profile01 from "./profile-01"
 import Link from "next/link"
 import { ThemeToggle } from "../theme-toggle"
-import { useSession } from "next-auth/react"
+import { useUser } from "@/hooks/use-user"
 import { Button } from "@/components/ui/button"
 
 interface BreadcrumbItem {
@@ -18,7 +18,7 @@ interface BreadcrumbItem {
 export default function TopNav() {
   const router = useRouter()
   const pathname = usePathname()
-  const { data: session, status } = useSession()
+  const { user, loading } = useUser()
 
   const getBreadcrumbs = (): BreadcrumbItem[] => {
     const pathSegments = pathname.split("/").filter(Boolean)
@@ -91,19 +91,19 @@ export default function TopNav() {
 
         <div className="h-8 w-[1px] bg-border mx-1 hidden sm:block" />
 
-        {status === "authenticated" ? (
+        {user && !loading ? (
           <DropdownMenu>
             <DropdownMenuTrigger className="focus:outline-none group">
               <div className="flex items-center gap-3 cursor-pointer p-1 pr-2 rounded-xl hover:bg-muted/50 transition-all">
                 <div className="w-9 h-9 bg-primary/10 rounded-xl flex items-center justify-center text-primary font-bold text-sm border border-primary/20 shadow-sm transition-transform group-hover:scale-105">
-                  {session.user?.name?.charAt(0) || session.user?.email?.charAt(0) || "U"}
+                  {user?.name?.charAt(0) || user?.email?.charAt(0) || "U"}
                 </div>
                 <div className="hidden sm:block text-left">
                   <p className="text-xs font-bold text-foreground leading-none mb-1 truncate max-w-[100px]">
-                    {session.user?.name || "User"}
+                    {user?.name || "User"}
                   </p>
                   <p className="text-[10px] text-muted-foreground leading-none truncate max-w-[100px]">
-                    {session.user?.email}
+                    {user?.email}
                   </p>
                 </div>
               </div>
