@@ -1,8 +1,6 @@
 "use client"
 
-import type React from "react"
-
-import { useState } from "react"
+import React, { useState } from "react"
 import Link from "next/link"
 import { useRouter } from "next/navigation"
 import { Button } from "@/components/ui/button"
@@ -16,6 +14,15 @@ export default function LoginPage() {
   const router = useRouter()
   const [isLoading, setIsLoading] = useState(false)
   const [error, setError] = useState("")
+  
+  // Check for success message from redirect
+  React.useEffect(() => {
+    const urlParams = new URLSearchParams(window.location.search)
+    const message = urlParams.get('message')
+    if (message === 'signup_success') {
+      setError("Account created successfully! Please log in.")
+    }
+  }, [])
   const [formData, setFormData] = useState({
     email: "",
     password: "",
@@ -70,6 +77,7 @@ export default function LoginPage() {
 
   const handleOAuthLogin = (provider: string) => {
     setIsLoading(true)
+    // Direct redirect to Supabase OAuth
     window.location.href = `/api/auth/${provider}`
   }
 

@@ -26,14 +26,16 @@ export async function POST(request: NextRequest) {
       process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY
     )
 
-    // Use Supabase Auth for signup
+    // Use Supabase Auth for signup with metadata
     const { data, error } = await supabase.auth.signUp({
       email,
       password,
       options: {
         data: {
-          name: practiceName || email.split('@')[0], // Use provided practice name or extract from email
-        }
+          full_name: practiceName || email.split('@')[0],
+          practice_name: practiceName || email.split('@')[0],
+        },
+        emailRedirectTo: `${request.nextUrl.origin}/auth/callback/success`
       }
     })
 

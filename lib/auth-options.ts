@@ -3,6 +3,7 @@ import GoogleProvider from "next-auth/providers/google"
 import FacebookProvider from "next-auth/providers/facebook"
 import AppleProvider from "next-auth/providers/apple"
 import CredentialsProvider from "next-auth/providers/credentials"
+import GitHubProvider from "next-auth/providers/github"
 
 declare module "next-auth" {
   interface Session {
@@ -32,6 +33,10 @@ export const authOptions: NextAuthOptions = {
         AppleProvider({
             clientId: process.env.APPLE_CLIENT_ID || "",
             clientSecret: process.env.APPLE_CLIENT_SECRET || "",
+        }),
+        GitHubProvider({
+            clientId: process.env.GITHUB_CLIENT_ID || "",
+            clientSecret: process.env.GITHUB_CLIENT_SECRET || "",
         }),
         CredentialsProvider({
             name: "Email and Password",

@@ -90,8 +90,7 @@ export default function SignUpPage() {
 
   const handleOAuthSignUp = (provider: string) => {
     setIsLoading(true)
-    // In a real app, this would redirect to the OAuth provider
-    // For now, we'll simulate the flow
+    // Direct redirect to Supabase OAuth
     window.location.href = `/api/auth/${provider}`
   }
 
