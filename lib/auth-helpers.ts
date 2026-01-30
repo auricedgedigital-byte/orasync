@@ -10,21 +10,11 @@ export const createAuthClient = () => {
     throw new Error("Missing Supabase environment variables")
   }
   
-  const cookieStore = cookies()
-  
   return createClient(supabaseUrl, supabaseAnonKey, {
     auth: {
       persistSession: true,
       autoRefreshToken: true,
-    },
-    cookies: {
-      getAll: () => cookieStore.getAll(),
-      setAll: (cookies: any[]) => {
-        cookies.forEach(({ name, value, options }) =>
-          cookieStore.set(name, value, options)
-        )
-      },
-    },
+    }
   })
 }
 

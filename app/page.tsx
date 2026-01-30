@@ -1,6 +1,8 @@
+"use client"
+
 import Link from "next/link"
-import { redirect } from "next/navigation"
-import { createAuthClient } from "@/lib/auth-helpers"
+import { useRouter } from "next/navigation"
+import { useUser } from "@/hooks/use-user"
 import { Button } from "@/components/ui/button"
 import OrasyncLogo from "@/components/orasync/logo"
 import {
@@ -16,12 +18,15 @@ import {
   Star as StarIcon
 } from "lucide-react"
 
-export default async function LandingPage() {
-  const supabase = createAuthClient()
-  const { data: { session } } = await supabase.auth.getSession()
+export default function LandingPage() {
+  const router = useRouter()
+  const { user, loading } = useUser()
 
-  if (session) {
-    redirect("/dashboard")
+  if (loading) return null // Don't redirect while loading
+
+  if (user) {
+    router.push("/dashboard")
+    return null
   }
 
   return (
