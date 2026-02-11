@@ -1,5 +1,6 @@
 import { Pool } from "pg"
 import dotenv from "dotenv"
+import { enqueueJob } from "../lib/db"
 
 dotenv.config({ path: ".env.local" })
 
@@ -56,7 +57,7 @@ export async function processCampaignJob(job: CampaignJob | Record<string, unkno
     const offset = batch_index * batchSize
 
     const recipientsRes = await client.query(
-      "SELECT * FROM leads WHERE clinic_id = $1 LIMIT $2 OFFSET $3",
+      "SELECT * FROM patients WHERE clinic_id = $1 LIMIT $2 OFFSET $3",
       [clinic_id, batchSize, offset]
     )
     const recipients = recipientsRes.rows
@@ -92,8 +93,11 @@ export async function processCampaignJob(job: CampaignJob | Record<string, unkno
 
     // Enqueue next batch
     if (recipients.length === batchSize) {
-      // TODO: Enqueue next batch via job queue
-      // For now we just stop here or could insert another job
+      await enqueueJob(clinic_id, "campaign_batch", {
+        campaign_id,
+        clinic_id,
+        batch_index: batch_index + 1,
+      })
     } else {
       // Final batch complete
       await client.query("UPDATE campaigns SET status = 'completed', completed_at = NOW() WHERE id = $1", [campaign_id])

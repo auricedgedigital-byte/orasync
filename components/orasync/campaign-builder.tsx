@@ -9,7 +9,8 @@ import { Textarea } from "@/components/ui/textarea"
 import { Switch } from "@/components/ui/switch"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from "@/components/ui/dialog"
-import { Plus, Trash2, Eye, AlertCircle, Zap } from "lucide-react"
+import { Plus, Trash2, Eye, AlertCircle, Zap, Sparkles } from "lucide-react"
+import { useEffect } from "react"
 
 interface Condition {
   id: string
@@ -56,12 +57,29 @@ export function CampaignBuilder() {
 
   const [segmentCount, setSegmentCount] = useState(245)
 
-  const [trialCredits] = useState({
-    reactivation_emails: 150,
-    reactivation_sms: 35,
-    reactivation_whatsapp: 15,
-    campaigns_started: 2,
+  const [trialCredits, setTrialCredits] = useState({
+    reactivation_emails: 0,
+    reactivation_sms: 0,
+    reactivation_whatsapp: 0,
+    campaigns_started: 0,
   })
+
+  // Fetch real credits and recipient counts
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const clinicId = "clinic-001" // In production, get from context
+        const res = await fetch(`/api/v1/clinics/${clinicId}/credits`)
+        if (res.ok) {
+          const data = await res.json()
+          setTrialCredits(data)
+        }
+      } catch (err) {
+        console.error("Failed to fetch credits:", err)
+      }
+    }
+    fetchData()
+  }, [])
 
   const [isLaunching, setIsLaunching] = useState(false)
   const [launchError, setLaunchError] = useState<string | null>(null)
@@ -209,9 +227,22 @@ export function CampaignBuilder() {
 
   return (
     <div className="space-y-6">
-      <div>
-        <h1 className="text-2xl font-bold text-foreground">Campaign Builder</h1>
-        <p className="text-muted-foreground">Create advanced patient engagement campaigns</p>
+      <div className="flex items-center justify-between">
+        <div>
+          <h1 className="text-2xl font-bold text-foreground">Campaign Builder</h1>
+          <p className="text-muted-foreground">Create advanced patient engagement campaigns</p>
+        </div>
+        <Button
+          variant="outline"
+          className="bg-indigo-600/10 text-indigo-400 border-indigo-500/30 hover:bg-indigo-600/20"
+          onClick={async () => {
+            // Mock calling Nova
+            alert("Nova is analyzing your patient base to suggest the optimal campaign...")
+          }}
+        >
+          <Sparkles className="w-4 h-4 mr-2" />
+          Nova Suggestions
+        </Button>
       </div>
 
       <Tabs defaultValue="basic" className="space-y-6">
@@ -320,8 +351,9 @@ export function CampaignBuilder() {
               </DialogHeader>
               <div className="space-y-4">
                 <div className="space-y-2">
-                  <label className="text-sm font-medium">Condition Type</label>
+                  <label htmlFor="condition-type" className="text-sm font-medium">Condition Type</label>
                   <select
+                    id="condition-type"
                     className="w-full px-3 py-2 border rounded-md"
                     value={newCondition.type}
                     onChange={(e) => setNewCondition({ ...newCondition, type: e.target.value as Condition["type"] })}
@@ -336,8 +368,9 @@ export function CampaignBuilder() {
                 </div>
 
                 <div className="space-y-2">
-                  <label className="text-sm font-medium">Operator</label>
+                  <label htmlFor="operator" className="text-sm font-medium">Operator</label>
                   <select
+                    id="operator"
                     className="w-full px-3 py-2 border rounded-md"
                     value={newCondition.operator}
                     onChange={(e) =>
@@ -501,8 +534,9 @@ export function CampaignBuilder() {
                 </div>
 
                 <div className="space-y-2">
-                  <label className="text-sm font-medium">Channel</label>
+                  <label htmlFor="channel-select" className="text-sm font-medium">Channel</label>
                   <select
+                    id="channel-select"
                     className="w-full px-3 py-2 border rounded-md"
                     value={newDripStep.channel}
                     onChange={(e) => setNewDripStep({ ...newDripStep, channel: e.target.value as DripStep["channel"] })}

@@ -185,20 +185,20 @@ export async function createCampaign(
   }
 }
 
-export async function getLeads(clinicId: string, limit = 100) {
+export async function getPatients(clinicId: string, limit = 100) {
   try {
     const result = await pool.query(
-      "SELECT * FROM leads WHERE clinic_id = $1 ORDER BY created_at DESC LIMIT $2",
+      "SELECT * FROM patients WHERE clinic_id = $1 ORDER BY created_at DESC LIMIT $2",
       [clinicId, limit]
     )
     return result.rows
   } catch (error) {
-    console.error("Error fetching leads:", error)
+    console.error("Error fetching patients:", error)
     return []
   }
 }
 
-export async function createLead(
+export async function createPatient(
   clinicId: string,
   firstName: string,
   lastName: string,
@@ -208,12 +208,12 @@ export async function createLead(
 ) {
   try {
     const result = await pool.query(
-      "INSERT INTO leads (clinic_id, first_name, last_name, email, phone, source, created_at) VALUES ($1, $2, $3, $4, $5, $6, NOW()) RETURNING *",
+      "INSERT INTO patients (clinic_id, first_name, last_name, email, phone, source, created_at) VALUES ($1, $2, $3, $4, $5, $6, NOW()) RETURNING *",
       [clinicId, firstName, lastName, email, phone, source]
     )
     return result.rows[0]
   } catch (error) {
-    console.error("Error creating lead:", error)
+    console.error("Error creating patient:", error)
     return null
   }
 }

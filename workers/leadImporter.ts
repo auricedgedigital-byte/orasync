@@ -28,12 +28,12 @@ export async function processLeadImportJob(job: LeadImportJob, jobId: string) {
 
       if (!email && !phone) continue
 
-      // Upsert lead
+      // Upsert patient
       const result = await sql`
-        INSERT INTO leads (clinic_id, first_name, last_name, email, phone, source, created_at)
+        INSERT INTO patients (clinic_id, first_name, last_name, email, phone, source, created_at)
         VALUES (${clinic_id}, ${lead.first_name || ""}, ${lead.last_name || ""}, ${email || null}, ${phone || null}, 'import', NOW())
         ON CONFLICT (clinic_id, email) WHERE email IS NOT NULL
-        DO UPDATE SET last_name = COALESCE(EXCLUDED.last_name, leads.last_name), phone = COALESCE(EXCLUDED.phone, leads.phone)
+        DO UPDATE SET last_name = COALESCE(EXCLUDED.last_name, patients.last_name), phone = COALESCE(EXCLUDED.phone, patients.phone)
         RETURNING xmax
       `
 

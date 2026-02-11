@@ -48,7 +48,7 @@ export async function POST(request: NextRequest, { params }: { params: { cid: st
       }
 
       const result = await sql`
-        INSERT INTO leads (clinic_id, first_name, last_name, email, phone, source, created_at)
+        INSERT INTO patients (clinic_id, first_name, last_name, email, phone, source, created_at)
         VALUES (${clinicId}, ${lead.first_name || ""}, ${lead.last_name || ""}, ${normalizedEmail}, ${normalizedPhone}, ${lead.source || "upload"}, NOW())
         ON CONFLICT (clinic_id, email) WHERE email IS NOT NULL
         DO UPDATE SET last_name = EXCLUDED.last_name, phone = EXCLUDED.phone

@@ -10,7 +10,7 @@ export function middleware(request: NextRequest) {
     "/dashboard",
     "/dashboard/",
     "/unified-inbox",
-    "/patient-crm", 
+    "/patient-crm",
     "/settings",
     "/analytics-reporting",
     "/campaign-builder",
@@ -29,7 +29,7 @@ export function middleware(request: NextRequest) {
   ]
 
   // Check if requested path is protected
-  const isProtectedRoute = protectedRoutes.some(route => 
+  const isProtectedRoute = protectedRoutes.some(route =>
     pathname.startsWith(route)
   )
 
@@ -37,13 +37,13 @@ export function middleware(request: NextRequest) {
   const publicRoutes = [
     "/",
     "/auth/login",
-    "/auth/signup", 
+    "/auth/signup",
     "/auth/forgot-password",
     "/login",
     "/signup"
   ]
 
-  const isPublicRoute = publicRoutes.some(route => 
+  const isPublicRoute = publicRoutes.some(route =>
     pathname === route || pathname.startsWith(route + "/")
   )
 
@@ -51,7 +51,7 @@ export function middleware(request: NextRequest) {
   if (pathname.startsWith('/api/')) {
     return NextResponse.next()
   }
-  
+
   // Allow debug routes
   if (pathname.startsWith('/debug')) {
     return NextResponse.next()
@@ -69,12 +69,17 @@ export function middleware(request: NextRequest) {
   //   }
   // }
 
-  return NextResponse.next()
+  // Add Trace-Id to response
+  const response = NextResponse.next()
+  const traceId = `trc_${Date.now()}_${Math.random().toString(36).substring(2, 9)}`
+  response.headers.set('X-Trace-Id', traceId)
+
+  return response
 }
 
 export const config = {
-    matcher: [
-        // Match all paths except for static files and API routes
-        "/((?!api|_next/static|_next/image|favicon.ico).*)",
-    ],
+  matcher: [
+    // Match all paths except for static files and API routes
+    "/((?!api|_next/static|_next/image|favicon.ico).*)",
+  ],
 }

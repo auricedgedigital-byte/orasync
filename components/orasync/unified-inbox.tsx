@@ -4,6 +4,7 @@ import { useState } from "react"
 import { ThreadList } from "./inbox/thread-list"
 import { ChatInterface } from "./inbox/chat-interface"
 import { PatientSidebar } from "./inbox/patient-sidebar"
+import { Sparkles } from "lucide-react"
 import { mockThreads, mockMessages, mockPatients, type Thread, type Message } from "@/lib/mock-inbox-data"
 
 export default function UnifiedInbox() {

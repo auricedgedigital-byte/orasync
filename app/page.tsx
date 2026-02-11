@@ -76,15 +76,15 @@ export default function LandingPage() {
           </div>
 
           <h1 className="text-6xl lg:text-8xl font-black text-foreground tracking-tighter leading-[0.9] mb-8 animate-in fade-in slide-in-from-bottom-8 duration-700">
-            Turn Patients into <br />
-            <span className="text-primary italic">Revenue</span>, Effortlessly.
+            Fill Empty Chairs <br />
+            <span className="text-primary italic">Automatically.</span>
           </h1>
 
           <p className="max-w-2xl mx-auto text-xl text-muted-foreground font-medium mb-12 animate-in fade-in slide-in-from-bottom-12 duration-1000 delay-200">
-            OraSync empowers dental practices to reactivate lost patients, capture new leads, and automate bookings — all from one high-fidelity platform.
+            Orasync is the AI Revenue Engine for dental practices. Reactivate lost patients on autopilot and reclaim 5–15 hours of staff time every week.
           </p>
 
-            <div className="flex flex-col sm:flex-row items-center justify-center gap-5 mb-16 animate-in fade-in slide-in-from-bottom-16 duration-1000 delay-300">
+          <div className="flex flex-col sm:flex-row items-center justify-center gap-5 mb-16 animate-in fade-in slide-in-from-bottom-16 duration-1000 delay-300">
             <Link href="/auth/login" className="w-full sm:w-auto">
               <Button size="lg" className="w-full sm:w-auto h-14 px-10 rounded-2xl font-black text-lg tracking-tight shadow-2xl shadow-primary/30 hover:scale-105 hover:rotate-1 active:scale-95 transition-all">
                 Start Free Trial
@@ -238,9 +238,9 @@ export default function LandingPage() {
                 <span className="px-3 py-1 text-[10px] font-bold uppercase tracking-widest bg-muted rounded-full">Essentials</span>
               </div>
               <h4 className="text-3xl font-black tracking-tight mb-2">Starter</h4>
-              <p className="text-muted-foreground font-medium mb-6">Perfect for modernizing patient communication.</p>
+              <p className="text-muted-foreground font-medium mb-6">For solo dentists testing automated growth.</p>
               <div className="flex items-baseline gap-1 mb-8">
-                <span className="text-4xl font-black">$99</span>
+                <span className="text-4xl font-black">$149</span>
                 <span className="text-muted-foreground font-bold">/month</span>
               </div>
               <ul className="space-y-4 mb-8">
@@ -272,10 +272,10 @@ export default function LandingPage() {
               <div className="mb-6">
                 <span className="px-3 py-1 text-[10px] font-bold uppercase tracking-widest bg-primary/20 text-primary rounded-full">Growth</span>
               </div>
-              <h4 className="text-3xl font-black tracking-tight mb-2">Scale</h4>
-              <p className="text-muted-foreground font-medium mb-6">For practices serious about ROI and automation.</p>
+              <h4 className="text-3xl font-black tracking-tight mb-2">Growth</h4>
+              <p className="text-muted-foreground font-medium mb-6">The Core Revenue Engine for high-volume practices.</p>
               <div className="flex items-baseline gap-1 mb-8">
-                <span className="text-4xl font-black">$299</span>
+                <span className="text-4xl font-black">$349</span>
                 <span className="text-muted-foreground font-bold">/month</span>
               </div>
               <ul className="space-y-4 mb-8">
@@ -304,10 +304,11 @@ export default function LandingPage() {
               <div className="mb-6">
                 <span className="px-3 py-1 text-[10px] font-bold uppercase tracking-widest bg-muted rounded-full">DSO / Group</span>
               </div>
-              <h4 className="text-3xl font-black tracking-tight mb-2">Enterprise</h4>
-              <p className="text-muted-foreground font-medium mb-6">Custom solutions for multi-location groups.</p>
+              <h4 className="text-3xl font-black tracking-tight mb-2">Pro</h4>
+              <p className="text-muted-foreground font-medium mb-6">Custom automation for multi-location groups.</p>
               <div className="flex items-baseline gap-1 mb-8">
-                <span className="text-4xl font-black">Custom</span>
+                <span className="text-4xl font-black">$699</span>
+                <span className="text-muted-foreground font-bold">+</span>
               </div>
               <ul className="space-y-4 mb-8">
                 {[

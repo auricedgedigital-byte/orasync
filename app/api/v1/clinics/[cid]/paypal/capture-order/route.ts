@@ -1,7 +1,6 @@
 import { type NextRequest, NextResponse } from "next/server"
-import { neon } from "@neondatabase/serverless"
+import { claimOrderCapture, topUpCreditsFromOrder, getOrderByPayPalOrderId, resumePausedCampaigns } from "@/lib/db"
 
-const sql = neon(process.env.DATABASE_URL || "")
 const PAYPAL_CLIENT_ID = process.env.PAYPAL_CLIENT_ID || "test_client_id"
 const PAYPAL_SECRET = process.env.PAYPAL_SECRET || "test_secret"
 const PAYPAL_API_URL = process.env.PAYPAL_API_URL || "https://api-m.sandbox.paypal.com"
@@ -37,12 +36,22 @@ export async function POST(request: NextRequest, { params }: { params: { cid: st
     }
 
     const clinicId = params.cid
-    const accessToken = await getPayPalAccessToken()
 
+    // Get internal order record using PayPal order ID
+    const orderRecord = await getOrderByPayPalOrderId(order_id)
+    if (!orderRecord) {
+      console.error(`[v0] Internal order record not found for PayPal order: ${order_id}`)
+      // In production we might want to auto-create it if we trust the receipt, 
+      // but for now we expect it to be pre-created by the frontend's create-order step.
+      return NextResponse.json({ error: "Order record not found" }, { status: 404 })
+    }
+
+    const accessToken = await getPayPalAccessToken()
     if (!accessToken) {
       return NextResponse.json({ error: "Failed to authenticate with PayPal" }, { status: 500 })
     }
 
+    // Attempt to capture on PayPal
     const response = await fetch(`${PAYPAL_API_URL}/v1/checkout/orders/${order_id}/capture`, {
       method: "POST",
       headers: {
@@ -58,55 +67,37 @@ export async function POST(request: NextRequest, { params }: { params: { cid: st
       return NextResponse.json({ error: "Payment capture failed" }, { status: 500 })
     }
 
-    const creditMap: Record<string, Record<string, number>> = {
-      email_pack: { reactivation_emails: 500 },
-      sms_pack: { reactivation_sms: 200 },
-      campaign_pack: { campaigns_started: 5 },
-      lead_pack: { lead_upload_rows: 5000 },
-      starter_plan: {
-        reactivation_emails: 500,
-        reactivation_sms: 100,
-        campaigns_started: 10,
-        lead_upload_rows: 5000,
-      },
-      growth_plan: {
-        reactivation_emails: 2000,
-        reactivation_sms: 500,
-        campaigns_started: 999,
-        lead_upload_rows: 50000,
-      },
+    const paypalTxId = captureData.id || captureData.purchase_units?.[0]?.payments?.captures?.[0]?.id
+
+    // 1. Claim the order record (Idempotent)
+    const claim = await claimOrderCapture(orderRecord.id, paypalTxId)
+    if (!claim.success && claim.error !== "Order already captured") {
+      return NextResponse.json({ error: claim.error }, { status: 500 })
     }
 
-    const credits = creditMap[pack_type]
-    if (!credits) {
-      return NextResponse.json({ error: "Invalid pack type" }, { status: 400 })
+    if (!claim.success && claim.error === "Order already captured") {
+      return NextResponse.json({
+        success: true,
+        pack_type,
+        transaction_id: paypalTxId,
+        message: "Order already processed",
+      })
     }
 
-    const result = await sql.transaction(async (tx) => {
-      for (const [creditKey, creditAmount] of Object.entries(credits)) {
-        await tx`
-          UPDATE trial_credits 
-          SET ${creditKey} = ${creditKey} + ${creditAmount}, modified_at = NOW()
-          WHERE clinic_id = ${clinicId}
-        `
-      }
+    // 2. Top up credits
+    const topup = await topUpCreditsFromOrder(orderRecord.id)
+    if (!topup.success) {
+      return NextResponse.json({ error: topup.error }, { status: 500 })
+    }
 
-      await tx`
-        INSERT INTO usage_logs (clinic_id, user_id, action_type, amount, details, created_at)
-        VALUES (${clinicId}, ${user_id || null}, ${"paypal_purchase_" + pack_type}, 1, ${JSON.stringify({
-          pack_type,
-          order_id,
-          transaction_id: captureData.id,
-        })}, NOW())
-      `
+    // 3. Resume paused campaigns (if any)
+    try {
+      await resumePausedCampaigns(clinicId)
+    } catch (resError) {
+      console.error("[v0] Failed to resume campaigns after top-up:", resError)
+    }
 
-      const updated = await tx`
-        SELECT * FROM trial_credits WHERE clinic_id = ${clinicId}
-      `
-
-      return updated[0]
-    })
-
+    // 4. Notify n8n for additional automation
     const n8nWebhookBase = process.env.N8N_WEBHOOK_BASE || "https://n8n.example.com"
     const apiKey = process.env.API_KEY || process.env.BACKEND_API_KEY || ""
 
@@ -120,6 +111,8 @@ export async function POST(request: NextRequest, { params }: { params: { cid: st
         body: JSON.stringify({
           clinic_id: clinicId,
           pack_type,
+          order_id,
+          transaction_id: paypalTxId,
         }),
       })
     } catch (n8nError) {
@@ -129,8 +122,8 @@ export async function POST(request: NextRequest, { params }: { params: { cid: st
     return NextResponse.json({
       success: true,
       pack_type,
-      transaction_id: captureData.id,
-      remaining: result,
+      transaction_id: paypalTxId,
+      remaining: topup.remaining,
     })
   } catch (error) {
     console.error("PayPal capture error:", error)

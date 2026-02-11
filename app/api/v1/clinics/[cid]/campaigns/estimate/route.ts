@@ -15,7 +15,7 @@ export async function POST(request: NextRequest, { params }: { params: { cid: st
 
     // Estimate recipient count
     const recipients = await sql`
-      SELECT COUNT(*) as count FROM leads WHERE clinic_id = ${clinicId}
+      SELECT COUNT(*) as count FROM patients WHERE clinic_id = ${clinicId}
     `
 
     const recipientCount = (recipients[0]?.count as number) || 0
