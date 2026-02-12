@@ -2,7 +2,6 @@
 
 import type { ReactNode } from "react"
 import { useEffect, useState } from "react"
-import { useRouter } from "next/navigation"
 import { useUser } from "@/hooks/use-user"
 import Sidebar from "./sidebar"
 import TopNav from "./top-nav"
@@ -12,7 +11,6 @@ interface LayoutProps {
 }
 
 export default function Layout({ children }: LayoutProps) {
-  const router = useRouter()
   const { user, loading } = useUser()
   const [isDark, setIsDark] = useState(false)
   const [mounted, setMounted] = useState(false)
@@ -42,7 +40,7 @@ export default function Layout({ children }: LayoutProps) {
     return () => observer.disconnect()
   }, [])
 
-  if (!mounted || loading) {
+  if (!mounted) {
     return (
       <div className="flex h-screen items-center justify-center bg-background">
         <div className="flex flex-col items-center gap-3">
@@ -51,11 +49,6 @@ export default function Layout({ children }: LayoutProps) {
         </div>
       </div>
     )
-  }
-
-  if (!user) {
-    router.push('/auth/login')
-    return null
   }
 
   return (
