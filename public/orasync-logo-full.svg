@@ -1,0 +1,29 @@
+<svg viewBox="0 0 400 200" xmlns="http://www.w3.org/2000/svg">
+  <!-- Tooth with AI Brain Icon -->
+  <g transform="translate(50, 50)">
+    <!-- Tooth outline -->
+    <path d="M 40 20 L 60 20 L 65 50 Q 65 80 40 90 Q 15 80 15 50 L 20 20 Z" fill="none" stroke="#0066CC" stroke-width="3" stroke-linejoin="round"/>
+    
+    <!-- AI Brain pattern inside -->
+    <circle cx="40" cy="55" r="8" fill="#0066CC" opacity="0.3"/>
+    <circle cx="40" cy="55" r="5" fill="#0066CC"/>
+    
+    <!-- Brain connections -->
+    <circle cx="25" cy="40" r="3" fill="#0066CC" opacity="0.6"/>
+    <circle cx="55" cy="40" r="3" fill="#0066CC" opacity="0.6"/>
+    <circle cx="30" cy="70" r="3" fill="#0066CC" opacity="0.6"/>
+    <circle cx="50" cy="70" r="3" fill="#0066CC" opacity="0.6"/>
+    
+    <!-- Connection lines -->
+    <line x1="40" y1="55" x2="25" y2="40" stroke="#0066CC" stroke-width="1.5" opacity="0.4"/>
+    <line x1="40" y1="55" x2="55" y2="40" stroke="#0066CC" stroke-width="1.5" opacity="0.4"/>
+    <line x1="40" y1="55" x2="30" y2="70" stroke="#0066CC" stroke-width="1.5" opacity="0.4"/>
+    <line x1="40" y1="55" x2="50" y2="70" stroke="#0066CC" stroke-width="1.5" opacity="0.4"/>
+    
+    <!-- Heartbeat line on left -->
+    <path d="M 10 50 L 15 50 L 18 45 L 22 65 L 25 50" stroke="#0066CC" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round" opacity="0.6"/>
+  </g>
+  
+  <!-- Text: Orasync -->
+  <text x="150" y="110" font-family="Arial, sans-serif" font-size="72" font-weight="bold" fill="#0066CC" letter-spacing="-2">Orasync</text>
+</svg>
