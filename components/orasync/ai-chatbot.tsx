@@ -21,9 +21,7 @@ interface ConversationAnalytics {
 
 export default function AIChatbot() {
   const [messages, setMessages] = useState<Array<{ role: string; content: string; sentiment?: string }>>([
-    { role: "bot", content: "Hello! I'm your dental assistant. How can I help you today?", sentiment: "neutral" },
-    { role: "user", content: "I'd like to schedule an appointment", sentiment: "neutral" },
-    { role: "bot", content: "Great! What type of appointment would you like?", sentiment: "positive" },
+    { role: "bot", content: "Hello! I'm your Orasync AI assistant. I can help you schedule appointments, answer questions about services, and manage your dental practice. How can I assist you today?", sentiment: "neutral" },
   ])
   const [inputValue, setInputValue] = useState("")
   const [selectedLanguage, setSelectedLanguage] = useState("english")
@@ -35,19 +33,46 @@ export default function AIChatbot() {
   ])
   const { scrollToSection } = useScrollToSection()
 
-  const handleSendMessage = () => {
+  const handleSendMessage = async () => {
     if (inputValue.trim()) {
       const userMessage = { role: "user", content: inputValue, sentiment: "neutral" }
-      setMessages([...messages, userMessage])
+      const newMessages = [...messages, userMessage]
+      setMessages(newMessages)
       setInputValue("")
-      setTimeout(() => {
+
+      try {
+        const response = await fetch('/api/v1/ai/chat', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            message: inputValue,
+            conversation: messages.slice(-5), // Send last 5 messages for context
+            context: 'dental_assistant'
+          })
+        })
+
+        if (response.ok) {
+          const data = await response.json()
+          const botMessage = {
+            role: "bot",
+            content: data.response,
+            sentiment: data.sentiment || "neutral",
+          }
+          setMessages(prev => [...prev, botMessage])
+        } else {
+          throw new Error('Failed to get AI response')
+        }
+      } catch (error) {
+        console.error('AI chat error:', error)
         const botMessage = {
           role: "bot",
-          content: "I've received your message. How else can I help?",
-          sentiment: "positive",
+          content: "I apologize, but I'm having trouble connecting right now. Please try again or contact our support team for immediate assistance.",
+          sentiment: "neutral",
         }
-        setMessages((prev) => [...prev, botMessage])
-      }, 500)
+        setMessages(prev => [...prev, botMessage])
+      }
     }
   }
 

@@ -1,4 +1,4 @@
-import { createClient } from "@supabase/supabase-js"
+import { createClient as createSupabaseClient } from "@supabase/supabase-js"
 
 const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL
 const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY
@@ -9,10 +9,15 @@ if (!supabaseUrl || !supabaseAnonKey) {
 }
 
 // Client for client-side usage (public)
-export const supabase = createClient(supabaseUrl, supabaseAnonKey)
+export const supabase = createSupabaseClient(supabaseUrl, supabaseAnonKey)
 
 // Admin client for server-side usage (bypass RLS)
 // Only use this in trusted server-side API routes
 export const supabaseAdmin = supabaseServiceKey
-    ? createClient(supabaseUrl, supabaseServiceKey)
+    ? createSupabaseClient(supabaseUrl, supabaseServiceKey)
     : null
+
+// Helper function to get appropriate client
+export function getClient() {
+  return supabaseAdmin || supabase
+}
