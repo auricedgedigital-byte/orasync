@@ -2,7 +2,7 @@
 
 import React from 'react'
 import Header from './layout/Header'
-import Sidebar from './layout/Sidebar'
+import SidebarOrasync from './layout/SidebarOrasync'
 import QuickActions from './layout/QuickActions'
 
 interface OrasyncLayoutProps {
@@ -12,7 +12,7 @@ interface OrasyncLayoutProps {
 export default function OrasyncLayout({ children }: OrasyncLayoutProps) {
   return (
     <div className="orasync-container">
-      <Sidebar />
+      <SidebarOrasync />
       <div className="orasync-main">
         <Header />
         <div className="orasync-content max-w-7xl mx-auto">

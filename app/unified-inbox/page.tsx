@@ -1,5 +1,13 @@
-import UnifiedInbox from "@/components/orasync/unified-inbox"
+"use client"
+
+import React from 'react'
+import OrasyncLayout from '@/components/orasync/OrasyncLayout'
+import InboxDashboard from '@/components/orasync/dashboard/InboxDashboard'
 
 export default function UnifiedInboxPage() {
-  return <UnifiedInbox />
+  return (
+    <OrasyncLayout>
+      <InboxDashboard />
+    </OrasyncLayout>
+  )
 }
