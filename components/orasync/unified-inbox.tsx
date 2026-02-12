@@ -5,20 +5,20 @@ import { ThreadList } from "./inbox/thread-list"
 import { ChatInterface } from "./inbox/chat-interface"
 import { PatientSidebar } from "./inbox/patient-sidebar"
 import { Sparkles } from "lucide-react"
-import { mockThreads, mockMessages, mockPatients, type Thread, type Message } from "@/lib/mock-inbox-data"
+import { Thread, Message } from "@/lib/mock-inbox-data"
 
 export default function UnifiedInbox() {
-  const [selectedThreadId, setSelectedThreadId] = useState<string | null>(mockThreads[0].id)
+  const [selectedThreadId, setSelectedThreadId] = useState<string | null>(null)
   const [searchTerm, setSearchTerm] = useState("")
   const [filterChannel, setFilterChannel] = useState("all")
 
   // In a real app, these would be state/context
-  const [threads, setThreads] = useState(mockThreads)
-  const [messagesMap, setMessagesMap] = useState(mockMessages)
+  const [threads, setThreads] = useState<Thread[]>([])
+  const [messagesMap, setMessagesMap] = useState<Record<string, Message[]>>({})
 
   const selectedThread = threads.find(t => t.id === selectedThreadId)
   const currentMessages = selectedThreadId ? messagesMap[selectedThreadId] || [] : []
-  const currentPatient = selectedThread ? mockPatients[selectedThread.patientId] : null
+  const currentPatient = selectedThread ? null : null
 
   const handleSendMessage = (text: string) => {
     if (!selectedThreadId) return
