@@ -44,8 +44,11 @@ export default function Layout({ children }: LayoutProps) {
 
   if (!mounted || loading) {
     return (
-      <div className="flex h-screen items-center justify-center">
-        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary"></div>
+      <div className="flex h-screen items-center justify-center bg-background">
+        <div className="flex flex-col items-center gap-3">
+          <div className="animate-spin rounded-full h-10 w-10 border-3 border-primary/30 border-t-primary"></div>
+          <p className="text-sm text-muted-foreground">Loading Orasync...</p>
+        </div>
       </div>
     )
   }
@@ -56,14 +59,16 @@ export default function Layout({ children }: LayoutProps) {
   }
 
   return (
-    <div className={`flex h-screen ${isDark ? "dark" : ""}`}>
+    <div className={`flex h-screen bg-background ${isDark ? "dark" : ""}`}>
       <Sidebar />
       <div className="w-full flex flex-1 flex-col">
-        <header className="h-16 border-b border-gray-200 dark:border-[#1F1F23] text-black bg-primary-foreground">
+        <header className="h-16 border-b border-gray-200 dark:border-slate-700/50 bg-white dark:bg-slate-800/30 backdrop-blur-sm sticky top-0 z-40">
           <TopNav />
         </header>
-        <main className="flex-1 overflow-auto p-6 dark:bg-[#0F0F12] bg-primary-foreground text-foreground">
-          {children}
+        <main className="flex-1 overflow-auto p-4 sm:p-6 lg:p-8 bg-gradient-to-b from-background to-background/50 text-foreground">
+          <div className="max-w-7xl mx-auto">
+            {children}
+          </div>
         </main>
       </div>
     </div>

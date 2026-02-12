@@ -1,5 +1,5 @@
-import ReputationManagement from "@/components/orasync/reputation-management"
+import ReputationOverview from "@/components/orasync/reputation/reputation-overview"
 
 export default function ReputationManagementPage() {
-  return <ReputationManagement />
+  return <ReputationOverview />
 }

@@ -3,24 +3,10 @@
 import { useRouter } from "next/navigation"
 import { useUser } from "@/hooks/use-user"
 import { useEffect, useState } from "react"
-import {
-  Calendar,
-  Users,
-  TrendingUp,
-  MessageSquare,
-  DollarSign,
-  Clock,
-  UserCheck,
-  Star,
-  Activity,
-  Phone,
-  ChevronRight,
-  Zap,
-  Megaphone,
-} from "@/components/icons"
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
+import { MessageSquare, Send, Calendar, Zap } from "lucide-react"
 import { Button } from "@/components/ui/button"
-import MetricCard from "./metric-card"
+import PerformanceCards from "@/components/orasync/dashboard/performance-cards"
+import Timeline from "@/components/orasync/dashboard/timeline"
 
 interface DashboardData {
   todayAppointments: number
@@ -46,12 +32,9 @@ export default function Content() {
   const [dashboardData, setDashboardData] = useState<DashboardData | null>(null)
   const [dataLoading, setDataLoading] = useState(true)
 
-  const handleScheduleAppointment = () => router.push("/appointments")
-  const handleAddPatient = () => router.push("/patient-crm")
-  const handleSendCampaign = () => router.push("/patient-engagement")
-  const handleViewAnalytics = () => router.push("/analytics-reporting")
-  const handlePatientRecords = () => router.push("/patient-crm")
-  const handleReviewRequests = () => router.push("/reputation-management")
+  const handleCreateCampaign = () => router.push("/campaigns-orasync")
+  const handleSendMessage = () => router.push("/unified-inbox")
+  const handleBookAppointment = () => router.push("/appointments")
 
   // Fetch real dashboard data
   useEffect(() => {
@@ -93,33 +76,48 @@ export default function Content() {
     recentActivity: []
   }
 
-  const appointmentDetails = (
-    <div className="space-y-4">
-      <div className="grid grid-cols-2 gap-4">
-        <div className="p-4 rounded-lg bg-muted">
-          <p className="text-sm text-muted-foreground">Confirmed</p>
-          <p className="text-2xl font-bold">{data.appointments.filter(a => a.status === 'confirmed').length}</p>
+  return (
+    <div className="space-y-8 animate-in fade-in duration-700">
+      {/* Welcome Header */}
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-6 mb-4">
+        <div>
+          <h1 className="text-4xl font-bold tracking-tight text-foreground mb-2">
+            Dashboard
+          </h1>
+          <p className="text-muted-foreground text-lg">
+            Welcome back, <span className="text-primary font-semibold">{user?.user_metadata?.full_name || user?.email || 'Doctor'}</span>
+          </p>
         </div>
-        <div className="p-4 rounded-lg bg-muted">
-          <p className="text-sm text-muted-foreground">Pending</p>
-          <p className="text-2xl font-bold">{data.appointments.filter(a => a.status === 'pending').length}</p>
+        <div className="flex gap-3 flex-wrap">
+          <Button 
+            className="rounded-xl px-6 h-11 font-semibold bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700 shadow-lg shadow-blue-500/20 transition-all hover:scale-105 active:scale-95"
+            onClick={handleCreateCampaign}
+          >
+            <Zap className="w-4 h-4 mr-2" />
+            Create Campaign
+          </Button>
+          <Button 
+            className="rounded-xl px-6 h-11 font-semibold bg-gradient-to-r from-purple-500 to-purple-600 hover:from-purple-600 hover:to-purple-700 shadow-lg shadow-purple-500/20 transition-all hover:scale-105 active:scale-95"
+            onClick={handleSendMessage}
+          >
+            <Send className="w-4 h-4 mr-2" />
+            Send Message
+          </Button>
+          <Button 
+            className="rounded-xl px-6 h-11 font-semibold bg-gradient-to-r from-emerald-500 to-emerald-600 hover:from-emerald-600 hover:to-emerald-700 shadow-lg shadow-emerald-500/20 transition-all hover:scale-105 active:scale-95"
+            onClick={handleBookAppointment}
+          >
+            <Calendar className="w-4 h-4 mr-2" />
+            Book Appointment
+          </Button>
         </div>
       </div>
-      <div className="space-y-2">
-        <h4 className="font-semibold">Today's Appointments</h4>
-        {data.appointments.length > 0 ? (
-          data.appointments.map((apt, i) => (
-            <div key={i} className="p-3 rounded-lg border text-sm">
-              <div className="font-medium">
-                {apt.time} - {apt.patient}
-              </div>
-              <div className="text-muted-foreground">{apt.treatment}</div>
-            </div>
-          ))
-        ) : (
-          <p className="text-muted-foreground text-sm">No appointments scheduled for today</p>
-        )}
-      </div>
+
+      {/* Performance Cards */}
+      <PerformanceCards />
+
+      {/* Timeline Section */}
+      <Timeline />
     </div>
   )
 

@@ -1,5 +1,5 @@
-import UnifiedInbox from "@/components/orasync/unified-inbox"
+import UnifiedInboxRedesign from "@/components/orasync/inbox/unified-inbox-redesign"
 
 export default function UnifiedInboxPage() {
-  return <UnifiedInbox />
+  return <UnifiedInboxRedesign />
 }
