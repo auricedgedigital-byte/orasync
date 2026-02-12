@@ -16,27 +16,29 @@ const cards: Card[] = [
     icon: TrendingUp,
     label: 'Total Campaigns',
     value: '42',
-    status: '↑',
-    color: 'from-blue-400 to-blue-600'
+    status: '↗',
+    color: 'bg-gradient-to-br from-blue-400 to-blue-500'
   },
   {
     icon: Zap,
     label: 'Active Campaigns',
     value: '8',
-    status: '◉ Running',
-    color: 'from-emerald-400 to-emerald-600'
+    status: '●',
+    color: 'bg-gradient-to-br from-emerald-300 to-emerald-400'
   },
   {
     icon: Mail,
     label: 'Messages Sent',
     value: '15,400',
-    color: 'from-purple-400 to-purple-600'
+    status: '✉',
+    color: 'bg-gradient-to-br from-blue-300 to-blue-400'
   },
   {
     icon: CheckCircle,
     label: 'Bookings',
     value: '315',
-    color: 'from-orange-400 to-orange-600'
+    status: '📅',
+    color: 'bg-gradient-to-br from-orange-300 to-orange-400'
   },
 ]
 
@@ -48,16 +50,16 @@ export default function PerformanceCards() {
         return (
           <div
             key={idx}
-            className={`bg-gradient-to-br ${card.color} rounded-lg p-6 text-white shadow-lg hover:shadow-xl transition-all duration-300 group cursor-pointer`}
+            className={`${card.color} rounded-xl p-6 text-white shadow-md hover:shadow-lg transition-all duration-200 group`}
           >
             <div className="flex items-start justify-between mb-4">
-              <Icon className="w-8 h-8 opacity-80 group-hover:scale-110 transition-transform" />
-              <span className="text-xl opacity-60">{card.status || ''}</span>
+              <div className="w-10 h-10 bg-white/20 rounded-lg flex items-center justify-center">
+                <Icon className="w-6 h-6" />
+              </div>
+              <span className="text-sm opacity-70">{card.status}</span>
             </div>
-            <div>
-              <div className="text-sm opacity-90 font-medium mb-1">{card.label}</div>
-              <div className="text-3xl font-bold">{card.value}</div>
-            </div>
+            <div className="text-xs font-semibold opacity-90 mb-1">{card.label}</div>
+            <div className="text-4xl font-bold">{card.value}</div>
           </div>
         )
       })}
