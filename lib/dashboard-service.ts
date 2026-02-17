@@ -13,13 +13,36 @@ export async function getTodayAppointments(clinicId: string) {
       `SELECT COUNT(*) FROM appointments 
        WHERE clinic_id = $1 
        AND DATE(scheduled_time) = $2
-       AND status IN ('confirmed', 'in-progress')`,
+       AND status NOT IN ('cancelled', 'no-show')`,
       [clinicId, today]
     )
     return parseInt(result.rows[0]?.count || "0")
   } catch (error) {
     console.error("Error getting today appointments:", error)
     return 0
+  }
+}
+
+export async function getTodaySchedule(clinicId: string) {
+  try {
+    const today = new Date().toISOString().split("T")[0]
+    const result = await pool.query(
+      `SELECT * FROM appointments 
+       WHERE clinic_id = $1 
+       AND DATE(scheduled_time) = $2
+       ORDER BY scheduled_time ASC`,
+      [clinicId, today]
+    )
+    return result.rows.map(apt => ({
+      id: apt.id,
+      time: new Date(apt.scheduled_time).toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit', hour12: true }),
+      patient: apt.patient_name || 'Unknown Patient',
+      treatment: apt.treatment_type || 'General Checkup',
+      status: apt.status || 'scheduled'
+    }))
+  } catch (error) {
+    console.error("Error getting today schedule:", error)
+    return []
   }
 }
 

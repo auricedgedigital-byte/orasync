@@ -1,10 +1,13 @@
 import { NextRequest, NextResponse } from 'next/server'
-import { Pool } from 'pg'
-
-const pool = new Pool({
-  connectionString: process.env.DATABASE_URL,
-  ssl: process.env.DATABASE_URL?.includes("postgres") ? { rejectUnauthorized: false } : undefined,
-})
+import {
+  getTodayAppointments,
+  getTodaySchedule,
+  getWeeklyProduction,
+  getNewLeadsCount,
+  getPatientSatisfaction,
+  getRecentActivity,
+  getAIInsights
+} from '@/lib/dashboard-service'
 
 export async function GET(
   request: NextRequest,
@@ -13,60 +16,37 @@ export async function GET(
   try {
     const clinicId = params.cid
 
-    // Get today's appointments and production
-    // Assuming appointments table has schedule_time, status, amount
-    const appointmentsQuery = await pool.query(
-      "SELECT * FROM appointments WHERE clinic_id = $1 AND scheduled_time::date = CURRENT_DATE ORDER BY scheduled_time ASC",
-      [clinicId]
-    )
-
-    const appointments = appointmentsQuery.rows
-
-    const todayAppointments = appointments.length
-
-    // Calculate net production (completed appointments today)
-    const netProduction = appointments
-      .filter(app => app.status === 'completed')
-      .reduce((sum, app) => sum + (parseFloat(app.amount) || 0), 0)
-
-    // Get new leads (patients created in last 7 days)
-    const newLeadsQuery = await pool.query(
-      "SELECT COUNT(*) as count FROM patients WHERE clinic_id = $1 AND created_at >= NOW() - INTERVAL '7 days'",
-      [clinicId]
-    )
-    const newLeads = parseInt(newLeadsQuery.rows[0].count, 10)
-
-    // Placeholder for patient satisfaction (unless we have a reviews table)
-    const patientSatisfaction = 4.8
-
-    // Format appointments for display
-    const formattedAppointments = appointments.slice(0, 5).map(apt => ({
-      time: new Date(apt.scheduled_time).toLocaleTimeString('en-US', {
-        hour: 'numeric',
-        minute: '2-digit',
-        hour12: true
-      }),
-      patient: apt.patient_name || 'Unknown Patient',
-      treatment: apt.treatment_type || 'General Appointment',
-      status: apt.status || 'scheduled'
-    }))
-
-    // Get recent activity (mock or from usage_logs)
-    const recentActivity = [
-      {
-        message: "Dashboard loaded successfully",
-        time: "Just now",
-        type: "system"
-      }
-    ]
+    // Fetch all dashboard data in parallel for performance
+    const [
+      todayAppointments,
+      appointments,
+      netProduction,
+      newLeads,
+      satisfaction,
+      recentActivity,
+      aiInsights
+    ] = await Promise.all([
+      getTodayAppointments(clinicId),
+      getTodaySchedule(clinicId),
+      getWeeklyProduction(clinicId),
+      getNewLeadsCount(clinicId),
+      getPatientSatisfaction(clinicId),
+      getRecentActivity(clinicId, 10),
+      getAIInsights(clinicId)
+    ])
 
     const dashboardData = {
       todayAppointments,
       netProduction,
       newLeads,
-      patientSatisfaction,
-      appointments: formattedAppointments,
-      recentActivity
+      patientSatisfaction: satisfaction.rating,
+      appointments: appointments.slice(0, 10), // Limit to 10 for dashboard view
+      recentActivity: recentActivity.map(activity => ({
+        message: activity.message,
+        time: activity.time,
+        type: activity.icon
+      })),
+      aiInsights
     }
 
     return NextResponse.json(dashboardData)
@@ -74,7 +54,7 @@ export async function GET(
   } catch (error) {
     console.error('Dashboard API error:', error)
     return NextResponse.json(
-      { error: 'Failed to fetch dashboard data' },
+      { error: 'Failed to fetch dashboard data', details: (error as Error).message },
       { status: 500 }
     )
   }

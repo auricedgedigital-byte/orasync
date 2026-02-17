@@ -6,38 +6,39 @@
 :root {
   --font-sans: var(--font-geist-sans);
   --font-mono: var(--font-geist-mono);
-  
+
   /* Premium Light Mode (Clean, Professional) */
   --background: 210 40% 98%;
   --foreground: 222 47% 11%;
-  
+
   --card: 0 0% 100%;
   --card-foreground: 222 47% 11%;
-  
+
   --popover: 0 0% 100%;
   --popover-foreground: 222 47% 11%;
-  
-  --primary: 262 83% 58%; /* Rich Purple */
+
+  --primary: 262 83% 58%;
+  /* Rich Purple */
   --primary-foreground: 210 40% 98%;
-  
+
   --secondary: 210 40% 96.1%;
   --secondary-foreground: 222 47% 11.2%;
-  
+
   --muted: 210 40% 96.1%;
   --muted-foreground: 215.4 16.3% 46.9%;
-  
+
   --accent: 210 40% 96.1%;
   --accent-foreground: 222 47% 11.2%;
-  
+
   --destructive: 0 84.2% 60.2%;
   --destructive-foreground: 210 40% 98%;
-  
+
   --border: 214.3 31.8% 91.4%;
   --input: 214.3 31.8% 91.4%;
   --ring: 262 83% 58%;
-  
+
   --radius: 1rem;
-  
+
   --sidebar-background: 0 0% 98%;
   --sidebar-foreground: 240 5.3% 26.1%;
   --sidebar-primary: 240 5.9% 10%;
@@ -54,42 +55,48 @@
 }
 
 .dark {
-  /* Premium Dark Mode (Deep, Rich, Glassy) */
-  --background: 240 10% 4%; /* Very dark slate/black */
+  /* Premium Dark Mode (Deep, Rich, Glassy) - Updated from Designs */
+  --background: 240 10% 4%;
+  /* Very dark, almost black */
   --foreground: 0 0% 98%;
-  
-  --card: 240 10% 6%; /* Slightly lighter than bg */
+
+  --card: 240 6% 10%;
+  /* Slightly lighter, providing depth */
   --card-foreground: 0 0% 98%;
-  
+
   --popover: 240 10% 6%;
   --popover-foreground: 0 0% 98%;
-  
-  --primary: 263.4 70% 50.4%; /* Deep Purple */
+
+  --primary: 263.4 70% 50.4%;
+  /* Deep Purple Anchor */
   --primary-foreground: 210 40% 98%;
-  
+
   --secondary: 240 4% 16%;
   --secondary-foreground: 0 0% 98%;
-  
+
   --muted: 240 4% 16%;
   --muted-foreground: 240 5% 65%;
-  
-  --accent: 240 4% 16%;
+
+  --accent: 263.4 70% 50.4%;
+  /* Use Primary as Accent in Dark Mode for pop */
   --accent-foreground: 0 0% 98%;
-  
+
   --destructive: 0 62.8% 30.6%;
   --destructive-foreground: 0 0% 98%;
-  
-  --border: 240 4% 16%;
-  --input: 240 4% 16%;
+
+  --border: 240 6% 14%;
+  /* Subtle borders */
+  --input: 240 6% 14%;
   --ring: 263.4 70% 50.4%;
-  
-  --sidebar-background: 240 10% 4%;
-  --sidebar-foreground: 240 4.8% 95.9%;
+
+  --sidebar-background: 240 10% 3%;
+  /* Darker than main bg for contrast */
+  --sidebar-foreground: 240 5% 80%;
   --sidebar-primary: 263.4 70% 50.4%;
   --sidebar-primary-foreground: 0 0% 100%;
   --sidebar-accent: 240 4% 16%;
-  --sidebar-accent-foreground: 240 4.8% 95.9%;
-  --sidebar-border: 240 4% 16%;
+  --sidebar-accent-foreground: 0 0% 100%;
+  --sidebar-border: 240 6% 14%;
   --sidebar-ring: 263.4 70% 50.4%;
 }
 
@@ -113,12 +120,12 @@
   --color-border: hsl(var(--border));
   --color-input: hsl(var(--input));
   --color-ring: hsl(var(--ring));
-  
+
   --radius-sm: calc(var(--radius) - 4px);
   --radius-md: calc(var(--radius) - 2px);
   --radius-lg: var(--radius);
   --radius-xl: calc(var(--radius) + 4px);
-  
+
   --color-sidebar: hsl(var(--sidebar-background));
   --color-sidebar-foreground: hsl(var(--sidebar-foreground));
   --color-sidebar-primary: hsl(var(--sidebar-primary));
@@ -137,6 +144,7 @@
   * {
     @apply border-border outline-ring/50;
   }
+
   body {
     @apply bg-background text-foreground antialiased;
   }
@@ -149,4 +157,8 @@
 
 @utility glass-card {
   @apply bg-card/60 backdrop-blur-xl border border-border/50 shadow-xl;
+}
+
+@utility glass-panel {
+  @apply bg-card/30 backdrop-blur-md border border-white/5 shadow-2xl;
 }
