@@ -9,12 +9,14 @@ import { Label } from "@/components/ui/label"
 import { Card } from "@/components/ui/card"
 import { AlertCircle, Loader2 } from "lucide-react"
 import { Alert, AlertDescription } from "@/components/ui/alert"
+import { signIn } from "next-auth/react"
+import Image from "next/image"
 
 export default function LoginPage() {
   const router = useRouter()
   const [isLoading, setIsLoading] = useState(false)
   const [error, setError] = useState("")
-  
+
   // Check for success message from redirect
   React.useEffect(() => {
     if (typeof window !== "undefined") {
@@ -48,27 +50,18 @@ export default function LoginPage() {
     }
 
     try {
-      const response = await fetch("/api/auth/login", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(formData),
+      const result = await signIn("credentials", {
+        redirect: false,
+        email: formData.email,
+        password: formData.password,
       })
 
-      const data = await response.json()
-
-      if (!response.ok) {
-        setError(data.message || "Login failed")
+      if (result?.error) {
+        setError("Invalid email or password")
         return
       }
 
-      // Store user session and redirect
-      if (data.success && data.user) {
-        // Store session info in localStorage for demo
-        localStorage.setItem('orasync_user', JSON.stringify(data.user))
-        router.push("/dashboard")
-      } else {
-        setError("Login failed")
-      }
+      router.push("/dashboard")
     } catch (err) {
       setError("An error occurred. Please try again.")
       console.error(err)
@@ -77,10 +70,9 @@ export default function LoginPage() {
     }
   }
 
-  const handleOAuthLogin = (provider: string) => {
+  const handleOAuthLogin = async (provider: string) => {
     setIsLoading(true)
-    // Direct redirect to Supabase OAuth
-    window.location.href = `/api/auth/${provider}`
+    await signIn(provider, { callbackUrl: "/dashboard" })
   }
 
   return (
@@ -88,11 +80,15 @@ export default function LoginPage() {
       <div className="w-full max-w-md">
         {/* Logo */}
         <div className="text-center mb-8">
-          <div className="flex items-center justify-center gap-2 mb-4">
-            <div className="w-10 h-10 bg-primary rounded-lg flex items-center justify-center">
-              <span className="text-primary-foreground font-bold text-lg">O</span>
-            </div>
-            <span className="font-bold text-2xl text-foreground">Orasync</span>
+          <div className="flex items-center justify-center gap-3 mb-6">
+            <Image
+              src="/logo.png"
+              alt="Orasync Logo"
+              width={64}
+              height={64}
+              className="rounded-xl shadow-xl shadow-primary/20"
+            />
+            <span className="font-black text-4xl text-foreground tracking-tighter">Orasync</span>
           </div>
           <h1 className="text-3xl font-bold text-foreground mb-2">Welcome Back</h1>
           <p className="text-muted-foreground">Sign in to your dental practice dashboard</p>

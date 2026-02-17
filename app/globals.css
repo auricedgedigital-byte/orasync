@@ -7,97 +7,93 @@
   --font-sans: var(--font-geist-sans);
   --font-mono: var(--font-geist-mono);
 
-  /* Premium Light Mode (Clean, Professional) */
-  --background: 210 40% 98%;
-  --foreground: 222 47% 11%;
+  /* Premium Light Mode (Clean, High-Contrast) */
+  --background: 210 50% 98%;
+  --foreground: 224 71% 4%;
 
   --card: 0 0% 100%;
-  --card-foreground: 222 47% 11%;
+  --card-foreground: 224 71% 4%;
 
   --popover: 0 0% 100%;
-  --popover-foreground: 222 47% 11%;
+  --popover-foreground: 224 71% 4%;
 
-  --primary: 262 83% 58%;
-  /* Rich Purple */
+  --primary: 221.2 83.2% 53.3%;
+  /* Professional Blue */
   --primary-foreground: 210 40% 98%;
 
   --secondary: 210 40% 96.1%;
-  --secondary-foreground: 222 47% 11.2%;
+  --secondary-foreground: 222.2 47.4% 11.2%;
 
   --muted: 210 40% 96.1%;
   --muted-foreground: 215.4 16.3% 46.9%;
 
   --accent: 210 40% 96.1%;
-  --accent-foreground: 222 47% 11.2%;
+  --accent-foreground: 222.2 47.4% 11.2%;
 
   --destructive: 0 84.2% 60.2%;
   --destructive-foreground: 210 40% 98%;
 
   --border: 214.3 31.8% 91.4%;
   --input: 214.3 31.8% 91.4%;
-  --ring: 262 83% 58%;
+  --ring: 221.2 83.2% 53.3%;
 
-  --radius: 1rem;
+  --radius: 1.25rem;
 
-  --sidebar-background: 0 0% 98%;
+  --sidebar-background: 210 40% 98%;
   --sidebar-foreground: 240 5.3% 26.1%;
-  --sidebar-primary: 240 5.9% 10%;
-  --sidebar-primary-foreground: 0 0% 98%;
+  --sidebar-primary: 221.2 83.2% 53.3%;
+  --sidebar-primary-foreground: 0 0% 100%;
   --sidebar-accent: 240 4.8% 95.9%;
   --sidebar-accent-foreground: 240 5.9% 10%;
   --sidebar-border: 220 13% 91%;
-  --sidebar-ring: 262 83% 58%;
+  --sidebar-ring: 221.2 83.2% 53.3%;
 
   /* Custom Gradients & AI Tokens */
-  --ai-primary: 262 83% 58%;
-  --ai-secondary: 290 80% 60%;
-  --ai-gradient: linear-gradient(135deg, hsl(262, 83%, 58%), hsl(290, 80%, 60%));
+  --ai-primary: 221.2 83.2% 53.3%;
+  --ai-secondary: 262 83% 58%;
+  --ai-gradient: linear-gradient(135deg, hsl(221.2, 83.2%, 53.3%), hsl(262, 83%, 58%));
 }
 
 .dark {
-  /* Premium Dark Mode (Deep, Rich, Glassy) - Updated from Designs */
-  --background: 240 10% 4%;
-  /* Very dark, almost black */
-  --foreground: 0 0% 98%;
+  /* Premium Dark Mode (Deep, Space, Glassy) */
+  --background: 224 71% 4%;
+  /* Deepest Blue-Black */
+  --foreground: 210 40% 98%;
 
-  --card: 240 6% 10%;
-  /* Slightly lighter, providing depth */
-  --card-foreground: 0 0% 98%;
+  --card: 224 71% 6%;
+  --card-foreground: 210 40% 98%;
 
-  --popover: 240 10% 6%;
-  --popover-foreground: 0 0% 98%;
+  --popover: 224 71% 4%;
+  --popover-foreground: 210 40% 98%;
 
-  --primary: 263.4 70% 50.4%;
-  /* Deep Purple Anchor */
-  --primary-foreground: 210 40% 98%;
+  --primary: 217.2 91.2% 59.8%;
+  /* Luminous Electric Blue */
+  --primary-foreground: 222.2 47.4% 11.2%;
 
-  --secondary: 240 4% 16%;
-  --secondary-foreground: 0 0% 98%;
+  --secondary: 222.2 47.4% 11.2%;
+  --secondary-foreground: 210 40% 98%;
 
-  --muted: 240 4% 16%;
-  --muted-foreground: 240 5% 65%;
+  --muted: 223 47% 11%;
+  --muted-foreground: 215 20.2% 65.1%;
 
-  --accent: 263.4 70% 50.4%;
-  /* Use Primary as Accent in Dark Mode for pop */
-  --accent-foreground: 0 0% 98%;
+  --accent: 217.2 91.2% 59.8%;
+  --accent-foreground: 210 40% 98%;
 
   --destructive: 0 62.8% 30.6%;
-  --destructive-foreground: 0 0% 98%;
+  --destructive-foreground: 210 40% 98%;
 
-  --border: 240 6% 14%;
-  /* Subtle borders */
-  --input: 240 6% 14%;
-  --ring: 263.4 70% 50.4%;
+  --border: 217.2 32.6% 17.5%;
+  --input: 217.2 32.6% 17.5%;
+  --ring: 224.3 76.3% 48%;
 
-  --sidebar-background: 240 10% 3%;
-  /* Darker than main bg for contrast */
+  --sidebar-background: 224 71% 3%;
   --sidebar-foreground: 240 5% 80%;
-  --sidebar-primary: 263.4 70% 50.4%;
+  --sidebar-primary: 217.2 91.2% 59.8%;
   --sidebar-primary-foreground: 0 0% 100%;
-  --sidebar-accent: 240 4% 16%;
+  --sidebar-accent: 222.2 47.4% 11.2%;
   --sidebar-accent-foreground: 0 0% 100%;
-  --sidebar-border: 240 6% 14%;
-  --sidebar-ring: 263.4 70% 50.4%;
+  --sidebar-border: 217.2 32.6% 17.5%;
+  --sidebar-ring: 224.3 76.3% 48%;
 }
 
 @theme inline {

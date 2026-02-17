@@ -16,6 +16,53 @@ export async function getTrialCredits(clinicId: string) {
   }
 }
 
+export async function getUserByEmail(email: string) {
+  try {
+    const result = await pool.query("SELECT * FROM users WHERE email = $1", [email])
+    return result.rows[0] || null
+  } catch (error) {
+    console.error("Error fetching user by email:", error)
+    return null
+  }
+}
+
+export async function syncUserByAuthId(email: string, authProvider: string, authProviderId: string, fullName?: string) {
+  try {
+    // Check if user exists
+    const existing = await pool.query("SELECT * FROM users WHERE email = $1", [email])
+    if (existing.rows[0]) {
+      // Update provider info if needed
+      await pool.query(
+        "UPDATE users SET auth_provider = $1, auth_provider_id = $2, full_name = COALESCE(full_name, $3), updated_at = NOW() WHERE email = $4",
+        [authProvider, authProviderId, fullName || null, email]
+      )
+      return existing.rows[0]
+    }
+
+    // Create a default clinic for new users if one doesn't exist
+    // In a real production system, this would be part of a proper signup flow
+    const clinicResult = await pool.query(
+      "INSERT INTO clinics (name) VALUES ($1) RETURNING id",
+      [`${fullName || 'New User'}'s Practice`]
+    )
+    const clinicId = clinicResult.rows[0].id
+
+    // Create user
+    const userResult = await pool.query(
+      "INSERT INTO users (email, clinic_id, full_name, role, auth_provider, auth_provider_id) VALUES ($1, $2, $3, 'admin', $4, $5) RETURNING *",
+      [email, clinicId, fullName || null, authProvider, authProviderId]
+    )
+
+    // Initialize trial credits
+    await pool.query("INSERT INTO trial_credits (clinic_id) VALUES ($1) ON CONFLICT DO NOTHING", [clinicId])
+
+    return userResult.rows[0]
+  } catch (error) {
+    console.error("Error syncing user:", error)
+    return null
+  }
+}
+
 import { QuotaManager } from "./nova/core/quota"
 import { AIQuality } from "./nova/types/ai.types"
 

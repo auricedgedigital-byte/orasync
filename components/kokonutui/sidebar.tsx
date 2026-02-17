@@ -69,18 +69,18 @@ export default function Sidebar() {
     <motion.aside
       initial={false}
       animate={{ width: collapsed ? 80 : 280 }}
-      className="relative z-50 h-screen border-r border-border/40 bg-sidebar/50 backdrop-blur-xl hidden lg:flex flex-col"
+      className="relative z-50 h-screen border-r border-border/40 bg-sidebar/40 backdrop-blur-2xl hidden lg:flex flex-col overflow-hidden"
     >
+      {/* Background Glow */}
+      <div className="absolute top-0 left-0 w-full h-32 bg-primary/5 blur-3xl pointer-events-none" />
       {/* Brand Header */}
       <div className="h-16 flex items-center px-4 mb-2 relative">
         <Link href="/dashboard" className="flex items-center gap-3 overflow-hidden">
           {/* If collapsed, show icon only, else show full logo */}
           {collapsed ? (
-            <div className="flex items-center justify-center w-10 h-10 rounded-xl bg-primary/20 text-primary font-black text-xl">
-              O
-            </div>
+            <OrasyncLogo showText={false} className="w-8 h-8" />
           ) : (
-            <OrasyncLogo />
+            <OrasyncLogo className="w-8 h-8" textClassName="text-xl" />
           )}
         </Link>
 
@@ -121,11 +121,18 @@ export default function Sidebar() {
                           relative flex items-center ${collapsed ? "justify-center p-2" : "px-3 py-2.5"} 
                           rounded-xl transition-all duration-300 group
                           ${active
-                            ? "bg-primary text-primary-foreground shadow-[0_0_20px_rgba(124,58,237,0.3)]"
-                            : "text-muted-foreground hover:text-foreground hover:bg-muted/60"
+                            ? "bg-primary/10 text-primary"
+                            : "text-muted-foreground hover:text-foreground hover:bg-muted/40"
                           }
                         `}
                       >
+                        {/* Active Indicator Glow */}
+                        {active && (
+                          <motion.div
+                            layoutId="active-indicator"
+                            className="absolute left-0 w-1 h-6 bg-primary rounded-r-full"
+                          />
+                        )}
                         {/* Active Glow Indicator */}
                         {active && !collapsed && (
                           <motion.div

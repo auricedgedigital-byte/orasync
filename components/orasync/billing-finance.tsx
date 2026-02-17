@@ -80,104 +80,115 @@ export default function BillingFinance() {
   }
 
   return (
-    <div className="space-y-8 max-w-[1600px] mx-auto p-6">
-      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+    <div className="space-y-8 max-w-[1600px] mx-auto p-4 md:p-6 animate-in fade-in duration-700">
+      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-6">
         <div>
-          <h1 className="text-3xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-foreground to-foreground/70">
+          <h1 className="text-4xl font-black tracking-tighter text-foreground mb-2">
             Billing & Credits
           </h1>
-          <p className="text-muted-foreground mt-1">Manage your subscription, credits, and invoices</p>
+          <p className="text-muted-foreground font-medium">Manage your subscription, credits, and invoices.</p>
         </div>
-        <div className="flex gap-2">
-          <Button variant="outline" size="sm">
+        <div className="flex gap-3">
+          <Button variant="outline" className="rounded-xl px-6 h-12 font-bold border-border/60 hover:bg-muted/50 transition-all">
             <Download className="w-4 h-4 mr-2" />
             Export History
           </Button>
-          <Button size="sm" onClick={handleBuyCredits} className="bg-primary hover:bg-primary/90 shadow-lg shadow-primary/20">
+          <Button onClick={handleBuyCredits} className="rounded-xl px-6 h-12 font-black shadow-lg shadow-primary/20 bg-primary text-primary-foreground hover:bg-primary/90 transition-all hover:scale-[1.02]">
             <Plus className="w-4 h-4 mr-2" />
             Add Credits
           </Button>
         </div>
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-        <Card className="bg-gradient-to-br from-primary/10 to-transparent border-primary/20">
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+        <Card className="glass-card border-primary/20 bg-primary/5 ring-1 ring-primary/10 transition-all hover:ring-primary/30">
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium text-primary">Email Credits</CardTitle>
-            <Zap className="h-4 w-4 text-primary" />
+            <CardTitle className="text-sm font-black uppercase tracking-widest text-primary">Email Credits</CardTitle>
+            <div className="p-2 bg-primary/10 rounded-lg">
+              <Zap className="h-4 w-4 text-primary" />
+            </div>
           </CardHeader>
-          <CardContent>
-            <div className="text-2xl font-bold">{credits?.reactivation_emails || 0}</div>
-            <p className="text-xs text-muted-foreground">Available for campaigns</p>
+          <CardContent className="pt-4">
+            <div className="text-3xl font-black">{credits?.reactivation_emails?.toLocaleString() || 0}</div>
+            <p className="text-xs font-bold text-muted-foreground mt-1 uppercase tracking-tight opacity-70">Available for campaigns</p>
           </CardContent>
         </Card>
 
-        <Card>
+        <Card className="glass-card ring-1 ring-blue-500/5 hover:ring-blue-500/20 transition-all">
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">SMS Credits</CardTitle>
-            <Zap className="h-4 w-4 text-muted-foreground" />
+            <CardTitle className="text-sm font-black uppercase tracking-widest text-muted-foreground/60">SMS Credits</CardTitle>
+            <div className="p-2 bg-blue-500/10 rounded-lg">
+              <Zap className="h-4 w-4 text-blue-500" />
+            </div>
           </CardHeader>
-          <CardContent>
-            <div className="text-2xl font-bold">{credits?.reactivation_sms || 0}</div>
-            <p className="text-xs text-muted-foreground">Text messages remaining</p>
+          <CardContent className="pt-4">
+            <div className="text-3xl font-black">{credits?.reactivation_sms?.toLocaleString() || 0}</div>
+            <p className="text-xs font-bold text-muted-foreground mt-1 uppercase tracking-tight opacity-70">Text messages remaining</p>
           </CardContent>
         </Card>
 
-        <Card>
+        <Card className="glass-card ring-1 ring-purple-500/5 hover:ring-purple-500/20 transition-all">
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Campaign Limits</CardTitle>
-            <TrendingUp className="h-4 w-4 text-muted-foreground" />
+            <CardTitle className="text-sm font-black uppercase tracking-widest text-muted-foreground/60">Campaign Limits</CardTitle>
+            <div className="p-2 bg-purple-500/10 rounded-lg">
+              <TrendingUp className="h-4 w-4 text-purple-500" />
+            </div>
           </CardHeader>
-          <CardContent>
-            <div className="text-2xl font-bold">{credits?.campaigns_started || 0}</div>
-            <p className="text-xs text-muted-foreground">Active campaigns allowed</p>
+          <CardContent className="pt-4">
+            <div className="text-3xl font-black">{credits?.campaigns_started || 0}</div>
+            <p className="text-xs font-bold text-muted-foreground mt-1 uppercase tracking-tight opacity-70">Active campaigns allowed</p>
           </CardContent>
         </Card>
 
-        <Card>
+        <Card className="glass-card ring-1 ring-green-500/5 hover:ring-green-500/20 transition-all">
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Current Plan</CardTitle>
-            <CreditCard className="h-4 w-4 text-muted-foreground" />
+            <CardTitle className="text-sm font-black uppercase tracking-widest text-muted-foreground/60">Current Plan</CardTitle>
+            <div className="p-2 bg-green-500/10 rounded-lg">
+              <CreditCard className="h-4 w-4 text-green-500" />
+            </div>
           </CardHeader>
-          <CardContent>
-            <div className="text-2xl font-bold">Growth</div>
-            <p className="text-xs text-muted-foreground text-green-500">Active • Renews Oct 24</p>
+          <CardContent className="pt-4">
+            <div className="text-3xl font-black">Growth</div>
+            <p className="text-xs font-bold text-green-500 mt-1 uppercase tracking-tight">Active • Renews Oct 24</p>
           </CardContent>
         </Card>
       </div>
 
-      <Tabs value={activeTab} onValueChange={setActiveTab} className="space-y-6">
-        <TabsList className="bg-background border border-border/50 p-1">
-          <TabsTrigger value="overview">Transaction History</TabsTrigger>
-          <TabsTrigger value="invoices">Invoices</TabsTrigger>
-          <TabsTrigger value="payment-methods">Payment Methods</TabsTrigger>
+      <Tabs value={activeTab} onValueChange={setActiveTab} className="space-y-8">
+        <TabsList className="bg-muted/30 border border-border/50 p-1 rounded-2xl h-14 w-fit px-2">
+          <TabsTrigger value="overview" className="rounded-xl h-10 px-8 font-bold data-[state=active]:bg-background data-[state=active]:shadow-lg">History</TabsTrigger>
+          <TabsTrigger value="invoices" className="rounded-xl h-10 px-8 font-bold data-[state=active]:bg-background data-[state=active]:shadow-lg">Invoices</TabsTrigger>
+          <TabsTrigger value="payment-methods" className="rounded-xl h-10 px-8 font-bold data-[state=active]:bg-background data-[state=active]:shadow-lg">Payment</TabsTrigger>
         </TabsList>
 
-        <TabsContent value="overview" className="space-y-6">
-          <Card className="border-none shadow-xl bg-background/50 backdrop-blur-sm">
-            <CardHeader>
-              <CardTitle>Recent Transactions</CardTitle>
-              <CardDescription>Your credit purchases and subscription payments</CardDescription>
+        <TabsContent value="overview" className="space-y-6 animate-in fade-in slide-in-from-bottom-4 duration-500">
+          <Card className="glass-card rounded-[2rem] border-border/50 overflow-hidden shadow-2xl shadow-primary/5">
+            <CardHeader className="p-8 border-b border-border/40">
+              <CardTitle className="text-xl font-black">Recent Transactions</CardTitle>
+              <CardDescription className="text-sm font-medium">Your credit purchases and subscription payments</CardDescription>
             </CardHeader>
-            <CardContent>
+            <CardContent className="p-0">
               {transactions.length === 0 ? (
-                <div className="text-center py-12 text-muted-foreground">No transactions found.</div>
+                <div className="text-center py-20 text-muted-foreground">
+                  <Receipt className="w-12 h-12 mx-auto mb-4 opacity-20" />
+                  <p className="font-bold text-lg">No transactions yet</p>
+                </div>
               ) : (
-                <div className="space-y-4">
+                <div className="divide-y divide-border/40">
                   {transactions.map((tx) => (
-                    <div key={tx.id} className="flex items-center justify-between p-4 rounded-xl border bg-card hover:bg-muted/5 transition-colors">
-                      <div className="flex items-center gap-4">
-                        <div className="h-10 w-10 bg-primary/10 rounded-full flex items-center justify-center text-primary">
-                          <Receipt className="w-5 h-5" />
+                    <div key={tx.id} className="flex items-center justify-between p-8 hover:bg-muted/10 transition-colors group cursor-pointer">
+                      <div className="flex items-center gap-6">
+                        <div className="h-14 w-14 bg-background border border-border/50 rounded-2xl flex items-center justify-center text-primary shadow-sm group-hover:scale-105 transition-transform">
+                          <Receipt className="w-6 h-6" />
                         </div>
                         <div>
-                          <div className="font-bold">Order #{tx.order_id}</div>
-                          <div className="text-sm text-muted-foreground">{new Date(tx.created_at).toLocaleDateString()}</div>
+                          <div className="text-base font-black text-foreground group-hover:text-primary transition-colors">Order #{tx.order_id}</div>
+                          <div className="text-xs font-bold text-muted-foreground uppercase mt-1">{new Date(tx.created_at).toLocaleDateString()}</div>
                         </div>
                       </div>
                       <div className="text-right">
-                        <div className="font-bold text-lg">${(tx.amount_cents / 100).toFixed(2)}</div>
-                        <Badge variant={tx.status === 'captured' ? 'default' : 'secondary'} className="capitalize">
+                        <div className="text-2xl font-black text-foreground mb-1">${(tx.amount_cents / 100).toFixed(2)}</div>
+                        <Badge variant={tx.status === 'captured' ? 'default' : 'secondary'} className="rounded-lg px-3 py-1 text-[10px] font-black uppercase tracking-widest">
                           {tx.status}
                         </Badge>
                       </div>
@@ -190,30 +201,27 @@ export default function BillingFinance() {
         </TabsContent>
 
         <TabsContent value="invoices">
-          <Card>
-            <CardHeader>
-              <CardTitle>Invoices</CardTitle>
-              <CardDescription>Download past invoices</CardDescription>
-            </CardHeader>
-            <CardContent>
-              <div className="h-64 flex items-center justify-center text-muted-foreground border-2 border-dashed border-border/50 rounded-xl">
-                No invoices generated yet.
+          <Card className="glass-card rounded-[2rem] border-border/50 p-20 text-center">
+            <div className="max-w-xs mx-auto space-y-4">
+              <div className="w-20 h-20 bg-muted/30 rounded-full flex items-center justify-center mx-auto mb-6">
+                <FileText className="w-10 h-10 opacity-30" />
               </div>
-            </CardContent>
+              <h3 className="text-xl font-black">Invoices Coming Soon</h3>
+              <p className="text-muted-foreground font-medium">Your first invoice will be generated automatically at the end of the billing cycle.</p>
+            </div>
           </Card>
         </TabsContent>
 
         <TabsContent value="payment-methods">
-          <Card>
-            <CardHeader>
-              <CardTitle>Payment Methods</CardTitle>
-              <CardDescription>Manage your saved cards</CardDescription>
-            </CardHeader>
-            <CardContent>
-              <div className="h-64 flex items-center justify-center text-muted-foreground border-2 border-dashed border-border/50 rounded-xl">
-                Integrated via PayPal/Stripe (Managed externally)
+          <Card className="glass-card rounded-[2rem] border-border/50 p-20 text-center">
+            <div className="max-w-xs mx-auto space-y-4">
+              <div className="w-20 h-20 bg-muted/30 rounded-full flex items-center justify-center mx-auto mb-6">
+                <CreditCard className="w-10 h-10 opacity-30" />
               </div>
-            </CardContent>
+              <h3 className="text-xl font-black">Secure Payment Gateway</h3>
+              <p className="text-muted-foreground font-medium">Payment methods are securely managed through our trusted provider.</p>
+              <Button variant="outline" className="rounded-xl font-bold mt-4" onClick={handleBuyCredits}>Configure Payment</Button>
+            </div>
           </Card>
         </TabsContent>
       </Tabs>

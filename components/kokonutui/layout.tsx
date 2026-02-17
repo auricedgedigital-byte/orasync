@@ -43,10 +43,11 @@ export default function Layout({ children }: LayoutProps) {
   }
 
   return (
-    <div className="flex h-screen w-full bg-background overflow-hidden relative">
-      {/* Ambient Background Glows */}
-      <div className="absolute top-[-20%] left-[-10%] w-[50%] h-[50%] bg-primary/5 blur-[120px] rounded-full pointer-events-none" />
-      <div className="absolute bottom-[-20%] right-[-10%] w-[50%] h-[50%] bg-ai-secondary/5 blur-[120px] rounded-full pointer-events-none" />
+    <div className="flex h-screen w-full bg-background overflow-hidden relative transition-colors duration-500">
+      {/* Ambient Background Glows - Premium Depth */}
+      <div className="absolute top-[-10%] left-[-10%] w-[60%] h-[60%] bg-primary/10 blur-[150px] rounded-full pointer-events-none animate-pulse duration-[10000ms]" />
+      <div className="absolute bottom-[-10%] right-[-10%] w-[60%] h-[60%] bg-ai-secondary/10 blur-[150px] rounded-full pointer-events-none animate-pulse duration-[8000ms]" />
+      <div className="absolute top-[20%] right-[30%] w-[40%] h-[40%] bg-blue-500/5 blur-[120px] rounded-full pointer-events-none" />
 
       {/* Sidebar (Fixed Left) */}
       <Sidebar />

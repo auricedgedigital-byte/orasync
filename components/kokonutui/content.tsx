@@ -191,234 +191,203 @@ export default function Content() {
       <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-6">
         <div>
           <h1 className="text-4xl font-black tracking-tighter text-foreground mb-2">
-            Home Base
+            Dashboard
           </h1>
           <p className="text-muted-foreground font-medium text-lg">
-            Good afternoon, <span className="text-primary font-bold">{user?.user_metadata?.full_name || user?.email?.split('@')[0] || 'Doctor'}</span>.
-            Here is your practice pulse.
+            Welcome back, <span className="text-primary font-bold">{user?.user_metadata?.full_name || user?.email?.split('@')[0] || 'Doctor'}</span>.
           </p>
         </div>
-        <div className="flex gap-3">
-          <Button variant="outline" className="rounded-xl px-6 h-12 font-bold border-border/60 hover:bg-muted/50 hover:text-foreground transition-all" onClick={handleScheduleAppointment}>
-            <Calendar className="w-4 h-4 mr-2 text-muted-foreground" />
-            Schedule
-          </Button>
-          <Button className="rounded-xl px-6 h-12 font-black shadow-lg shadow-primary/20 transition-all hover:scale-[1.02] active:scale-[0.98] bg-primary text-primary-foreground hover:bg-primary/90" onClick={handleAddPatient}>
-            <Users className="w-4 h-4 mr-2" />
-            Add Patient
+        <div className="flex items-center gap-4 bg-card/40 backdrop-blur-md p-2 rounded-2xl border border-border/50">
+          <div className="flex items-center gap-2 px-4 py-2 bg-primary/10 rounded-xl border border-primary/20">
+            <Zap className="w-4 h-4 text-primary fill-primary" />
+            <span className="text-sm font-black text-primary">5,000 Credits</span>
+          </div>
+          <Button variant="ghost" size="icon" className="h-10 w-10 rounded-xl hover:bg-muted/50">
+            <Clock className="w-5 h-5 text-muted-foreground" />
           </Button>
         </div>
       </div>
 
-      {/* Metric Cards Grid */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-        <MetricCard
-          title="Appointments"
-          value={data.todayAppointments.toString()}
-          subtitle="Scheduled today"
-          icon={Calendar}
-          detailsContent={appointmentDetails}
-          className="glass-card shadow-sm shadow-blue-500/5 hover:shadow-md transition-shadow"
-        />
-
-        <MetricCard
-          title="Production"
-          value={`$${data.netProduction.toLocaleString()}`}
-          subtitle="Gross revenue today"
-          icon={DollarSign}
-          detailsContent={productionDetails}
-          className="glass-card shadow-sm shadow-indigo-500/5 hover:shadow-md transition-shadow"
-        />
-
-        <MetricCard
-          title="New Leads"
-          value={data.newLeads.toString()}
-          subtitle="In the last 7 days"
-          icon={UserCheck}
-          detailsContent={newPatientsDetails}
-          className="glass-card shadow-sm shadow-purple-500/5 hover:shadow-md transition-shadow"
-        />
-
-        <MetricCard
-          title="NPS Score"
-          value={data.patientSatisfaction.toFixed(1)}
-          subtitle="Patient satisfaction"
-          icon={Star}
-          detailsContent={satisfactionDetails}
-          className="glass-card shadow-sm shadow-yellow-500/5 hover:shadow-md transition-shadow"
-        />
-      </div>
+      {/* Performance Section */}
+      <section className="space-y-4">
+        <h2 className="text-sm font-black uppercase tracking-widest text-muted-foreground/50 ml-1">Performance</h2>
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+          <MetricCard
+            title="Total Campaigns"
+            value="42"
+            subtitle="+12% from last month"
+            icon={Megaphone}
+            detailsContent={productionDetails}
+            className="glass-card ring-1 ring-primary/5 hover:ring-primary/20 transition-all"
+          />
+          <MetricCard
+            title="Active Campaigns"
+            value="8"
+            subtitle="Currently running"
+            icon={Zap}
+            detailsContent={productionDetails}
+            className="glass-card ring-1 ring-green-500/5 hover:ring-green-500/20 transition-all"
+          />
+          <MetricCard
+            title="Messages Sent"
+            value="15,400"
+            subtitle="98% delivery rate"
+            icon={MessageSquare}
+            detailsContent={productionDetails}
+            className="glass-card ring-1 ring-blue-500/5 hover:ring-blue-500/20 transition-all"
+          />
+          <MetricCard
+            title="Bookings"
+            value="315"
+            subtitle="Confirmed patients"
+            icon={Calendar}
+            detailsContent={appointmentDetails}
+            className="glass-card ring-1 ring-purple-500/5 hover:ring-purple-500/20 transition-all"
+          />
+        </div>
+      </section>
 
       {/* Main Content Grid */}
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-        {/* Schedule & Activity (Left/Center) */}
-        <div className="lg:col-span-2 space-y-8">
-          <Card className="glass-card rounded-3xl border-border/50 overflow-hidden">
-            <CardHeader className="border-b border-border/40 pb-4 pt-6 px-6">
-              <div className="flex items-center justify-between">
-                <CardTitle className="text-lg font-bold flex items-center gap-3">
-                  <div className="p-2.5 bg-primary/10 rounded-xl">
-                    <Clock className="w-5 h-5 text-primary" />
-                  </div>
-                  Daily Agenda
-                </CardTitle>
-                <Button variant="ghost" size="sm" className="text-primary font-bold hover:bg-primary/5 rounded-lg px-4" onClick={handleScheduleAppointment}>
-                  View Calendar
-                </Button>
-              </div>
+      <div className="grid grid-cols-1 lg:grid-cols-4 gap-8">
+        {/* Timeline & Lists (Left 3 cols) */}
+        <div className="lg:col-span-3 space-y-8">
+          {/* Recent Campaign Activity Visualization */}
+          <Card className="glass-card rounded-[2rem] border-border/50 overflow-hidden relative group">
+            <div className="absolute inset-0 bg-gradient-to-br from-primary/5 via-transparent to-ai-secondary/5 opacity-50 pointer-events-none" />
+            <CardHeader className="pb-4 pt-8 px-8">
+              <CardTitle className="text-xl font-black flex items-center gap-3">
+                Recent campaign activity
+              </CardTitle>
             </CardHeader>
-            <CardContent className="p-0">
-              <div className="divide-y divide-border/40">
-                {data.appointments.length > 0 ? (
-                  data.appointments.slice(0, 5).map((appointment, index) => (
-                    <div key={index} className="flex items-center justify-between p-6 hover:bg-muted/30 transition-colors group cursor-pointer">
-                      <div className="flex items-center gap-6">
-                        <div className="text-sm font-black text-muted-foreground w-16 bg-muted/50 py-1 px-2 rounded-lg text-center border border-border/50">
-                          {appointment.time}
-                        </div>
-                        <div>
-                          <div className="font-bold text-foreground group-hover:text-primary transition-colors text-base">{appointment.patient}</div>
-                          <div className="text-xs text-muted-foreground font-medium uppercase tracking-wide mt-0.5">{appointment.treatment}</div>
-                        </div>
-                      </div>
-                      <div className="flex items-center gap-4">
-                        <div className={`
-                          px-3 py-1 rounded-lg text-[10px] font-bold uppercase tracking-wider border
-                          ${appointment.status === 'confirmed' ? 'bg-green-500/10 text-green-600 border-green-500/20' :
-                            appointment.status === 'pending' ? 'bg-yellow-500/10 text-yellow-600 border-yellow-500/20' :
-                              'bg-muted text-muted-foreground border-border/40'}
-                        `}>
-                          {appointment.status}
-                        </div>
-                        <Button variant="ghost" size="icon" className="h-8 w-8 rounded-lg text-muted-foreground opacity-0 group-hover:opacity-100 transition-all">
-                          <ChevronRight className="h-4 w-4" />
-                        </Button>
-                      </div>
-                    </div>
-                  ))
-                ) : (
-                  <div className="p-12 text-center text-muted-foreground">
-                    <div className="w-16 h-16 bg-muted/50 rounded-full flex items-center justify-center mx-auto mb-4">
-                      <Calendar className="w-8 h-8 opacity-40" />
-                    </div>
-                    <p className="font-bold text-lg mb-1">Clear Schedule</p>
-                    <p className="text-sm opacity-70">No appointments scheduled for today.</p>
-                    <Button variant="link" onClick={handleScheduleAppointment} className="mt-2 text-primary">
-                      Open Calendar
-                    </Button>
-                  </div>
-                )}
-              </div>
-              {data.appointments.length > 5 && (
-                <div className="p-4 text-center border-t border-border/40 bg-muted/10">
-                  <Button variant="ghost" size="sm" className="text-xs font-bold text-muted-foreground hover:text-foreground" onClick={handleScheduleAppointment}>
-                    View {data.appointments.length - 5} more appointments
-                  </Button>
+            <CardContent className="px-8 pb-8">
+              {/* Simulated Chart Visualization to match design reference */}
+              <div className="h-48 w-full relative mt-8 mb-4">
+                <svg className="w-full h-full" preserveAspectRatio="none">
+                  <path
+                    d="M 0 100 Q 150 20 300 80 T 600 40 T 900 90 T 1200 30"
+                    fill="none"
+                    stroke="url(#line-gradient)"
+                    strokeWidth="4"
+                    strokeLinecap="round"
+                    className="drop-shadow-[0_0_10px_rgba(124,58,237,0.5)]"
+                  />
+                  <defs>
+                    <linearGradient id="line-gradient" x1="0%" y1="0%" x2="100%" y2="0%">
+                      <stop offset="0%" stopColor="#7c3aed" />
+                      <stop offset="50%" stopColor="#3b82f6" />
+                      <stop offset="100%" stopColor="#10b981" />
+                    </linearGradient>
+                  </defs>
+                  {/* Nodes */}
+                  <circle cx="20%" cy="40" r="6" fill="#7c3aed" className="animate-pulse" />
+                  <circle cx="50%" cy="60" r="6" fill="#3b82f6" className="animate-pulse" />
+                  <circle cx="80%" cy="85" r="6" fill="#10b981" className="animate-pulse" />
+                </svg>
+                {/* Labels matching reference */}
+                <div className="absolute top-0 left-[18%] bg-card/80 backdrop-blur-md px-3 py-1 rounded-lg border border-border/50 text-[10px] font-bold">
+                  Q3 Outreach <br /><span className="text-muted-foreground">15 Jun 2023</span>
                 </div>
-              )}
+                <div className="absolute top-10 left-[48%] bg-card/80 backdrop-blur-md px-3 py-1 rounded-lg border border-border/50 text-[10px] font-bold">
+                  Holiday Promo <br /><span className="text-muted-foreground">18 Apr 2023</span>
+                </div>
+                <div className="absolute top-0 left-[78%] bg-card/80 backdrop-blur-md px-3 py-1 rounded-lg border border-border/50 text-[10px] font-bold">
+                  New Product Launch <br /><span className="text-muted-foreground">27 Apr 2023</span>
+                </div>
+              </div>
             </CardContent>
           </Card>
 
-          <Card className="glass-card rounded-3xl border-border/50 overflow-hidden">
-            <CardHeader className="border-b border-border/40 pb-4 pt-6 px-6">
-              <CardTitle className="text-lg font-bold flex items-center gap-3">
-                <div className="p-2.5 bg-primary/10 rounded-xl">
-                  <Activity className="w-5 h-5 text-primary" />
-                </div>
-                Live Pulse
-              </CardTitle>
-            </CardHeader>
-            <CardContent className="p-6">
-              <div className="space-y-6">
-                {data.recentActivity.length > 0 ? (
-                  data.recentActivity.slice(0, 5).map((activity, index) => (
-                    <div key={index} className="flex gap-5 group relative">
-                      {/* Timeline line */}
-                      {index !== data.recentActivity.length - 1 && (
-                        <div className="absolute left-[19px] top-10 bottom-[-24px] w-[2px] bg-border/40" />
-                      )}
-
-                      <div className="w-10 h-10 rounded-xl bg-background border border-border/60 flex items-center justify-center flex-shrink-0 shadow-sm z-10 group-hover:border-primary/40 group-hover:text-primary transition-all">
-                        {activity.type === 'call' ? <Phone className="w-4 h-4" /> :
-                          activity.type === 'message' ? <MessageSquare className="w-4 h-4" /> :
-                            <Activity className="w-4 h-4" />}
-                      </div>
-                      <div className="flex-1 min-w-0 pt-1">
-                        <p className="text-sm font-semibold text-foreground leading-snug group-hover:text-primary transition-colors">{activity.message}</p>
-                        <p className="text-[10px] text-muted-foreground font-bold mt-1 uppercase tracking-tight opacity-70">{activity.time}</p>
-                      </div>
-                    </div>
-                  ))
-                ) : (
-                  <div className="text-center text-muted-foreground py-8">
-                    <Activity className="w-12 h-12 mx-auto mb-4 opacity-30" />
-                    <p className="font-medium">No recent activity</p>
-                  </div>
-                )}
-              </div>
+          {/* Campaign Table (simplified to match design reference) */}
+          <Card className="glass-card rounded-[2rem] border-border/50 overflow-hidden">
+            <CardContent className="p-0">
+              <table className="w-full text-left">
+                <thead className="bg-muted/30 border-b border-border/40">
+                  <tr>
+                    <th className="px-8 py-5 text-xs font-bold uppercase tracking-wider text-muted-foreground">Campaign Name</th>
+                    <th className="px-6 py-5 text-xs font-bold uppercase tracking-wider text-muted-foreground">Status</th>
+                    <th className="px-6 py-5 text-xs font-bold uppercase tracking-wider text-muted-foreground">Progress</th>
+                    <th className="px-6 py-5 text-xs font-bold uppercase tracking-wider text-muted-foreground">Sent</th>
+                    <th className="px-6 py-5 text-xs font-bold uppercase tracking-wider text-muted-foreground">Opened</th>
+                    <th className="px-8 py-5 text-xs font-bold uppercase tracking-wider text-muted-foreground">Actions</th>
+                  </tr>
+                </thead>
+                <tbody className="divide-y divide-border/40">
+                  {[
+                    { name: 'Summer Sale Email', status: 'Running', progress: '65%', sent: '5,000', opened: '2,500' },
+                    { name: 'Webinar Invitation', status: 'Completed', progress: '100%', sent: '5,000', opened: '1,000' },
+                    { name: 'Customer Feedback', status: 'Draft', progress: '10%', sent: '600', opened: '60' },
+                  ].map((row, i) => (
+                    <tr key={i} className="hover:bg-muted/20 transition-colors">
+                      <td className="px-8 py-6 font-bold text-sm">{row.name}</td>
+                      <td className="px-6 py-6">
+                        <span className={`px-3 py-1 rounded-full text-[10px] font-black uppercase tracking-widest ${row.status === 'Running' ? 'bg-green-500/10 text-green-500' :
+                          row.status === 'Completed' ? 'bg-primary/10 text-primary' :
+                            'bg-muted text-muted-foreground'
+                          }`}>
+                          {row.status}
+                        </span>
+                      </td>
+                      <td className="px-6 py-6 font-medium text-xs text-muted-foreground">{row.progress}</td>
+                      <td className="px-6 py-6 font-bold text-sm">{row.sent}</td>
+                      <td className="px-6 py-6 font-bold text-sm text-foreground/70">{row.opened}</td>
+                      <td className="px-8 py-6">
+                        <Button variant="ghost" size="icon" className="h-8 w-8 rounded-lg hover:bg-muted/50">
+                          <ChevronRight className="h-4 h-4" />
+                        </Button>
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
             </CardContent>
           </Card>
         </div>
 
-        {/* AI Assistant Sidebar (Right) */}
+        {/* Action Sidebar (Right 1 col) */}
         <div className="space-y-8">
-          <Card className="glass-card rounded-3xl border-primary/20 bg-background/50 shadow-2xl shadow-primary/5 overflow-hidden group">
-            <div className="bg-ai-gradient p-6 text-white relative overflow-hidden">
-              <div className="absolute -right-10 -top-10 w-40 h-40 bg-white/20 blur-3xl rounded-full pointer-events-none" />
-              <div className="flex items-center gap-3 mb-2 relative z-10">
-                <div className="p-1.5 bg-white/20 rounded-lg backdrop-blur-md">
-                  <Zap className="w-4 h-4 fill-white" />
+          <Card className="glass-card rounded-[2rem] border-border/50 overflow-hidden group">
+            <CardHeader className="pb-4 pt-8 px-6">
+              <CardTitle className="text-lg font-black">Quick Actions</CardTitle>
+            </CardHeader>
+            <CardContent className="p-6 space-y-4">
+              <Button className="w-full h-14 rounded-2xl bg-card border border-border/60 hover:border-primary/40 hover:bg-primary/5 text-foreground justify-start px-6 group/btn transition-all" onClick={handleSendCampaign}>
+                <div className="p-2 bg-primary/10 rounded-xl mr-4 group-hover/btn:bg-primary/20">
+                  <Megaphone className="w-4 h-4 text-primary" />
                 </div>
-                <h3 className="font-black tracking-tight text-lg">Nova Insights</h3>
-              </div>
-              <p className="text-[10px] font-bold opacity-80 uppercase tracking-widest relative z-10 pl-1">Practice Optimization AI</p>
-            </div>
-            <CardContent className="p-6 space-y-6">
-              <div className="space-y-4">
-                <div className="p-5 rounded-2xl bg-background/80 border border-border/60 shadow-sm hover:shadow-md transition-all">
-                  <div className="flex justify-between items-start mb-2">
-                    <p className="text-[10px] font-bold text-primary uppercase tracking-wider">Action Item</p>
-                    <span className="w-2 h-2 rounded-full bg-red-500 animate-pulse" />
-                  </div>
-                  <p className="text-sm font-bold text-foreground leading-relaxed mb-4">
-                    Welcome to Orasync! Start by adding your first patient to activate the AI reactivation engine.
-                  </p>
-                  <Button size="sm" className="w-full text-xs font-bold rounded-xl h-9" onClick={handleAddPatient}>
-                    Add First Patient
-                  </Button>
+                <span className="font-bold">Create Campaign</span>
+              </Button>
+              <Button className="w-full h-14 rounded-2xl bg-card border border-border/60 hover:border-blue-500/40 hover:bg-blue-500/5 text-foreground justify-start px-6 group/btn transition-all">
+                <div className="p-2 bg-blue-500/10 rounded-xl mr-4 group-hover/btn:bg-blue-500/20">
+                  <MessageSquare className="w-4 h-4 text-blue-500" />
                 </div>
-
-                <div className="p-5 rounded-2xl bg-background/80 border border-border/60 shadow-sm hover:shadow-md transition-all">
-                  <div className="flex justify-between items-start mb-2">
-                    <p className="text-[10px] font-bold text-indigo-500 uppercase tracking-wider">Tip</p>
-                  </div>
-                  <p className="text-sm font-medium text-foreground leading-relaxed">
-                    Did you know? You can sync your calendar to enable auto-scheduling.
-                  </p>
+                <span className="font-bold">Send Message</span>
+              </Button>
+              <Button className="w-full h-14 rounded-2xl bg-card border border-border/60 hover:border-purple-500/40 hover:bg-purple-500/5 text-foreground justify-start px-6 group/btn transition-all" onClick={handleScheduleAppointment}>
+                <div className="p-2 bg-purple-500/10 rounded-xl mr-4 group-hover/btn:bg-purple-500/20">
+                  <Calendar className="w-4 h-4 text-purple-500" />
                 </div>
-              </div>
+                <span className="font-bold">Book Appointment</span>
+              </Button>
             </CardContent>
           </Card>
 
-          <div className="grid grid-cols-2 gap-4">
-            {[
-              { label: "New Campaign", icon: Megaphone, action: handleSendCampaign, color: "text-pink-500", bg: "bg-pink-500/10" },
-              { label: "Patient CRM", icon: Users, action: handlePatientRecords, color: "text-blue-500", bg: "bg-blue-500/10" },
-              { label: "Reports", icon: TrendingUp, action: handleViewAnalytics, color: "text-green-500", bg: "bg-green-500/10" },
-              { label: "Reviews", icon: Star, action: handleReviewRequests, color: "text-yellow-500", bg: "bg-yellow-500/10" },
-            ].map((shortcut, i) => (
-              <button
-                key={i}
-                onClick={shortcut.action}
-                className="glass-card flex flex-col items-center justify-center p-5 rounded-2xl border border-border/50 hover:bg-muted/50 hover:border-primary/20 hover:scale-[1.03] transition-all group shadow-sm"
-              >
-                <div className={`p-3 rounded-xl ${shortcut.bg} mb-3 group-hover:scale-110 transition-transform`}>
-                  <shortcut.icon className={`w-5 h-5 ${shortcut.color}`} />
-                </div>
-                <span className="text-[10px] font-bold text-muted-foreground group-hover:text-foreground transition-colors uppercase tracking-tight">{shortcut.label}</span>
-              </button>
-            ))}
-          </div>
+          {/* AI Status or Notifications */}
+          <Card className="glass-card rounded-[2rem] border-primary/20 bg-primary/5 group">
+            <CardContent className="p-8 space-y-6">
+              <div className="flex items-center gap-3">
+                <div className="w-2 h-2 rounded-full bg-primary animate-ping" />
+                <span className="text-[10px] font-black uppercase tracking-[0.2em] text-primary">Nova AI Status</span>
+              </div>
+              <p className="text-sm font-bold leading-relaxed text-foreground/80">
+                "I've identified 12 dormant patients who are likely to book a check-up if reached today via SMS."
+              </p>
+              <div className="pt-2">
+                <Button size="sm" className="rounded-xl text-xs font-black px-6 bg-primary text-primary-foreground shadow-lg shadow-primary/20">
+                  Engage Leads
+                </Button>
+              </div>
+            </CardContent>
+          </Card>
         </div>
       </div>
     </div>

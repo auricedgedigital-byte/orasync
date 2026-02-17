@@ -176,153 +176,166 @@ export function CampaignBuilder({ onCancel, onSuccess }: CampaignBuilderProps) {
   }
 
   return (
-    <div className="flex flex-col gap-6">
+    <div className="flex flex-col gap-8 animate-in fade-in duration-700">
       {/* Header / Nova Suggestion */}
-      <div className="bg-gradient-to-r from-indigo-500/10 via-purple-500/10 to-transparent p-1 rounded-2xl border border-indigo-500/20">
-        <div className="bg-background/80 backdrop-blur-sm p-4 rounded-xl flex items-center justify-between">
-          <div className="flex items-center gap-3">
-            <div className="bg-indigo-500/20 p-2 rounded-lg">
-              <Sparkles className="h-5 w-5 text-indigo-500" />
+      <div className="relative group">
+        <div className="absolute inset-0 bg-gradient-to-r from-primary/20 via-primary/5 to-transparent blur-3xl rounded-[2rem] opacity-50 pointer-events-none" />
+        <div className="glass-card p-1 rounded-[2rem] border-primary/20 bg-primary/5 overflow-hidden">
+          <div className="bg-background/40 backdrop-blur-xl p-6 flex flex-col md:flex-row items-center justify-between gap-6">
+            <div className="flex items-center gap-5">
+              <div className="bg-primary/20 p-4 rounded-2xl shadow-inner group-hover:scale-110 transition-transform">
+                <Sparkles className="h-6 w-6 text-primary" />
+              </div>
+              <div>
+                <h3 className="font-black text-lg tracking-tight">Nova AI Intelligence</h3>
+                <p className="text-sm font-medium text-muted-foreground">"I've analyzed your database and found <span className="text-primary font-bold">128 patients</span> ideal for a hygiene reactivation."</p>
+              </div>
             </div>
-            <div>
-              <h3 className="font-bold text-sm">Nova AI Suggestion</h3>
-              <p className="text-xs text-muted-foreground">Based on your recent patient data, we found 128 patients overdue for hygiene.</p>
-            </div>
+            <Button size="lg" onClick={applyNovaSuggestion} className="rounded-2xl px-8 h-14 font-black shadow-xl shadow-primary/20 bg-primary text-primary-foreground hover:bg-primary/90 transition-all hover:scale-[1.05] active:scale-95">
+              Auto-Pilot Launch
+            </Button>
           </div>
-          <Button size="sm" variant="secondary" onClick={applyNovaSuggestion} className="bg-indigo-500 text-white hover:bg-indigo-600 border-none shadow-lg shadow-indigo-500/20">
-            Auto-Fill Campaign
-          </Button>
         </div>
       </div>
 
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+      <div className="grid grid-cols-1 lg:grid-cols-4 gap-8">
         {/* Left Sidebar: Steps */}
-        <div className="lg:col-span-1 space-y-4">
-          <Card className="border-border/50 bg-muted/5">
-            <CardHeader>
-              <CardTitle className="text-sm uppercase tracking-wider text-muted-foreground">Configuration Steps</CardTitle>
+        <div className="lg:col-span-1 space-y-6">
+          <Card className="glass-card rounded-[2rem] border-border/50 overflow-hidden bg-card/30">
+            <CardHeader className="pb-4 pt-8 px-6">
+              <CardTitle className="text-[10px] font-black uppercase tracking-[0.2em] text-muted-foreground/50">Campaign Logic</CardTitle>
             </CardHeader>
-            <CardContent className="p-0">
+            <CardContent className="p-2 space-y-1">
               {(["basic", "segment", "drip", "review"] as const).map((step, idx) => (
                 <div
                   key={step}
                   onClick={() => setActiveTab(step)}
                   className={cn(
-                    "flex items-center gap-3 p-4 border-l-2 cursor-pointer transition-all hover:bg-muted/10",
+                    "flex items-center gap-4 p-5 rounded-2xl cursor-pointer transition-all group",
                     activeTab === step
-                      ? "border-primary bg-primary/5 text-primary font-medium"
-                      : "border-transparent text-muted-foreground"
+                      ? "bg-primary/10 text-primary"
+                      : "text-muted-foreground hover:bg-muted/30"
                   )}
                 >
-                  <div className={cn("w-6 h-6 rounded-full flex items-center justify-center text-xs border", activeTab === step ? "border-primary bg-background" : "border-muted-foreground/30")}>
+                  <div className={cn(
+                    "w-8 h-8 rounded-xl flex items-center justify-center text-xs font-black border-2 transition-all shadow-sm",
+                    activeTab === step ? "border-primary bg-background scale-110" : "border-muted-foreground/20 bg-card/50"
+                  )}>
                     {idx + 1}
                   </div>
-                  <span className="capitalize">{step} Setup</span>
-                  {activeTab === step && <ArrowRight className="h-4 w-4 ml-auto opacity-50" />}
+                  <span className="capitalize font-black tracking-tight text-sm">{step} Setup</span>
+                  {activeTab === step && <div className="w-1.5 h-1.5 rounded-full bg-primary ml-auto shadow-[0_0_10px_rgba(124,58,237,0.5)]" />}
                 </div>
               ))}
             </CardContent>
           </Card>
 
-          {/* Summary Card */}
-          {activeTab === 'review' && (
-            <Card className="bg-primary/5 border-primary/20">
-              <CardHeader>
-                <CardTitle className="flex items-center gap-2 text-primary">
-                  <Zap className="h-4 w-4" />
-                  Launch Ready
-                </CardTitle>
-              </CardHeader>
-              <CardContent className="space-y-2 text-sm">
-                <div className="flex justify-between">
-                  <span className="text-muted-foreground">Audience</span>
-                  <span className="font-bold">{segmentCount} patients</span>
-                </div>
-                <div className="flex justify-between">
-                  <span className="text-muted-foreground">Channels</span>
-                  <span className="font-bold uppercase">{[...new Set(dripSteps.map(s => s.channel))].join(', ')}</span>
-                </div>
-                <div className="flex justify-between">
-                  <span className="text-muted-foreground">Steps</span>
-                  <span className="font-bold">{dripSteps.length} messages</span>
-                </div>
-              </CardContent>
-            </Card>
-          )}
+          {/* Quick Summary Card */}
+          <Card className="glass-card rounded-[2rem] border-primary/20 bg-primary/5 p-8 space-y-6">
+            <div className="flex items-center gap-3">
+              <Zap className="h-4 w-4 text-primary fill-primary" />
+              <span className="text-[10px] font-black uppercase tracking-widest text-primary">Live Stats</span>
+            </div>
+            <div className="space-y-4 font-bold text-sm">
+              <div className="flex justify-between items-center bg-background/40 p-3 rounded-xl border border-border/40">
+                <span className="text-muted-foreground">Reach</span>
+                <span className="text-foreground">{segmentCount} Patients</span>
+              </div>
+              <div className="flex justify-between items-center bg-background/40 p-3 rounded-xl border border-border/40">
+                <span className="text-muted-foreground">Steps</span>
+                <span className="text-foreground">{dripSteps.length} Messages</span>
+              </div>
+              <div className="flex justify-between items-center bg-background/40 p-3 rounded-xl border border-border/40">
+                <span className="text-muted-foreground">Channels</span>
+                <span className="text-primary truncate ml-4 font-black uppercase tracking-tighter">
+                  {[...new Set(dripSteps.map(s => s.channel))].join(', ') || 'None'}
+                </span>
+              </div>
+            </div>
+          </Card>
         </div>
 
         {/* Main Content Area */}
-        <div className="lg:col-span-2">
-          <Tabs value={activeTab} onValueChange={setActiveTab} className="space-y-6">
+        <div className="lg:col-span-3">
+          <Tabs value={activeTab} onValueChange={setActiveTab} className="space-y-8">
 
             {/* Basic Info */}
-            <TabsContent value="basic" className="space-y-4 animate-in fade-in slide-in-from-right-4 duration-300">
-              <Card>
-                <CardHeader>
-                  <CardTitle>Campaign Details</CardTitle>
-                  <CardDescription>Name your campaign and set its goal.</CardDescription>
+            <TabsContent value="basic" className="space-y-6 animate-in fade-in slide-in-from-right-4 duration-500">
+              <Card className="glass-card rounded-[2rem] border-border/50 p-8">
+                <CardHeader className="px-0 pt-0">
+                  <CardTitle className="text-2xl font-black">Campaign Details</CardTitle>
+                  <CardDescription className="text-base font-medium">Name your campaign and set its strategic goal.</CardDescription>
                 </CardHeader>
-                <CardContent className="space-y-6">
-                  <div className="space-y-2">
-                    <label className="text-sm font-medium">Campaign Name</label>
+                <CardContent className="px-0 py-6 space-y-8">
+                  <div className="space-y-3">
+                    <label className="text-xs font-black uppercase tracking-widest text-muted-foreground ml-1">Campaign Name</label>
                     <Input
-                      placeholder="e.g. Summer Whitening Promo"
+                      placeholder="e.g. Summer Whitening High-Impact Promo"
                       value={campaignName}
                       onChange={(e) => setCampaignName(e.target.value)}
-                      className="text-lg font-medium p-6"
+                      className="text-xl font-black h-16 rounded-2xl border-border/60 bg-background/40 px-6 focus:ring-primary/20 focus:border-primary/40 shadow-inner"
                     />
                   </div>
 
-                  <Button onClick={() => setActiveTab("segment")} className="w-full" variant="outline">
+                  <Button onClick={() => setActiveTab("segment")} className="w-full h-14 rounded-2xl text-lg font-black bg-primary text-primary-foreground shadow-lg shadow-primary/20 hover:scale-[1.01] transition-all">
                     Next: Define Audience
-                    <ArrowRight className="w-4 h-4 ml-2" />
+                    <ArrowRight className="w-5 h-5 ml-3" />
                   </Button>
                 </CardContent>
               </Card>
             </TabsContent>
 
             {/* Segment */}
-            <TabsContent value="segment" className="space-y-4 animate-in fade-in slide-in-from-right-4 duration-300">
-              <Card>
-                <CardHeader className="flex flex-row items-center justify-between">
+            <TabsContent value="segment" className="space-y-6 animate-in fade-in slide-in-from-right-4 duration-500">
+              <Card className="glass-card rounded-[2rem] border-border/50 p-8">
+                <CardHeader className="px-0 pt-0 flex flex-row items-center justify-between">
                   <div>
-                    <CardTitle>Audience Segment</CardTitle>
-                    <CardDescription>Who should receive this campaign?</CardDescription>
+                    <CardTitle className="text-2xl font-black">Audience Engine</CardTitle>
+                    <CardDescription className="text-base font-medium">Who should receive this intelligence?</CardDescription>
                   </div>
-                  <Badge variant="secondary" className="text-lg px-3 py-1 bg-primary/10 text-primary">{segmentCount} est. patients</Badge>
+                  <div className="bg-primary/10 px-6 py-3 rounded-2xl border border-primary/20 shadow-sm">
+                    <span className="text-2xl font-black text-primary">{segmentCount}</span>
+                    <span className="text-[10px] font-black uppercase text-primary ml-2 tracking-widest">Patients</span>
+                  </div>
                 </CardHeader>
-                <CardContent className="space-y-6">
-                  <div className="space-y-3">
+                <CardContent className="px-0 py-6 space-y-8">
+                  <div className="space-y-4">
                     {conditions.length === 0 ? (
-                      <div className="p-8 border-2 border-dashed rounded-xl flex flex-col items-center justify-center text-muted-foreground bg-muted/5">
-                        <p>No filters applied. Campaign will be sent to ALL patients.</p>
-                        <Button variant="link" onClick={() => setShowConditionDialog(true)}>Add a filter</Button>
+                      <div className="p-12 border-2 border-dashed rounded-3xl flex flex-col items-center justify-center text-muted-foreground bg-muted/5 border-border/60 group hover:border-primary/40 transition-colors">
+                        <div className="w-16 h-16 bg-background rounded-2xl flex items-center justify-center border border-border/50 mb-4 shadow-sm group-hover:scale-110 transition-transform">
+                          <Plus className="w-8 h-8 opacity-30" />
+                        </div>
+                        <p className="font-bold text-lg mb-1">Total Reach Applied</p>
+                        <p className="text-sm opacity-70">No filters applied. Campaign will target your whole base.</p>
+                        <Button variant="link" onClick={() => setShowConditionDialog(true)} className="text-primary font-bold mt-2">Add target criteria</Button>
                       </div>
                     ) : (
-                      conditions.map((condition) => (
-                        <div key={condition.id} className="flex items-center justify-between p-4 rounded-xl border bg-card shadow-sm">
-                          <div className="flex items-center gap-3">
-                            <div className="h-8 w-8 rounded-full bg-primary/10 flex items-center justify-center text-primary text-xs font-bold">
-                              IF
+                      <div className="space-y-3">
+                        {conditions.map((condition) => (
+                          <div key={condition.id} className="flex items-center justify-between p-6 rounded-2xl border border-border/50 bg-background/40 hover:bg-background/60 transition-colors group">
+                            <div className="flex items-center gap-5">
+                              <div className="h-10 w-10 rounded-xl bg-primary/10 flex items-center justify-center text-primary text-[10px] font-black border border-primary/20 shadow-sm">
+                                IF
+                              </div>
+                              <span className="font-black text-lg tracking-tight">{getConditionLabel(condition)}</span>
                             </div>
-                            <span className="font-mono text-sm">{getConditionLabel(condition)}</span>
+                            <Button size="icon" variant="ghost" onClick={() => removeCondition(condition.id)} className="h-10 w-10 text-red-500 hover:text-red-100 hover:bg-red-500 rounded-xl transition-all">
+                              <Trash2 className="w-5 h-5" />
+                            </Button>
                           </div>
-                          <Button size="icon" variant="ghost" onClick={() => removeCondition(condition.id)} className="text-red-500 hover:text-red-600 hover:bg-red-500/10">
-                            <Trash2 className="w-4 h-4" />
-                          </Button>
-                        </div>
-                      ))
+                        ))}
+                      </div>
                     )}
                   </div>
 
                   <div className="flex gap-4">
-                    <Button onClick={() => setShowConditionDialog(true)} variant="outline" className="flex-1 border-dashed">
-                      <Plus className="w-4 h-4 mr-2" />
-                      Add Condition
+                    <Button onClick={() => setShowConditionDialog(true)} variant="outline" className="flex-1 h-14 rounded-2xl border-dashed font-bold hover:bg-muted/50 border-border/60">
+                      <Plus className="w-5 h-5 mr-3" />
+                      Add Drill-Down
                     </Button>
-                    <Button onClick={() => setActiveTab("drip")} className="flex-1">
-                      Next: Message Sequence
-                      <ArrowRight className="w-4 h-4 ml-2" />
+                    <Button onClick={() => setActiveTab("drip")} className="flex-1 h-14 rounded-2xl font-black bg-primary shadow-lg shadow-primary/20">
+                      Edit Sequence
+                      <ArrowRight className="w-5 h-5 ml-3" />
                     </Button>
                   </div>
                 </CardContent>
@@ -330,98 +343,109 @@ export function CampaignBuilder({ onCancel, onSuccess }: CampaignBuilderProps) {
             </TabsContent>
 
             {/* Drip Sequence */}
-            <TabsContent value="drip" className="space-y-4 animate-in fade-in slide-in-from-right-4 duration-300">
-              <Card>
-                <CardHeader className="flex flex-row items-center justify-between">
+            <TabsContent value="drip" className="space-y-6 animate-in fade-in slide-in-from-right-4 duration-500">
+              <Card className="glass-card rounded-[2rem] border-border/50 p-8">
+                <CardHeader className="px-0 pt-0 flex flex-row items-center justify-between">
                   <div>
-                    <CardTitle>Message Sequence</CardTitle>
-                    <CardDescription>Design your follow-up cadence.</CardDescription>
+                    <CardTitle className="text-2xl font-black">Performance Cadence</CardTitle>
+                    <CardDescription className="text-base font-medium">Design your multi-channel follow-up flow.</CardDescription>
                   </div>
-                  <Button size="sm" onClick={() => setShowDripDialog(true)}>
+                  <Button size="sm" onClick={() => setShowDripDialog(true)} className="rounded-xl font-bold bg-muted/50 text-foreground border border-border/50 hover:bg-muted/80">
                     <Plus className="w-4 h-4 mr-2" />
                     Add Step
                   </Button>
                 </CardHeader>
-                <CardContent className="space-y-4">
+                <CardContent className="px-0 py-8 space-y-6 relative">
+                  <div className="absolute left-[19px] top-12 bottom-12 w-0.5 bg-gradient-to-b from-primary via-primary/30 to-border/20" />
                   {dripSteps.map((step, index) => (
-                    <div key={index} className="relative pl-8 border-l-2 border-border/50 pb-8 last:pb-0">
-                      <div className="absolute -left-[9px] top-0 w-4 h-4 rounded-full bg-background border-2 border-primary" />
-                      <div className="p-4 rounded-xl border bg-card shadow-sm hover:shadow-md transition-all">
-                        <div className="flex justify-between items-start mb-2">
-                          <div className="flex gap-2">
-                            <Badge variant="outline">Day {step.day}</Badge>
-                            <Badge className="uppercase text-[10px]">{step.channel}</Badge>
+                    <div key={index} className="relative pl-12 group">
+                      <div className="absolute left-0 top-6 w-10 h-10 rounded-2xl bg-background border-2 border-primary flex items-center justify-center z-10 shadow-lg group-hover:scale-110 transition-transform">
+                        <div className="w-4 h-4 rounded-full bg-primary" />
+                      </div>
+                      <div className="p-8 rounded-[2rem] border border-border/50 bg-background/40 hover:bg-background/60 transition-all shadow-sm hover:shadow-xl hover:shadow-primary/5">
+                        <div className="flex justify-between items-start mb-6">
+                          <div className="flex gap-3">
+                            <div className="bg-primary/10 text-primary px-4 py-1.5 rounded-xl text-[10px] font-black uppercase tracking-widest border border-primary/20">Day {step.day}</div>
+                            <div className="bg-blue-500/10 text-blue-500 px-4 py-1.5 rounded-xl text-[10px] font-black uppercase tracking-widest border border-blue-500/20">{step.channel}</div>
                           </div>
-                          <div className="flex gap-1">
-                            <Button size="icon" variant="ghost" className="h-6 w-6" onClick={() => editDripStep(index)}>
-                              <Eye className="w-3 h-3" />
+                          <div className="flex gap-2">
+                            <Button size="icon" variant="ghost" className="h-10 w-10 rounded-xl hover:bg-primary/10 text-primary" onClick={() => editDripStep(index)}>
+                              <Eye className="w-5 h-5" />
                             </Button>
-                            <Button size="icon" variant="ghost" className="h-6 w-6 text-red-500" onClick={() => removeDripStep(index)}>
-                              <Trash2 className="w-3 h-3" />
+                            <Button size="icon" variant="ghost" className="h-10 w-10 rounded-xl hover:bg-red-500/10 text-red-500" onClick={() => removeDripStep(index)}>
+                              <Trash2 className="w-5 h-5" />
                             </Button>
                           </div>
                         </div>
-                        <p className="text-sm text-foreground/80 whitespace-pre-wrap">{step.message}</p>
+                        <div className="bg-muted/30 p-6 rounded-2xl border border-border/40 min-h-[100px] text-lg font-medium leading-relaxed italic text-foreground/80">
+                          "{step.message}"
+                        </div>
                       </div>
                     </div>
                   ))}
 
-                  <Button onClick={() => setActiveTab("review")} className="w-full mt-4">
-                    Next: Review & Launch
-                    <ArrowRight className="w-4 h-4 ml-2" />
+                  <Button onClick={() => setActiveTab("review")} className="w-full h-16 rounded-3xl text-xl font-black bg-primary shadow-2xl shadow-primary/20 mt-8">
+                    Review Command & Launch
                   </Button>
                 </CardContent>
               </Card>
             </TabsContent>
 
             {/* Review */}
-            <TabsContent value="review" className="space-y-4 animate-in fade-in slide-in-from-right-4 duration-300">
-              <Card>
-                <CardHeader>
-                  <CardTitle>Launch Confirmation</CardTitle>
-                  <CardDescription>Double check everything before starting.</CardDescription>
+            <TabsContent value="review" className="space-y-6 animate-in fade-in slide-in-from-right-4 duration-500">
+              <Card className="glass-card rounded-[2rem] border-border/50 p-8 overflow-hidden relative">
+                <div className="absolute -right-20 -top-20 w-80 h-80 bg-primary/10 blur-[100px] rounded-full" />
+                <CardHeader className="px-0 pt-0">
+                  <CardTitle className="text-3xl font-black">Final Command</CardTitle>
+                  <CardDescription className="text-lg font-medium">Execution ready. Verify your parameters for takeoff.</CardDescription>
                 </CardHeader>
-                <CardContent className="space-y-6">
+                <CardContent className="px-0 py-8 space-y-12">
                   {launchError && (
-                    <div className="p-4 rounded-xl bg-red-500/10 border border-red-500/20 text-red-600 flex items-center gap-3">
-                      <AlertCircle className="w-5 h-5" />
-                      <p className="text-sm font-medium">{launchError}</p>
+                    <div className="p-6 rounded-2xl bg-red-500/10 border border-red-500/20 text-red-600 flex items-center gap-4 animate-bounce">
+                      <AlertCircle className="w-6 h-6 shrink-0" />
+                      <p className="text-base font-black tracking-tight">{launchError}</p>
                     </div>
                   )}
 
-                  <div className="grid grid-cols-2 gap-4">
-                    <div className="p-4 rounded-xl bg-muted/10 border border-border/50">
-                      <span className="text-xs text-muted-foreground uppercase tracking-widest">Rate Limit</span>
-                      <p className="text-lg font-bold">{rateLimit} / min</p>
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+                    <div className="p-8 rounded-[2rem] bg-background/50 border border-border/60 shadow-inner group transition-all hover:border-primary/40">
+                      <span className="text-[10px] font-black text-muted-foreground uppercase tracking-[0.3em] mb-4 block">Velocity</span>
+                      <div className="flex items-baseline gap-2">
+                        <p className="text-4xl font-black text-foreground">{rateLimit}</p>
+                        <span className="text-sm font-bold text-muted-foreground">sends / minute</span>
+                      </div>
                     </div>
-                    <div className="p-4 rounded-xl bg-muted/10 border border-border/50">
-                      <span className="text-xs text-muted-foreground uppercase tracking-widest">Batch Size</span>
-                      <p className="text-lg font-bold">{batchSize} msgs</p>
+                    <div className="p-8 rounded-[2rem] bg-background/50 border border-border/60 shadow-inner group transition-all hover:border-primary/40">
+                      <span className="text-[10px] font-black text-muted-foreground uppercase tracking-[0.3em] mb-4 block">Parallelism</span>
+                      <div className="flex items-baseline gap-2">
+                        <p className="text-4xl font-black text-foreground">{batchSize}</p>
+                        <span className="text-sm font-bold text-muted-foreground">batch size</span>
+                      </div>
                     </div>
                   </div>
 
-                  <CardFooter className="px-0 flex-col gap-3">
+                  <div className="flex flex-col gap-4">
                     <Button
-                      className="w-full h-12 text-lg font-bold shadow-xl shadow-primary/20 bg-primary hover:bg-primary/90"
+                      className="w-full h-20 text-2xl font-black rounded-3xl shadow-2xl shadow-primary/30 bg-primary hover:bg-primary/90 transition-all hover:scale-[1.02] active:scale-95 group overflow-hidden"
                       onClick={handleLaunchCampaign}
                       disabled={isLaunching}
                     >
                       {isLaunching ? (
                         <>
-                          <Zap className="w-5 h-5 mr-2 animate-pulse" />
-                          Launching Campaign...
+                          <Zap className="w-8 h-8 mr-4 animate-ping text-white/50" />
+                          IGNITING...
                         </>
                       ) : (
                         <>
-                          <Play className="w-5 h-5 mr-2 fill-current" />
-                          Launch Campaign Now
+                          <Play className="w-6 h-6 mr-4 fill-current group-hover:scale-125 transition-transform" />
+                          LAUNCH NOW
                         </>
                       )}
                     </Button>
-                    <Button variant="ghost" onClick={onCancel} disabled={isLaunching}>
-                      Cancel and Save Draft
+                    <Button variant="ghost" onClick={onCancel} className="h-12 rounded-2xl font-bold opacity-60 hover:opacity-100" disabled={isLaunching}>
+                      Retract to Drafts
                     </Button>
-                  </CardFooter>
+                  </div>
                 </CardContent>
               </Card>
             </TabsContent>
