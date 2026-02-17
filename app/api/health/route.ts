@@ -3,6 +3,7 @@ import { Pool } from "pg"
 
 const pool = new Pool({
     connectionString: process.env.DATABASE_URL,
+    ssl: { rejectUnauthorized: false }, // Force SSL bypass for Vercel/Neon
 })
 
 export async function GET() {
