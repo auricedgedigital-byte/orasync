@@ -723,43 +723,24 @@ export async function getAnalyticsData(clinicId: string, startDate?: string, end
 }
 
 export async function getReviews(clinicId: string) {
-  // Mock data for now as we don't have a reviews table yet
-  return [
-    {
-      id: "1",
-      author: "Sarah Johnson",
-      rating: 5,
-      text: "Excellent service! Dr. Smith was very professional and caring.",
-      platform: "Google",
-      date: "2 days ago",
-      responded: true,
-    },
-    {
-      id: "2",
-      author: "Mike Chen",
-      rating: 5,
-      text: "Best dental experience I've had. Highly recommend!",
-      platform: "Yelp",
-      date: "1 week ago",
-      responded: true,
-    },
-    {
-      id: "3",
-      author: "Emma Davis",
-      rating: 4,
-      text: "Good service, but wait time was a bit long.",
-      platform: "Google",
-      date: "1 week ago",
-      responded: false,
-    },
-    {
-      id: "4",
-      author: "John Smith",
-      rating: 5,
-      text: "Very friendly staff and clean facility!",
-      platform: "Facebook",
-      date: "2 weeks ago",
-      responded: true,
-    },
-  ]
+  try {
+    const result = await pool.query(
+      `SELECT 
+        id, 
+        author_name as author, 
+        rating, 
+        content as text, 
+        platform, 
+        review_date as date, 
+        is_responded as responded 
+      FROM reviews 
+      WHERE clinic_id = $1 
+      ORDER BY review_date DESC`,
+      [clinicId]
+    )
+    return result.rows
+  } catch (error) {
+    console.error("Error fetching reviews:", error)
+    return []
+  }
 }
