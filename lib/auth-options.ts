@@ -79,35 +79,36 @@ export const authOptions: NextAuthOptions = {
     session: {
         strategy: "jwt",
     },
-    async jwt({ token, user, account, profile }) {
-        if (user) {
-            token.id = user.id
-            token.clinic_id = (user as any).clinic_id
-        }
-
-        // Handle OAuth sign in
-        if (account && profile && profile.email) {
-            const synced = await syncUserByAuthId(
-                profile.email,
-                account.provider,
-                account.providerAccountId,
-                profile.name || (profile as any).full_name
-            )
-            if (synced) {
-                token.id = synced.id
-                token.clinic_id = synced.clinic_id
+    callbacks: {
+        async jwt({ token, user, account, profile }) {
+            if (user) {
+                token.id = user.id
+                token.clinic_id = (user as any).clinic_id
             }
-        }
-        return token
+
+            // Handle OAuth sign in
+            if (account && profile && profile.email) {
+                const synced = await syncUserByAuthId(
+                    profile.email,
+                    account.provider,
+                    account.providerAccountId,
+                    profile.name || (profile as any).full_name
+                )
+                if (synced) {
+                    token.id = synced.id
+                    token.clinic_id = synced.clinic_id
+                }
+            }
+            return token
+        },
+        async session({ session, token }) {
+            if (session.user) {
+                session.user.id = token.id as string
+                (session.user as any).clinic_id = token.clinic_id
+            }
+            return session
+        },
     },
-    async session({ session, token }) {
-        if (session.user) {
-            session.user.id = token.id as string
-            (session.user as any).clinic_id = token.clinic_id
-        }
-        return session
-    },
-},
     secret: process.env.NEXTAUTH_SECRET,
     pages: {
         signIn: "/login",
