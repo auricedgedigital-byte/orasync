@@ -4,6 +4,7 @@ import { useState, useEffect } from "react"
 import { ThreadList } from "./inbox/thread-list"
 import { ChatInterface } from "./inbox/chat-interface"
 import { PatientSidebar } from "./inbox/patient-sidebar"
+import { InboxStatsHeader } from "./inbox/inbox-stats-header"
 import { useUser } from "@/hooks/use-user"
 import type { Thread, Message, Patient } from "@/types/inbox"
 import { Loader2 } from "lucide-react"
@@ -145,55 +146,61 @@ export default function UnifiedInbox() {
   }
 
   return (
-    <div className="flex h-[calc(100vh-6rem)] w-full bg-background border border-border/50 rounded-2xl overflow-hidden shadow-2xl">
-      {/* Left Sidebar: Threads */}
-      <div className="w-80 flex-shrink-0 min-w-[300px] border-r border-border/40">
-        <ThreadList
-          threads={threads}
-          selectedThreadId={selectedThreadId}
-          onSelectThread={(t) => setSelectedThreadId(t.id)}
-          searchTerm={searchTerm}
-          onSearchChange={setSearchTerm}
-          filterChannel={filterChannel}
-          onFilterChange={setFilterChannel}
-        />
-      </div>
+    <div className="space-y-6">
+      {/* Inbox Statistics Header */}
+      <InboxStatsHeader />
 
-      {/* Middle Pane: Chat */}
-      <div className="flex-1 min-w-[400px] bg-background relative">
-        {selectedThread ? (
-          messagesLoading && messages.length === 0 ? (
-            <div className="h-full flex items-center justify-center">
-              <Loader2 className="h-8 w-8 animate-spin text-primary" />
-            </div>
+      {/* Main Inbox Interface */}
+      <div className="flex h-[calc(100vh-20rem)] w-full bg-background border border-border/50 rounded-2xl overflow-hidden shadow-2xl">
+        {/* Left Sidebar: Threads */}
+        <div className="w-80 flex-shrink-0 min-w-[300px] border-r border-border/40">
+          <ThreadList
+            threads={threads}
+            selectedThreadId={selectedThreadId}
+            onSelectThread={(t) => setSelectedThreadId(t.id)}
+            searchTerm={searchTerm}
+            onSearchChange={setSearchTerm}
+            filterChannel={filterChannel}
+            onFilterChange={setFilterChannel}
+          />
+        </div>
+
+        {/* Middle Pane: Chat */}
+        <div className="flex-1 min-w-[400px] bg-background relative">
+          {selectedThread ? (
+            messagesLoading && messages.length === 0 ? (
+              <div className="h-full flex items-center justify-center">
+                <Loader2 className="h-8 w-8 animate-spin text-primary" />
+              </div>
+            ) : (
+              <ChatInterface
+                thread={selectedThread}
+                messages={messages}
+                patient={currentPatient}
+                onSendMessage={handleSendMessage}
+              />
+            )
           ) : (
-            <ChatInterface
-              thread={selectedThread}
-              messages={messages}
-              patient={currentPatient}
-              onSendMessage={handleSendMessage}
-            />
-          )
-        ) : (
-          <div className="h-full flex flex-col items-center justify-center text-muted-foreground bg-muted/5 p-6 text-center">
-            <div className="h-16 w-16 bg-muted rounded-full flex items-center justify-center mb-4">
-              <Loader2 className="h-8 w-8 animate-spin text-muted-foreground opacity-20" />
+            <div className="h-full flex flex-col items-center justify-center text-muted-foreground bg-muted/5 p-6 text-center">
+              <div className="h-16 w-16 bg-muted rounded-full flex items-center justify-center mb-4">
+                <Loader2 className="h-8 w-8 animate-spin text-muted-foreground opacity-20" />
+              </div>
+              <h3 className="text-lg font-bold text-foreground">No conversation selected</h3>
+              <p className="text-sm max-w-xs mx-auto">Select a patient from the list to view their history and start chatting.</p>
             </div>
-            <h3 className="text-lg font-bold text-foreground">No conversation selected</h3>
-            <p className="text-sm max-w-xs mx-auto">Select a patient from the list to view their history and start chatting.</p>
-          </div>
-        )}
-      </div>
+          )}
+        </div>
 
-      {/* Right Sidebar: Patient Info */}
-      <div className="w-[300px] flex-shrink-0 hidden xl:block border-l border-border/40">
-        {currentPatient ? (
-          <PatientSidebar patient={currentPatient} />
-        ) : (
-          <div className="h-full bg-muted/5 flex items-center justify-center text-muted-foreground text-xs font-medium">
-            <p>Select a thread to view patient details</p>
-          </div>
-        )}
+        {/* Right Sidebar: Patient Info */}
+        <div className="w-[300px] flex-shrink-0 hidden xl:block border-l border-border/40">
+          {currentPatient ? (
+            <PatientSidebar patient={currentPatient} />
+          ) : (
+            <div className="h-full bg-muted/5 flex items-center justify-center text-muted-foreground text-xs font-medium">
+              <p>Select a thread to view patient details</p>
+            </div>
+          )}
+        </div>
       </div>
     </div>
   )
