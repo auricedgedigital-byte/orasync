@@ -43,7 +43,7 @@ export default function TopNav() {
   }
 
   return (
-    <nav className="px-4 sm:px-8 flex items-center justify-between border-b border-border bg-background/60 backdrop-blur-md h-full sticky top-0 z-40">
+    <nav className="px-4 sm:px-8 flex items-center justify-between border-b border-border/50 glass h-full sticky top-0 z-40 transition-all duration-300">
       <div className="flex items-center gap-4">
         <div className="hidden sm:flex items-center space-x-1.5 text-xs">
           {breadcrumbs.map((item, index) => (

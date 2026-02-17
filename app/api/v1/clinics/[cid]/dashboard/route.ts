@@ -1,63 +1,57 @@
 import { NextRequest, NextResponse } from 'next/server'
-import { getClient } from '@/lib/supabase'
+import { Pool } from 'pg'
+
+const pool = new Pool({
+  connectionString: process.env.DATABASE_URL,
+  ssl: process.env.DATABASE_URL?.includes("postgres") ? { rejectUnauthorized: false } : undefined,
+})
 
 export async function GET(
   request: NextRequest,
   { params }: { params: { cid: string } }
 ) {
   try {
-    const supabase = getClient()
     const clinicId = params.cid
 
-    // Get real dashboard data
-    const { data: appointments, error: appointmentsError } = await supabase
-      .from('appointments')
-      .select('*')
-      .eq('clinic_id', clinicId)
-      .gte('scheduled_time', new Date().toISOString().split('T')[0])
-      .order('scheduled_time', { ascending: true })
+    // Get today's appointments and production
+    // Assuming appointments table has schedule_time, status, amount
+    const appointmentsQuery = await pool.query(
+      "SELECT * FROM appointments WHERE clinic_id = $1 AND scheduled_time::date = CURRENT_DATE ORDER BY scheduled_time ASC",
+      [clinicId]
+    )
 
-    if (appointmentsError) {
-      console.error('Appointments error:', appointmentsError)
-    }
+    const appointments = appointmentsQuery.rows
 
-    const todayAppointments = appointments?.filter(apt => 
-      new Date(apt.scheduled_time).toDateString() === new Date().toDateString()
-    ).length || 0
+    const todayAppointments = appointments.length
 
-    // Get production data (sum of completed appointments today)
-    const { data: production, error: productionError } = await supabase
-      .from('appointments')
-      .select('amount')
-      .eq('clinic_id', clinicId)
-      .eq('status', 'completed')
-      .gte('scheduled_time', new Date().toISOString().split('T')[0])
+    // Calculate net production (completed appointments today)
+    const netProduction = appointments
+      .filter(app => app.status === 'completed')
+      .reduce((sum, app) => sum + (parseFloat(app.amount) || 0), 0)
 
-    const netProduction = production?.reduce((sum, apt) => sum + (apt.amount || 0), 0) || 0
+    // Get new leads (patients created in last 7 days)
+    const newLeadsQuery = await pool.query(
+      "SELECT COUNT(*) as count FROM patients WHERE clinic_id = $1 AND created_at >= NOW() - INTERVAL '7 days'",
+      [clinicId]
+    )
+    const newLeads = parseInt(newLeadsQuery.rows[0].count, 10)
 
-    // Get new leads count
-    const { count: newLeads, error: leadsError } = await supabase
-      .from('patients')
-      .select('*', { count: 'exact', head: true })
-      .eq('clinic_id', clinicId)
-      .gte('created_at', new Date(Date.now() - 7 * 24 * 60 * 60 * 1000).toISOString())
-
-    // Get patient satisfaction (placeholder for now)
+    // Placeholder for patient satisfaction (unless we have a reviews table)
     const patientSatisfaction = 4.8
 
     // Format appointments for display
-    const formattedAppointments = appointments?.slice(0, 5).map(apt => ({
-      time: new Date(apt.scheduled_time).toLocaleTimeString('en-US', { 
-        hour: 'numeric', 
-        minute: '2-digit', 
-        hour12: true 
+    const formattedAppointments = appointments.slice(0, 5).map(apt => ({
+      time: new Date(apt.scheduled_time).toLocaleTimeString('en-US', {
+        hour: 'numeric',
+        minute: '2-digit',
+        hour12: true
       }),
       patient: apt.patient_name || 'Unknown Patient',
       treatment: apt.treatment_type || 'General Appointment',
       status: apt.status || 'scheduled'
-    })) || []
+    }))
 
-    // Get recent activity
+    // Get recent activity (mock or from usage_logs)
     const recentActivity = [
       {
         message: "Dashboard loaded successfully",
@@ -69,7 +63,7 @@ export async function GET(
     const dashboardData = {
       todayAppointments,
       netProduction,
-      newLeads: newLeads || 0,
+      newLeads,
       patientSatisfaction,
       appointments: formattedAppointments,
       recentActivity

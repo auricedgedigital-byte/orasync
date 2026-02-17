@@ -7,7 +7,7 @@
   --font-sans: var(--font-geist-sans);
   --font-mono: var(--font-geist-mono);
   
-  /* High-fidelity Dental/Medical palette */
+  /* Premium Light Mode (Clean, Professional) */
   --background: 210 40% 98%;
   --foreground: 222 47% 11%;
   
@@ -17,7 +17,7 @@
   --popover: 0 0% 100%;
   --popover-foreground: 222 47% 11%;
   
-  --primary: 243 75% 59%; /* Vibrant Indigo/Purple */
+  --primary: 262 83% 58%; /* Rich Purple */
   --primary-foreground: 210 40% 98%;
   
   --secondary: 210 40% 96.1%;
@@ -34,59 +34,63 @@
   
   --border: 214.3 31.8% 91.4%;
   --input: 214.3 31.8% 91.4%;
-  --ring: 243 75% 59%;
-  
-  --chart-1: 12 76% 61%;
-  --chart-2: 173 58% 39%;
-  --chart-3: 197 37% 24%;
-  --chart-4: 43 74% 66%;
-  --chart-5: 27 87% 67%;
+  --ring: 262 83% 58%;
   
   --radius: 1rem;
   
-  --sidebar-background: 0 0% 100%;
-  --sidebar-foreground: 222 47% 11%;
-  --sidebar-primary: 243 75% 59%;
-  --sidebar-primary-foreground: 0 0% 100%;
-  --sidebar-accent: 210 40% 96.1%;
-  --sidebar-accent-foreground: 222 47% 11.2%;
-  --sidebar-border: 214.3 31.8% 91.4%;
-  --sidebar-ring: 243 75% 59%;
+  --sidebar-background: 0 0% 98%;
+  --sidebar-foreground: 240 5.3% 26.1%;
+  --sidebar-primary: 240 5.9% 10%;
+  --sidebar-primary-foreground: 0 0% 98%;
+  --sidebar-accent: 240 4.8% 95.9%;
+  --sidebar-accent-foreground: 240 5.9% 10%;
+  --sidebar-border: 220 13% 91%;
+  --sidebar-ring: 262 83% 58%;
 
-  /* Custom AI Tokens */
+  /* Custom Gradients & AI Tokens */
   --ai-primary: 262 83% 58%;
-  --ai-secondary: 243 75% 59%;
-  --ai-gradient: linear-gradient(135deg, hsl(262, 83%, 58%), hsl(243, 75%, 59%));
+  --ai-secondary: 290 80% 60%;
+  --ai-gradient: linear-gradient(135deg, hsl(262, 83%, 58%), hsl(290, 80%, 60%));
 }
 
 .dark {
-  --background: 222.2 84% 4.9%;
-  --foreground: 210 40% 98%;
+  /* Premium Dark Mode (Deep, Rich, Glassy) */
+  --background: 240 10% 4%; /* Very dark slate/black */
+  --foreground: 0 0% 98%;
   
-  --card: 222.2 84% 4.9%;
-  --card-foreground: 210 40% 98%;
+  --card: 240 10% 6%; /* Slightly lighter than bg */
+  --card-foreground: 0 0% 98%;
   
-  --popover: 222.2 84% 4.9%;
-  --popover-foreground: 210 40% 98%;
+  --popover: 240 10% 6%;
+  --popover-foreground: 0 0% 98%;
   
-  --primary: 217.2 91.2% 59.8%;
-  --primary-foreground: 222.2 47.4% 11.2%;
+  --primary: 263.4 70% 50.4%; /* Deep Purple */
+  --primary-foreground: 210 40% 98%;
   
-  --secondary: 217.2 32.6% 17.5%;
-  --secondary-foreground: 210 40% 98%;
+  --secondary: 240 4% 16%;
+  --secondary-foreground: 0 0% 98%;
   
-  --muted: 217.2 32.6% 17.5%;
-  --muted-foreground: 215 20.2% 65.1%;
+  --muted: 240 4% 16%;
+  --muted-foreground: 240 5% 65%;
   
-  --accent: 217.2 32.6% 17.5%;
-  --accent-foreground: 210 40% 98%;
+  --accent: 240 4% 16%;
+  --accent-foreground: 0 0% 98%;
   
   --destructive: 0 62.8% 30.6%;
-  --destructive-foreground: 210 40% 98%;
+  --destructive-foreground: 0 0% 98%;
   
-  --border: 217.2 32.6% 17.5%;
-  --input: 217.2 32.6% 17.5%;
-  --ring: 224.3 76.3% 48%;
+  --border: 240 4% 16%;
+  --input: 240 4% 16%;
+  --ring: 263.4 70% 50.4%;
+  
+  --sidebar-background: 240 10% 4%;
+  --sidebar-foreground: 240 4.8% 95.9%;
+  --sidebar-primary: 263.4 70% 50.4%;
+  --sidebar-primary-foreground: 0 0% 100%;
+  --sidebar-accent: 240 4% 16%;
+  --sidebar-accent-foreground: 240 4.8% 95.9%;
+  --sidebar-border: 240 4% 16%;
+  --sidebar-ring: 263.4 70% 50.4%;
 }
 
 @theme inline {
@@ -134,6 +138,15 @@
     @apply border-border outline-ring/50;
   }
   body {
-    @apply bg-background text-foreground;
+    @apply bg-background text-foreground antialiased;
   }
+}
+
+/* Glassmorphism Utilities */
+@utility glass {
+  @apply bg-background/60 backdrop-blur-xl border-b border-border/50;
+}
+
+@utility glass-card {
+  @apply bg-card/60 backdrop-blur-xl border border-border/50 shadow-xl;
 }

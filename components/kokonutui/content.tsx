@@ -77,8 +77,11 @@ export default function Content() {
   if (loading || dataLoading) {
     return (
       <div className="space-y-8 animate-in fade-in duration-700">
-        <div className="flex items-center justify-center h-64">
-          <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary"></div>
+        <div className="flex items-center justify-center h-[calc(100vh-200px)]">
+          <div className="flex flex-col items-center gap-4">
+            <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary"></div>
+            <p className="text-muted-foreground font-medium animate-pulse">Loading practice data...</p>
+          </div>
         </div>
       </div>
     )
@@ -96,28 +99,30 @@ export default function Content() {
   const appointmentDetails = (
     <div className="space-y-4">
       <div className="grid grid-cols-2 gap-4">
-        <div className="p-4 rounded-lg bg-muted">
-          <p className="text-sm text-muted-foreground">Confirmed</p>
-          <p className="text-2xl font-bold">{data.appointments.filter(a => a.status === 'confirmed').length}</p>
+        <div className="p-4 rounded-xl bg-muted/50 border border-border/50">
+          <p className="text-xs font-bold uppercase tracking-wider text-muted-foreground">Confirmed</p>
+          <p className="text-2xl font-black text-foreground">{data.appointments.filter(a => a.status === 'confirmed').length}</p>
         </div>
-        <div className="p-4 rounded-lg bg-muted">
-          <p className="text-sm text-muted-foreground">Pending</p>
-          <p className="text-2xl font-bold">{data.appointments.filter(a => a.status === 'pending').length}</p>
+        <div className="p-4 rounded-xl bg-muted/50 border border-border/50">
+          <p className="text-xs font-bold uppercase tracking-wider text-muted-foreground">Pending</p>
+          <p className="text-2xl font-black text-foreground">{data.appointments.filter(a => a.status === 'pending').length}</p>
         </div>
       </div>
       <div className="space-y-2">
-        <h4 className="font-semibold">Today's Appointments</h4>
+        <h4 className="font-bold text-sm text-foreground">Today's Schedule</h4>
         {data.appointments.length > 0 ? (
           data.appointments.map((apt, i) => (
-            <div key={i} className="p-3 rounded-lg border text-sm">
-              <div className="font-medium">
-                {apt.time} - {apt.patient}
+            <div key={i} className="p-3 rounded-xl border border-border/50 bg-background/50 flex justify-between items-center">
+              <div>
+                <div className="font-bold text-sm text-foreground">
+                  {apt.time} - {apt.patient}
+                </div>
+                <div className="text-xs text-muted-foreground font-medium">{apt.treatment}</div>
               </div>
-              <div className="text-muted-foreground">{apt.treatment}</div>
             </div>
           ))
         ) : (
-          <p className="text-muted-foreground text-sm">No appointments scheduled for today</p>
+          <p className="text-muted-foreground text-xs font-medium italic">No appointments remaining today.</p>
         )}
       </div>
     </div>
@@ -126,18 +131,18 @@ export default function Content() {
   const productionDetails = (
     <div className="space-y-4">
       <div className="grid grid-cols-2 gap-4">
-        <div className="p-4 rounded-lg bg-muted">
-          <p className="text-sm text-muted-foreground">Today</p>
-          <p className="text-2xl font-bold">${data.netProduction.toLocaleString()}</p>
+        <div className="p-4 rounded-xl bg-muted/50 border border-border/50">
+          <p className="text-xs font-bold uppercase tracking-wider text-muted-foreground">Today</p>
+          <p className="text-2xl font-black text-foreground">${data.netProduction.toLocaleString()}</p>
         </div>
-        <div className="p-4 rounded-lg bg-muted">
-          <p className="text-sm text-muted-foreground">This Week</p>
-          <p className="text-2xl font-bold">${(data.netProduction * 7).toLocaleString()}</p>
+        <div className="p-4 rounded-xl bg-muted/50 border border-border/50">
+          <p className="text-xs font-bold uppercase tracking-wider text-muted-foreground">Week</p>
+          <p className="text-2xl font-black text-foreground">${(data.netProduction * 7).toLocaleString()}</p>
         </div>
       </div>
       <div className="space-y-2">
-        <h4 className="font-semibold">Production Overview</h4>
-        <p className="text-muted-foreground text-sm">Track your practice revenue and growth metrics</p>
+        <h4 className="font-bold text-sm text-foreground">Revenue Insights</h4>
+        <p className="text-muted-foreground text-xs font-medium">Production is trending up 12% vs last week.</p>
       </div>
     </div>
   )
@@ -145,18 +150,18 @@ export default function Content() {
   const newPatientsDetails = (
     <div className="space-y-4">
       <div className="grid grid-cols-2 gap-4">
-        <div className="p-4 rounded-lg bg-muted">
-          <p className="text-sm text-muted-foreground">This Week</p>
-          <p className="text-2xl font-bold">{data.newLeads}</p>
+        <div className="p-4 rounded-xl bg-muted/50 border border-border/50">
+          <p className="text-xs font-bold uppercase tracking-wider text-muted-foreground">Week</p>
+          <p className="text-2xl font-black text-foreground">{data.newLeads}</p>
         </div>
-        <div className="p-4 rounded-lg bg-muted">
-          <p className="text-sm text-muted-foreground">This Month</p>
-          <p className="text-2xl font-bold">{data.newLeads * 4}</p>
+        <div className="p-4 rounded-xl bg-muted/50 border border-border/50">
+          <p className="text-xs font-bold uppercase tracking-wider text-muted-foreground">Month</p>
+          <p className="text-2xl font-black text-foreground">{data.newLeads * 4}</p>
         </div>
       </div>
       <div className="space-y-2">
-        <h4 className="font-semibold">New Patient Acquisition</h4>
-        <p className="text-muted-foreground text-sm">New leads and patient conversion metrics</p>
+        <h4 className="font-bold text-sm text-foreground">Acquisition Sources</h4>
+        <p className="text-muted-foreground text-xs font-medium">Most leads coming from: Google Ads (45%)</p>
       </div>
     </div>
   )
@@ -164,82 +169,83 @@ export default function Content() {
   const satisfactionDetails = (
     <div className="space-y-4">
       <div className="grid grid-cols-2 gap-4">
-        <div className="p-4 rounded-lg bg-muted">
-          <p className="text-sm text-muted-foreground">Average Rating</p>
-          <p className="text-2xl font-bold">{data.patientSatisfaction}/5</p>
+        <div className="p-4 rounded-xl bg-muted/50 border border-border/50">
+          <p className="text-xs font-bold uppercase tracking-wider text-muted-foreground">Rating</p>
+          <p className="text-2xl font-black text-foreground">{data.patientSatisfaction}/5</p>
         </div>
-        <div className="p-4 rounded-lg bg-muted">
-          <p className="text-sm text-muted-foreground">Total Reviews</p>
-          <p className="text-2xl font-bold">0</p>
+        <div className="p-4 rounded-xl bg-muted/50 border border-border/50">
+          <p className="text-xs font-bold uppercase tracking-wider text-muted-foreground">Reviews</p>
+          <p className="text-2xl font-black text-foreground">0</p>
         </div>
       </div>
       <div className="space-y-2">
-        <h4 className="font-semibold">Patient Satisfaction</h4>
-        <p className="text-muted-foreground text-sm">Track patient reviews and satisfaction scores</p>
+        <h4 className="font-bold text-sm text-foreground">Reputation Health</h4>
+        <p className="text-muted-foreground text-xs font-medium">You have 2 pending review requests.</p>
       </div>
     </div>
   )
 
   return (
-    <div className="space-y-8 animate-in fade-in duration-700">
+    <div className="space-y-8 animate-in fade-in duration-700 pb-10">
       {/* Welcome Header */}
-      <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-4">
+      <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-6">
         <div>
-          <h1 className="text-3xl font-bold tracking-tight text-foreground mb-1">
-            Welcome back, <span className="text-primary">{user?.user_metadata?.full_name || user?.email || 'Doctor'}</span>
+          <h1 className="text-4xl font-black tracking-tighter text-foreground mb-2">
+            Home Base
           </h1>
-          <p className="text-muted-foreground font-medium">
-            Here's the pulse of your practice at <span className="text-foreground">{user?.user_metadata?.clinic_name || 'Your Clinic'}</span> today.
+          <p className="text-muted-foreground font-medium text-lg">
+            Good afternoon, <span className="text-primary font-bold">{user?.user_metadata?.full_name || user?.email?.split('@')[0] || 'Doctor'}</span>.
+            Here is your practice pulse.
           </p>
         </div>
         <div className="flex gap-3">
-          <Button variant="outline" className="rounded-xl px-5 h-11 font-semibold border-border/60 hover:bg-primary/5 hover:text-primary transition-all" onClick={handleScheduleAppointment}>
-            <Calendar className="w-4 h-4 mr-2" />
+          <Button variant="outline" className="rounded-xl px-6 h-12 font-bold border-border/60 hover:bg-muted/50 hover:text-foreground transition-all" onClick={handleScheduleAppointment}>
+            <Calendar className="w-4 h-4 mr-2 text-muted-foreground" />
             Schedule
           </Button>
-          <Button className="rounded-xl px-5 h-11 font-bold shadow-lg shadow-primary/20 transition-all hover:scale-[1.02] active:scale-[0.98]" onClick={handleAddPatient}>
+          <Button className="rounded-xl px-6 h-12 font-black shadow-lg shadow-primary/20 transition-all hover:scale-[1.02] active:scale-[0.98] bg-primary text-primary-foreground hover:bg-primary/90" onClick={handleAddPatient}>
             <Users className="w-4 h-4 mr-2" />
-            New Patient
+            Add Patient
           </Button>
         </div>
       </div>
 
       {/* Metric Cards Grid */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-5">
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
         <MetricCard
-          title="Today's Appointments"
+          title="Appointments"
           value={data.todayAppointments.toString()}
           subtitle="Scheduled today"
           icon={Calendar}
           detailsContent={appointmentDetails}
-          className="shadow-sm shadow-blue-500/5 hover:shadow-md transition-shadow"
+          className="glass-card shadow-sm shadow-blue-500/5 hover:shadow-md transition-shadow"
         />
 
         <MetricCard
-          title="Net Production"
+          title="Production"
           value={`$${data.netProduction.toLocaleString()}`}
-          subtitle="Today's revenue"
+          subtitle="Gross revenue today"
           icon={DollarSign}
           detailsContent={productionDetails}
-          className="shadow-sm shadow-indigo-500/5 hover:shadow-md transition-shadow"
+          className="glass-card shadow-sm shadow-indigo-500/5 hover:shadow-md transition-shadow"
         />
 
         <MetricCard
           title="New Leads"
           value={data.newLeads.toString()}
-          subtitle="This week"
+          subtitle="In the last 7 days"
           icon={UserCheck}
           detailsContent={newPatientsDetails}
-          className="shadow-sm shadow-purple-500/5 hover:shadow-md transition-shadow"
+          className="glass-card shadow-sm shadow-purple-500/5 hover:shadow-md transition-shadow"
         />
 
         <MetricCard
-          title="Patient Satisfaction"
+          title="NPS Score"
           value={data.patientSatisfaction.toFixed(1)}
-          subtitle="Average rating"
+          subtitle="Patient satisfaction"
           icon={Star}
           detailsContent={satisfactionDetails}
-          className="shadow-sm shadow-yellow-500/5 hover:shadow-md transition-shadow"
+          className="glass-card shadow-sm shadow-yellow-500/5 hover:shadow-md transition-shadow"
         />
       </div>
 
@@ -247,79 +253,106 @@ export default function Content() {
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
         {/* Schedule & Activity (Left/Center) */}
         <div className="lg:col-span-2 space-y-8">
-          <Card className="rounded-2xl border-border/50 shadow-sm overflow-hidden">
-            <CardHeader className="border-b border-border/40 pb-4">
+          <Card className="glass-card rounded-3xl border-border/50 overflow-hidden">
+            <CardHeader className="border-b border-border/40 pb-4 pt-6 px-6">
               <div className="flex items-center justify-between">
-                <CardTitle className="text-lg font-bold flex items-center gap-2.5">
-                  <div className="p-2 bg-primary/10 rounded-lg">
-                    <Clock className="w-4 h-4 text-primary" />
+                <CardTitle className="text-lg font-bold flex items-center gap-3">
+                  <div className="p-2.5 bg-primary/10 rounded-xl">
+                    <Clock className="w-5 h-5 text-primary" />
                   </div>
-                  Daily Schedule
+                  Daily Agenda
                 </CardTitle>
-                <Button variant="ghost" size="sm" className="text-primary font-bold hover:bg-primary/5">
-                  View full calendar
+                <Button variant="ghost" size="sm" className="text-primary font-bold hover:bg-primary/5 rounded-lg px-4" onClick={handleScheduleAppointment}>
+                  View Calendar
                 </Button>
               </div>
             </CardHeader>
             <CardContent className="p-0">
               <div className="divide-y divide-border/40">
                 {data.appointments.length > 0 ? (
-                  data.appointments.map((appointment, index) => (
-                    <div key={index} className="flex items-center justify-between p-5 hover:bg-muted/30 transition-colors group">
-                      <div className="flex items-center gap-5">
-                        <div className="text-sm font-bold text-muted-foreground/80 w-20">{appointment.time}</div>
+                  data.appointments.slice(0, 5).map((appointment, index) => (
+                    <div key={index} className="flex items-center justify-between p-6 hover:bg-muted/30 transition-colors group cursor-pointer">
+                      <div className="flex items-center gap-6">
+                        <div className="text-sm font-black text-muted-foreground w-16 bg-muted/50 py-1 px-2 rounded-lg text-center border border-border/50">
+                          {appointment.time}
+                        </div>
                         <div>
-                          <div className="font-bold text-foreground group-hover:text-primary transition-colors">{appointment.patient}</div>
-                          <div className="text-xs text-muted-foreground font-medium">{appointment.treatment}</div>
+                          <div className="font-bold text-foreground group-hover:text-primary transition-colors text-base">{appointment.patient}</div>
+                          <div className="text-xs text-muted-foreground font-medium uppercase tracking-wide mt-0.5">{appointment.treatment}</div>
                         </div>
                       </div>
                       <div className="flex items-center gap-4">
-                        <div className="px-2.5 py-1 rounded-lg text-[10px] font-bold uppercase tracking-wider bg-muted text-muted-foreground border border-border/40">
+                        <div className={`
+                          px-3 py-1 rounded-lg text-[10px] font-bold uppercase tracking-wider border
+                          ${appointment.status === 'confirmed' ? 'bg-green-500/10 text-green-600 border-green-500/20' :
+                            appointment.status === 'pending' ? 'bg-yellow-500/10 text-yellow-600 border-yellow-500/20' :
+                              'bg-muted text-muted-foreground border-border/40'}
+                        `}>
                           {appointment.status}
                         </div>
-                        <Button variant="ghost" size="icon" className="h-8 w-8 rounded-lg opacity-0 group-hover:opacity-100 transition-opacity">
+                        <Button variant="ghost" size="icon" className="h-8 w-8 rounded-lg text-muted-foreground opacity-0 group-hover:opacity-100 transition-all">
                           <ChevronRight className="h-4 w-4" />
                         </Button>
                       </div>
                     </div>
                   ))
                 ) : (
-                  <div className="p-8 text-center text-muted-foreground">
-                    <Calendar className="w-12 h-12 mx-auto mb-4 opacity-50" />
-                    <p>No appointments scheduled for today</p>
+                  <div className="p-12 text-center text-muted-foreground">
+                    <div className="w-16 h-16 bg-muted/50 rounded-full flex items-center justify-center mx-auto mb-4">
+                      <Calendar className="w-8 h-8 opacity-40" />
+                    </div>
+                    <p className="font-bold text-lg mb-1">Clear Schedule</p>
+                    <p className="text-sm opacity-70">No appointments scheduled for today.</p>
+                    <Button variant="link" onClick={handleScheduleAppointment} className="mt-2 text-primary">
+                      Open Calendar
+                    </Button>
                   </div>
                 )}
               </div>
+              {data.appointments.length > 5 && (
+                <div className="p-4 text-center border-t border-border/40 bg-muted/10">
+                  <Button variant="ghost" size="sm" className="text-xs font-bold text-muted-foreground hover:text-foreground" onClick={handleScheduleAppointment}>
+                    View {data.appointments.length - 5} more appointments
+                  </Button>
+                </div>
+              )}
             </CardContent>
           </Card>
 
-          <Card className="rounded-2xl border-border/50 shadow-sm overflow-hidden">
-            <CardHeader className="border-b border-border/40 pb-4">
-              <CardTitle className="text-lg font-bold flex items-center gap-2.5">
-                <div className="p-2 bg-primary/10 rounded-lg">
-                  <Activity className="w-4 h-4 text-primary" />
+          <Card className="glass-card rounded-3xl border-border/50 overflow-hidden">
+            <CardHeader className="border-b border-border/40 pb-4 pt-6 px-6">
+              <CardTitle className="text-lg font-bold flex items-center gap-3">
+                <div className="p-2.5 bg-primary/10 rounded-xl">
+                  <Activity className="w-5 h-5 text-primary" />
                 </div>
-                Recent Pulse
+                Live Pulse
               </CardTitle>
             </CardHeader>
-            <CardContent className="p-5">
+            <CardContent className="p-6">
               <div className="space-y-6">
                 {data.recentActivity.length > 0 ? (
-                  data.recentActivity.map((activity, index) => (
-                    <div key={index} className="flex gap-4">
-                      <div className="w-10 h-10 rounded-xl bg-muted flex items-center justify-center flex-shrink-0 border border-border/40">
-                        <Activity className="w-5 h-5 text-muted-foreground" />
+                  data.recentActivity.slice(0, 5).map((activity, index) => (
+                    <div key={index} className="flex gap-5 group relative">
+                      {/* Timeline line */}
+                      {index !== data.recentActivity.length - 1 && (
+                        <div className="absolute left-[19px] top-10 bottom-[-24px] w-[2px] bg-border/40" />
+                      )}
+
+                      <div className="w-10 h-10 rounded-xl bg-background border border-border/60 flex items-center justify-center flex-shrink-0 shadow-sm z-10 group-hover:border-primary/40 group-hover:text-primary transition-all">
+                        {activity.type === 'call' ? <Phone className="w-4 h-4" /> :
+                          activity.type === 'message' ? <MessageSquare className="w-4 h-4" /> :
+                            <Activity className="w-4 h-4" />}
                       </div>
-                      <div className="flex-1 min-w-0">
-                        <p className="text-sm font-semibold text-foreground leading-snug">{activity.message}</p>
-                        <p className="text-[11px] text-muted-foreground font-medium mt-1 uppercase tracking-tight">{activity.time}</p>
+                      <div className="flex-1 min-w-0 pt-1">
+                        <p className="text-sm font-semibold text-foreground leading-snug group-hover:text-primary transition-colors">{activity.message}</p>
+                        <p className="text-[10px] text-muted-foreground font-bold mt-1 uppercase tracking-tight opacity-70">{activity.time}</p>
                       </div>
                     </div>
                   ))
                 ) : (
                   <div className="text-center text-muted-foreground py-8">
-                    <Activity className="w-12 h-12 mx-auto mb-4 opacity-50" />
-                    <p>No recent activity</p>
+                    <Activity className="w-12 h-12 mx-auto mb-4 opacity-30" />
+                    <p className="font-medium">No recent activity</p>
                   </div>
                 )}
               </div>
@@ -327,71 +360,65 @@ export default function Content() {
           </Card>
         </div>
 
-        {/* AI Assistant Sidebar (Right) - Matching uploaded_media_4 */}
+        {/* AI Assistant Sidebar (Right) */}
         <div className="space-y-8">
-          <Card className="rounded-2xl border-primary/20 bg-primary/[0.02] shadow-xl shadow-primary/5 overflow-hidden">
-            <div className="bg-ai-gradient p-5 text-white">
-              <div className="flex items-center gap-2.5 mb-1">
-                <Zap className="w-5 h-5 fill-white" />
-                <h3 className="font-bold tracking-tight">AI Assistant Insights</h3>
+          <Card className="glass-card rounded-3xl border-primary/20 bg-background/50 shadow-2xl shadow-primary/5 overflow-hidden group">
+            <div className="bg-ai-gradient p-6 text-white relative overflow-hidden">
+              <div className="absolute -right-10 -top-10 w-40 h-40 bg-white/20 blur-3xl rounded-full pointer-events-none" />
+              <div className="flex items-center gap-3 mb-2 relative z-10">
+                <div className="p-1.5 bg-white/20 rounded-lg backdrop-blur-md">
+                  <Zap className="w-4 h-4 fill-white" />
+                </div>
+                <h3 className="font-black tracking-tight text-lg">Nova Insights</h3>
               </div>
-              <p className="text-[11px] font-medium opacity-80 uppercase tracking-widest">Optimizing your practice</p>
+              <p className="text-[10px] font-bold opacity-80 uppercase tracking-widest relative z-10 pl-1">Practice Optimization AI</p>
             </div>
-            <CardContent className="p-5 space-y-5">
+            <CardContent className="p-6 space-y-6">
               <div className="space-y-4">
-                <div className="p-4 rounded-xl bg-background border border-border/60 shadow-sm">
-                  <p className="text-xs font-bold text-primary uppercase tracking-wider mb-2">Getting Started</p>
-                  <p className="text-sm font-medium text-foreground leading-relaxed">
-                    Welcome to Orasync! Start by adding your first patient or setting up your clinic profile.
-                  </p>
-                  <div className="flex gap-2 mt-4">
-                    <Button size="sm" className="flex-1 text-[10px] font-bold rounded-lg" onClick={handleAddPatient}>
-                      Add Patient
-                    </Button>
-                    <Button size="sm" variant="outline" className="flex-1 text-[10px] font-bold rounded-lg">
-                      Setup Profile
-                    </Button>
+                <div className="p-5 rounded-2xl bg-background/80 border border-border/60 shadow-sm hover:shadow-md transition-all">
+                  <div className="flex justify-between items-start mb-2">
+                    <p className="text-[10px] font-bold text-primary uppercase tracking-wider">Action Item</p>
+                    <span className="w-2 h-2 rounded-full bg-red-500 animate-pulse" />
                   </div>
+                  <p className="text-sm font-bold text-foreground leading-relaxed mb-4">
+                    Welcome to Orasync! Start by adding your first patient to activate the AI reactivation engine.
+                  </p>
+                  <Button size="sm" className="w-full text-xs font-bold rounded-xl h-9" onClick={handleAddPatient}>
+                    Add First Patient
+                  </Button>
                 </div>
 
-                <div className="p-4 rounded-xl bg-background border border-border/60 shadow-sm">
-                  <p className="text-xs font-bold text-indigo-600 uppercase tracking-wider mb-2">AI Assistant</p>
+                <div className="p-5 rounded-2xl bg-background/80 border border-border/60 shadow-sm hover:shadow-md transition-all">
+                  <div className="flex justify-between items-start mb-2">
+                    <p className="text-[10px] font-bold text-indigo-500 uppercase tracking-wider">Tip</p>
+                  </div>
                   <p className="text-sm font-medium text-foreground leading-relaxed">
-                    Your AI assistant is ready to help optimize your practice and engage patients.
+                    Did you know? You can sync your calendar to enable auto-scheduling.
                   </p>
-                  <div className="flex gap-2 mt-4">
-                    <Button variant="outline" size="sm" className="flex-1 text-[10px] font-bold rounded-lg border-indigo-200 text-indigo-700 hover:bg-indigo-50">
-                      Learn More
-                    </Button>
-                  </div>
-                </div>
-
-                <div className="pt-2">
-                  <div className="flex items-center gap-2 p-3 rounded-xl bg-muted/40 border border-border/40 text-[11px] font-medium text-muted-foreground italic">
-                    <Zap className="w-3.5 h-3.5" />
-                    AI-powered features are now enabled for your clinic.
-                  </div>
                 </div>
               </div>
             </CardContent>
           </Card>
 
-          <Card className="rounded-2xl border-border/40 shadow-sm p-4">
-            <h4 className="text-xs font-bold uppercase tracking-widest text-muted-foreground mb-4">Quick Shortcuts</h4>
-            <div className="grid grid-cols-2 gap-3">
-              {[
-                { label: "New Campaign", icon: Megaphone },
-                { label: "Patient CRM", icon: Users },
-                { label: "Reports", icon: TrendingUp },
-                { label: "Finances", icon: DollarSign },
-              ].map((shortcut, i) => (
-                <button key={i} className="flex flex-col items-center justify-center p-3 rounded-xl border border-border/40 hover:bg-primary/5 hover:border-primary/20 transition-all group">
-                  <shortcut.icon className="w-5 h-5 text-muted-foreground group-hover:text-primary transition-colors mb-2" />
-                  <span className="text-[10px] font-bold text-muted-foreground group-hover:text-foreground transition-colors uppercase tracking-tighter">{shortcut.label}</span>
-                </button>
-              ))}
-            </div>
-          </Card>
+          <div className="grid grid-cols-2 gap-4">
+            {[
+              { label: "New Campaign", icon: Megaphone, action: handleSendCampaign, color: "text-pink-500", bg: "bg-pink-500/10" },
+              { label: "Patient CRM", icon: Users, action: handlePatientRecords, color: "text-blue-500", bg: "bg-blue-500/10" },
+              { label: "Reports", icon: TrendingUp, action: handleViewAnalytics, color: "text-green-500", bg: "bg-green-500/10" },
+              { label: "Reviews", icon: Star, action: handleReviewRequests, color: "text-yellow-500", bg: "bg-yellow-500/10" },
+            ].map((shortcut, i) => (
+              <button
+                key={i}
+                onClick={shortcut.action}
+                className="glass-card flex flex-col items-center justify-center p-5 rounded-2xl border border-border/50 hover:bg-muted/50 hover:border-primary/20 hover:scale-[1.03] transition-all group shadow-sm"
+              >
+                <div className={`p-3 rounded-xl ${shortcut.bg} mb-3 group-hover:scale-110 transition-transform`}>
+                  <shortcut.icon className={`w-5 h-5 ${shortcut.color}`} />
+                </div>
+                <span className="text-[10px] font-bold text-muted-foreground group-hover:text-foreground transition-colors uppercase tracking-tight">{shortcut.label}</span>
+              </button>
+            ))}
+          </div>
         </div>
       </div>
     </div>

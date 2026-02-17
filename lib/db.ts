@@ -3,7 +3,7 @@ import { Pool } from "pg"
 
 const pool = new Pool({
   connectionString: process.env.DATABASE_URL,
-  ssl: process.env.DATABASE_URL?.includes("postgres") ? { rejectUnauthorized: false } : undefined,
+  ssl: { rejectUnauthorized: false }, // Force SSL bypass for Vercel/Neon compatibility
 })
 
 export async function getTrialCredits(clinicId: string) {
@@ -172,15 +172,32 @@ export async function createCampaign(
   name: string,
   segmentCriteria: Record<string, unknown>,
   channels: string[],
+  batchSize = 100,
+  sendsPerMinute = 10,
+  dripSequence: any[] = [],
+  abTest = false
 ) {
   try {
     const result = await pool.query(
-      "INSERT INTO campaigns (clinic_id, name, segment_criteria, channels, status, created_at) VALUES ($1, $2, $3, $4, 'draft', NOW()) RETURNING *",
-      [clinicId, name, JSON.stringify(segmentCriteria), JSON.stringify(channels)]
+      "INSERT INTO campaigns (clinic_id, name, segment_criteria, channels, batch_size, sends_per_minute, drip_sequence, a_b_test, status, created_at) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, 'draft', NOW()) RETURNING *",
+      [clinicId, name, JSON.stringify(segmentCriteria), JSON.stringify(channels), batchSize, sendsPerMinute, JSON.stringify(dripSequence), abTest]
     )
     return result.rows[0]
   } catch (error) {
     console.error("Error creating campaign:", error)
+    return null
+  }
+}
+
+export async function startCampaign(clinicId: string, campaignId: string) {
+  try {
+    const result = await pool.query(
+      "UPDATE campaigns SET status = 'active', updated_at = NOW() WHERE id = $1 AND clinic_id = $2 RETURNING *",
+      [campaignId, clinicId]
+    )
+    return result.rows[0]
+  } catch (error) {
+    console.error("Error starting campaign:", error)
     return null
   }
 }
@@ -214,6 +231,19 @@ export async function createPatient(
     return result.rows[0]
   } catch (error) {
     console.error("Error creating patient:", error)
+    return null
+  }
+}
+
+export async function getPatientById(clinicId: string, patientId: string) {
+  try {
+    const result = await pool.query(
+      "SELECT * FROM patients WHERE clinic_id = $1 AND id = $2",
+      [clinicId, patientId]
+    )
+    return result.rows[0] || null
+  } catch (error) {
+    console.error("Error fetching patient by ID:", error)
     return null
   }
 }
@@ -571,4 +601,165 @@ export async function updateJobStatus(jobId: string, status: string, errorMessag
     console.error("Error updating job:", error)
     return null
   }
+}
+export async function getThreads(clinicId: string, limit = 50, filterChannel = 'all', searchTerm = '') {
+  try {
+    let query = `
+      SELECT t.*, 
+             p.first_name as patient_first_name, 
+             p.last_name as patient_last_name,
+             (SELECT content FROM messages WHERE thread_id = t.id ORDER BY created_at DESC LIMIT 1) as last_message_content
+      FROM threads t
+      LEFT JOIN patients p ON t.patient_id = p.id
+      WHERE t.clinic_id = $1
+    `
+    const params: (string | number)[] = [clinicId]
+    let paramIndex = 2
+
+    if (filterChannel !== 'all') {
+      query += ` AND t.channel = $${paramIndex}`
+      params.push(filterChannel)
+      paramIndex++
+    }
+
+    if (searchTerm) {
+      query += ` AND (p.first_name ILIKE $${paramIndex} OR p.last_name ILIKE $${paramIndex} OR t.contact_phone ILIKE $${paramIndex} OR t.contact_email ILIKE $${paramIndex})`
+      params.push(`%${searchTerm}%`)
+      paramIndex++
+    }
+
+    query += ` ORDER BY t.last_message_at DESC LIMIT $${paramIndex}`
+    params.push(limit)
+
+    const result = await pool.query(query, params)
+    return result.rows
+  } catch (error) {
+    console.error("Error fetching threads:", error)
+    return []
+  }
+}
+
+export async function getMessages(threadId: string, limit = 50) {
+  try {
+    const result = await pool.query(
+      "SELECT * FROM messages WHERE thread_id = $1 ORDER BY created_at ASC LIMIT $2",
+      [threadId, limit]
+    )
+    return result.rows
+  } catch (error) {
+    console.error("Error fetching messages:", error)
+    return []
+  }
+}
+
+export async function createMessage(
+  clinicId: string,
+  threadId: string,
+  senderType: 'staff' | 'patient' | 'ai' | 'system',
+  content: string,
+  userId?: string
+) {
+  const client = await pool.connect()
+  try {
+    await client.query("BEGIN")
+
+    // Insert message
+    const messageResult = await client.query(
+      "INSERT INTO messages (thread_id, clinic_id, sender_type, user_id, content, created_at) VALUES ($1, $2, $3, $4, $5, NOW()) RETURNING *",
+      [threadId, clinicId, senderType, userId || null, content]
+    )
+
+    // Update thread last_message_at
+    await client.query(
+      "UPDATE threads SET last_message_at = NOW() WHERE id = $1",
+      [threadId]
+    )
+
+    await client.query("COMMIT")
+    return messageResult.rows[0]
+  } catch (error) {
+    await client.query("ROLLBACK")
+    console.error("Error creating message:", error)
+    return null
+  } finally {
+    client.release()
+  }
+}
+
+export async function getAnalyticsData(clinicId: string, startDate?: string, endDate?: string) {
+  try {
+    // Basic aggregation queries
+    const revenue = await pool.query(
+      "SELECT SUM(amount_cents) as total, COUNT(*) as count FROM orders WHERE clinic_id = $1 AND status = 'captured' AND created_at >= $2 AND created_at <= $3",
+      [clinicId, startDate || '1970-01-01', endDate || '2100-01-01']
+    )
+
+    const appointments = await pool.query(
+      "SELECT COUNT(*) as count FROM appointments WHERE clinic_id = $1 AND scheduled_time >= $2 AND scheduled_time <= $3",
+      [clinicId, startDate || '1970-01-01', endDate || '2100-01-01']
+    )
+
+    const newPatients = await pool.query(
+      "SELECT COUNT(*) as count FROM patients WHERE clinic_id = $1 AND created_at >= $2 AND created_at <= $3",
+      [clinicId, startDate || '1970-01-01', endDate || '2100-01-01']
+    )
+
+    // Campaign stats
+    const campaigns = await pool.query(
+      "SELECT COUNT(*) as count, SUM(sent_count) as sent, SUM(opened_count) as opened, SUM(clicked_count) as clicked FROM campaigns WHERE clinic_id = $1 AND created_at >= $2 AND created_at <= $3",
+      [clinicId, startDate || '1970-01-01', endDate || '2100-01-01']
+    )
+
+    return {
+      revenue: { total: revenue.rows[0].total || 0, count: revenue.rows[0].count },
+      appointments: { count: appointments.rows[0].count },
+      patients: { new: newPatients.rows[0].count },
+      campaigns: campaigns.rows[0]
+    }
+  } catch (error) {
+    console.error("Error getting analytics data:", error)
+    return null
+  }
+}
+
+export async function getReviews(clinicId: string) {
+  // Mock data for now as we don't have a reviews table yet
+  return [
+    {
+      id: "1",
+      author: "Sarah Johnson",
+      rating: 5,
+      text: "Excellent service! Dr. Smith was very professional and caring.",
+      platform: "Google",
+      date: "2 days ago",
+      responded: true,
+    },
+    {
+      id: "2",
+      author: "Mike Chen",
+      rating: 5,
+      text: "Best dental experience I've had. Highly recommend!",
+      platform: "Yelp",
+      date: "1 week ago",
+      responded: true,
+    },
+    {
+      id: "3",
+      author: "Emma Davis",
+      rating: 4,
+      text: "Good service, but wait time was a bit long.",
+      platform: "Google",
+      date: "1 week ago",
+      responded: false,
+    },
+    {
+      id: "4",
+      author: "John Smith",
+      rating: 5,
+      text: "Very friendly staff and clean facility!",
+      platform: "Facebook",
+      date: "2 weeks ago",
+      responded: true,
+    },
+  ]
 }
