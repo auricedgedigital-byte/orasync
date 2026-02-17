@@ -23,13 +23,25 @@ export async function POST(
             [campaignId, clinicId]
         )
 
-        // TODO: Enqueue campaign job to worker system
-        // For now, we'll return success
-        // In production, this would trigger: await campaignQueue.add('process-campaign', { campaignId })
+        // Trigger immediate processing by calling the cron endpoint
+        try {
+            const cronSecret = process.env.CRON_SECRET || 'default-secret'
+            const baseUrl = process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3000'
+
+            await fetch(`${baseUrl}/api/cron/process-campaigns`, {
+                method: 'POST',
+                headers: {
+                    'Authorization': `Bearer ${cronSecret}`
+                }
+            })
+        } catch (triggerError) {
+            console.error('Failed to trigger campaign processing:', triggerError)
+            // Non-fatal - cron will pick it up eventually
+        }
 
         return NextResponse.json({
             status: 'queued',
-            estimated_time: '5-10 minutes'
+            estimated_time: '1-2 minutes'
         })
 
     } catch (error) {
