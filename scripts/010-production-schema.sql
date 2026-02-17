@@ -1,7 +1,6 @@
 -- Orasync Production Schema V1
 -- Consolidates and extends previous partial migrations.
 -- Run this in your Supabase SQL Editor.
-
 -- 1. Core Clinic & User
 CREATE TABLE IF NOT EXISTS clinics (
   id uuid PRIMARY KEY DEFAULT gen_random_uuid(),
@@ -9,16 +8,15 @@ CREATE TABLE IF NOT EXISTS clinics (
   subscription_tier text DEFAULT 'free',
   created_at timestamptz DEFAULT now()
 );
-
 CREATE TABLE IF NOT EXISTS users (
   id uuid PRIMARY KEY DEFAULT gen_random_uuid(),
   email text UNIQUE NOT NULL,
-  clinic_id uuid REFERENCES clinics(id) ON DELETE SET NULL,
-  full_name text,
-  role text DEFAULT 'staff',
-  created_at timestamptz DEFAULT now()
+  clinic_id uuid REFERENCES clinics(id) ON DELETE
+  SET NULL,
+    full_name text,
+    role text DEFAULT 'staff',
+    created_at timestamptz DEFAULT now()
 );
-
 -- 2. Unified Inbox
 CREATE TABLE IF NOT EXISTS threads (
   id uuid PRIMARY KEY DEFAULT gen_random_uuid(),
@@ -31,7 +29,6 @@ CREATE TABLE IF NOT EXISTS threads (
   last_message_at timestamptz DEFAULT now(),
   created_at timestamptz DEFAULT now()
 );
-
 CREATE TABLE IF NOT EXISTS messages (
   id uuid PRIMARY KEY DEFAULT gen_random_uuid(),
   thread_id uuid REFERENCES threads(id),
@@ -39,20 +36,19 @@ CREATE TABLE IF NOT EXISTS messages (
   content text NOT NULL,
   created_at timestamptz DEFAULT now()
 );
-
 -- 3. Calendar & Appointments
 CREATE TABLE IF NOT EXISTS appointments (
   id uuid PRIMARY KEY DEFAULT gen_random_uuid(),
   clinic_id uuid REFERENCES clinics(id),
   patient_name text NOT NULL,
-  appt_type text DEFAULT 'exam', -- cleaning, exam, etc
+  appt_type text DEFAULT 'exam',
+  -- cleaning, exam, etc
   start_time timestamptz NOT NULL,
   end_time timestamptz NOT NULL,
   status text DEFAULT 'confirmed',
   notes text,
   created_at timestamptz DEFAULT now()
 );
-
 -- 4. Reactivation & Campaigns
 CREATE TABLE IF NOT EXISTS campaigns (
   id uuid PRIMARY KEY DEFAULT gen_random_uuid(),
@@ -64,7 +60,6 @@ CREATE TABLE IF NOT EXISTS campaigns (
   open_rate float DEFAULT 0,
   created_at timestamptz DEFAULT now()
 );
-
 -- 5. Billing & Credits
 CREATE TABLE IF NOT EXISTS credits (
   clinic_id uuid REFERENCES clinics(id) PRIMARY KEY,
@@ -73,17 +68,16 @@ CREATE TABLE IF NOT EXISTS credits (
   campaign_balance int DEFAULT 1,
   updated_at timestamptz DEFAULT now()
 );
-
 CREATE TABLE IF NOT EXISTS transactions (
   id uuid PRIMARY KEY DEFAULT gen_random_uuid(),
   clinic_id uuid REFERENCES clinics(id),
-  pack_type text, -- 'starter_plan', 'email_pack'
+  pack_type text,
+  -- 'starter_plan', 'email_pack'
   amount_usd numeric,
   paypal_order_id text,
   status text DEFAULT 'completed',
   created_at timestamptz DEFAULT now()
 );
-
 -- 6. Reputation
 CREATE TABLE IF NOT EXISTS review_requests (
   id uuid PRIMARY KEY DEFAULT gen_random_uuid(),
@@ -91,23 +85,23 @@ CREATE TABLE IF NOT EXISTS review_requests (
   patient_contact text,
   channel text DEFAULT 'sms',
   status text DEFAULT 'sent',
-  sentiment text, -- 'positive', 'negative'
+  sentiment text,
+  -- 'positive', 'negative'
   rating int,
   created_at timestamptz DEFAULT now()
 );
-
 -- 7. Ads & Analytics
 CREATE TABLE IF NOT EXISTS ad_metrics_daily (
   id uuid PRIMARY KEY DEFAULT gen_random_uuid(),
   clinic_id uuid REFERENCES clinics(id),
   date date DEFAULT CURRENT_DATE,
-  platform text, -- facebook, google
+  platform text,
+  -- facebook, google
   spend numeric DEFAULT 0,
   revenue numeric DEFAULT 0,
   clicks int DEFAULT 0,
   leads int DEFAULT 0
 );
-
 -- Enable Row Level Security (RLS) on all tables
 ALTER TABLE clinics ENABLE ROW LEVEL SECURITY;
 ALTER TABLE users ENABLE ROW LEVEL SECURITY;
@@ -119,16 +113,25 @@ ALTER TABLE credits ENABLE ROW LEVEL SECURITY;
 ALTER TABLE transactions ENABLE ROW LEVEL SECURITY;
 ALTER TABLE review_requests ENABLE ROW LEVEL SECURITY;
 ALTER TABLE ad_metrics_daily ENABLE ROW LEVEL SECURITY;
-
 -- SIMPLE OPEN POLICY FOR MVP (WARNING: Lock down before real launch)
+DROP POLICY IF EXISTS "Allow all access to authenticated users" ON clinics;
 CREATE POLICY "Allow all access to authenticated users" ON clinics FOR ALL USING (auth.role() = 'authenticated');
+DROP POLICY IF EXISTS "Allow all access to authenticated users" ON users;
 CREATE POLICY "Allow all access to authenticated users" ON users FOR ALL USING (auth.role() = 'authenticated');
 -- Repeat simple policy for others to unblock development:
+DROP POLICY IF EXISTS "Allow all access to threads" ON threads;
 CREATE POLICY "Allow all access to threads" ON threads FOR ALL USING (true);
+DROP POLICY IF EXISTS "Allow all access to messages" ON messages;
 CREATE POLICY "Allow all access to messages" ON messages FOR ALL USING (true);
+DROP POLICY IF EXISTS "Allow all access to appointments" ON appointments;
 CREATE POLICY "Allow all access to appointments" ON appointments FOR ALL USING (true);
+DROP POLICY IF EXISTS "Allow all access to campaigns" ON campaigns;
 CREATE POLICY "Allow all access to campaigns" ON campaigns FOR ALL USING (true);
+DROP POLICY IF EXISTS "Allow all access to credits" ON credits;
 CREATE POLICY "Allow all access to credits" ON credits FOR ALL USING (true);
+DROP POLICY IF EXISTS "Allow all access to transactions" ON transactions;
 CREATE POLICY "Allow all access to transactions" ON transactions FOR ALL USING (true);
+DROP POLICY IF EXISTS "Allow all access to review_requests" ON review_requests;
 CREATE POLICY "Allow all access to review_requests" ON review_requests FOR ALL USING (true);
+DROP POLICY IF EXISTS "Allow all access to ad_metrics_daily" ON ad_metrics_daily;
 CREATE POLICY "Allow all access to ad_metrics_daily" ON ad_metrics_daily FOR ALL USING (true);

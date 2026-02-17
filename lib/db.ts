@@ -16,6 +16,9 @@ export async function getTrialCredits(clinicId: string) {
   }
 }
 
+import { QuotaManager } from "./nova/core/quota"
+import { AIQuality } from "./nova/types/ai.types"
+
 export async function checkAndDecrementCredits(
   clinicId: string,
   actionType: string,
@@ -24,53 +27,49 @@ export async function checkAndDecrementCredits(
   relatedId?: string,
   details?: Record<string, unknown>,
 ) {
+  // Use the new QuotaManager for AI credits if applicable
+  if (actionType.startsWith("ai_")) {
+    try {
+      const quota = new QuotaManager(pool)
+      const quality: AIQuality = actionType === "ai_premium" ? "premium" : "cheap"
+      // Basic check: 1 credit in UI = approx 100 estimated tokens for gating
+      const success = await quota.checkQuota(clinicId, amount * 100, quality)
+
+      // Fetch remaining for compatibility
+      const creditType = quality === "premium" ? "ai_premium" : "ai_cheap"
+      const balances = await pool.query("SELECT amount FROM balances WHERE clinic_id = $1 AND credit_type = $2", [clinicId, creditType])
+      return {
+        allowed: success,
+        remaining: { [actionType]: balances.rows[0]?.amount || 0 }
+      }
+    } catch (error) {
+      console.error("Quota consumption error:", error)
+      return { allowed: false, error: "Quota service error" }
+    }
+  }
+
+  // Fallback for legacy credits if still needed
   const client = await pool.connect()
   try {
     await client.query("BEGIN")
-
-    // Get current credits with lock
-    const credits = await client.query(
-      "SELECT * FROM trial_credits WHERE clinic_id = $1 FOR UPDATE",
-      [clinicId]
-    )
-
+    const credits = await client.query("SELECT * FROM trial_credits WHERE clinic_id = $1 FOR UPDATE", [clinicId])
     if (!credits.rows || credits.rows.length === 0) {
       await client.query("ROLLBACK")
-      return { allowed: false, remaining: null, error: "No trial credits found" }
+      return { allowed: false, remaining: null, error: "No credits found" }
     }
-
     const current = credits.rows[0]
     const currentAmount = current[actionType] || 0
-
     if (currentAmount < amount) {
       await client.query("ROLLBACK")
-      return {
-        allowed: false,
-        remaining: current,
-        error: `Insufficient ${actionType} credits. Available: ${currentAmount}, Required: ${amount}`,
-      }
+      return { allowed: false, remaining: current, error: `Insufficient ${actionType} credits` }
     }
-
-    // Decrement credits
-    await client.query(
-      `UPDATE trial_credits SET ${actionType} = ${actionType} - $1, modified_at = NOW() WHERE clinic_id = $2`,
-      [amount, clinicId]
-    )
-
-    // Log usage
-    await client.query(
-      "INSERT INTO usage_logs (clinic_id, user_id, action_type, amount, related_id, details, created_at) VALUES ($1, $2, $3, $4, $5, $6, NOW())",
-      [clinicId, userId || null, actionType, amount, relatedId || null, JSON.stringify(details || {})]
-    )
-
-    // Get updated credits
+    await client.query(`UPDATE trial_credits SET ${actionType} = ${actionType} - $1, modified_at = NOW() WHERE clinic_id = $2`, [amount, clinicId])
+    await client.query("INSERT INTO usage_logs (clinic_id, user_id, action_type, amount, related_id, details, created_at) VALUES ($1, $2, $3, $4, $5, $6, NOW())", [clinicId, userId || null, actionType, amount, relatedId || null, JSON.stringify(details || {})])
     const updated = await client.query("SELECT * FROM trial_credits WHERE clinic_id = $1", [clinicId])
-
     await client.query("COMMIT")
     return { allowed: true, remaining: updated.rows[0] }
   } catch (error) {
     await client.query("ROLLBACK")
-    console.error("Error checking/decrementing credits:", error)
     return { allowed: false, error: "Database error" }
   } finally {
     client.release()
@@ -171,16 +170,14 @@ export async function createCampaign(
   clinicId: string,
   name: string,
   segmentCriteria: Record<string, unknown>,
-  channels: string[],
-  batchSize = 100,
-  sendsPerMinute = 10,
-  dripSequence: any[] = [],
-  abTest = false
+  template: Record<string, unknown>,
+  channels: Record<string, boolean>,
+  status = 'draft'
 ) {
   try {
     const result = await pool.query(
-      "INSERT INTO campaigns (clinic_id, name, segment_criteria, channels, batch_size, sends_per_minute, drip_sequence, a_b_test, status, created_at) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, 'draft', NOW()) RETURNING *",
-      [clinicId, name, JSON.stringify(segmentCriteria), JSON.stringify(channels), batchSize, sendsPerMinute, JSON.stringify(dripSequence), abTest]
+      "INSERT INTO campaigns (clinic_id, name, segment_criteria, template, channels, status, created_at, updated_at) VALUES ($1, $2, $3, $4, $5, $6, NOW(), NOW()) RETURNING *",
+      [clinicId, name, JSON.stringify(segmentCriteria), JSON.stringify(template), JSON.stringify(channels), status]
     )
     return result.rows[0]
   } catch (error) {
@@ -251,7 +248,7 @@ export async function getPatientById(clinicId: string, patientId: string) {
 export async function getAppointments(clinicId: string, limit = 100) {
   try {
     const result = await pool.query(
-      "SELECT * FROM appointments WHERE clinic_id = $1 ORDER BY scheduled_time DESC LIMIT $2",
+      "SELECT * FROM appointments WHERE clinic_id = $1 ORDER BY start_time DESC LIMIT $2",
       [clinicId, limit]
     )
     return result.rows
@@ -263,14 +260,16 @@ export async function getAppointments(clinicId: string, limit = 100) {
 
 export async function createAppointment(
   clinicId: string,
-  patientEmail: string,
-  providerId: string,
-  scheduledTime: string,
+  patientName: string,
+  startTime: string,
+  endTime: string,
+  treatmentType = 'exam',
+  notes = ''
 ) {
   try {
     const result = await pool.query(
-      "INSERT INTO appointments (clinic_id, patient_email, provider_id, scheduled_time, status, created_at) VALUES ($1, $2, $3, $4, 'confirmed', NOW()) RETURNING *",
-      [clinicId, patientEmail, providerId, scheduledTime]
+      "INSERT INTO appointments (clinic_id, patient_name, start_time, end_time, treatment_type, status, notes, created_at) VALUES ($1, $2, $3, $4, $5, 'confirmed', $6, NOW()) RETURNING *",
+      [clinicId, patientName, startTime, endTime, treatmentType, notes]
     )
     return result.rows[0]
   } catch (error) {
@@ -695,7 +694,7 @@ export async function getAnalyticsData(clinicId: string, startDate?: string, end
     )
 
     const appointments = await pool.query(
-      "SELECT COUNT(*) as count FROM appointments WHERE clinic_id = $1 AND scheduled_time >= $2 AND scheduled_time <= $3",
+      "SELECT COUNT(*) as count FROM appointments WHERE clinic_id = $1 AND start_time >= $2 AND start_time <= $3",
       [clinicId, startDate || '1970-01-01', endDate || '2100-01-01']
     )
 
@@ -704,17 +703,27 @@ export async function getAnalyticsData(clinicId: string, startDate?: string, end
       [clinicId, startDate || '1970-01-01', endDate || '2100-01-01']
     )
 
-    // Campaign stats
+    // Campaign stats from JSONB
     const campaigns = await pool.query(
-      "SELECT COUNT(*) as count, SUM(sent_count) as sent, SUM(opened_count) as opened, SUM(clicked_count) as clicked FROM campaigns WHERE clinic_id = $1 AND created_at >= $2 AND created_at <= $3",
+      `SELECT 
+        COUNT(*) as count, 
+        SUM((stats->>'sent')::int) as sent, 
+        SUM((stats->>'opened')::int) as opened, 
+        SUM((stats->>'clicked')::int) as clicked 
+      FROM campaigns WHERE clinic_id = $1 AND created_at >= $2 AND created_at <= $3`,
       [clinicId, startDate || '1970-01-01', endDate || '2100-01-01']
     )
 
     return {
-      revenue: { total: revenue.rows[0].total || 0, count: revenue.rows[0].count },
+      revenue: { total: (revenue.rows[0].total || 0) / 100, count: revenue.rows[0].count }, // Convert cents to USD
       appointments: { count: appointments.rows[0].count },
       patients: { new: newPatients.rows[0].count },
-      campaigns: campaigns.rows[0]
+      campaigns: {
+        count: campaigns.rows[0].count,
+        sent: campaigns.rows[0].sent || 0,
+        opened: campaigns.rows[0].opened || 0,
+        clicked: campaigns.rows[0].clicked || 0
+      }
     }
   } catch (error) {
     console.error("Error getting analytics data:", error)

@@ -8,7 +8,7 @@ CREATE TABLE IF NOT EXISTS segments (
     created_at TIMESTAMPTZ DEFAULT NOW(),
     updated_at TIMESTAMPTZ DEFAULT NOW()
 );
-CREATE INDEX idx_segments_clinic_id ON segments(clinic_id);
+CREATE INDEX IF NOT EXISTS idx_segments_clinic_id ON segments(clinic_id);
 -- Create campaign_steps table for multi-channel sequencing
 CREATE TABLE IF NOT EXISTS campaign_steps (
     id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
@@ -23,7 +23,7 @@ CREATE TABLE IF NOT EXISTS campaign_steps (
     -- 'no_open', 'no_reply', 'always', null
     created_at TIMESTAMPTZ DEFAULT NOW()
 );
-CREATE INDEX idx_campaign_steps_campaign_id ON campaign_steps(campaign_id);
+CREATE INDEX IF NOT EXISTS idx_campaign_steps_campaign_id ON campaign_steps(campaign_id);
 -- Add columns to campaigns table for worker tracking
 ALTER TABLE campaigns
 ADD COLUMN IF NOT EXISTS status VARCHAR(50) DEFAULT 'draft',

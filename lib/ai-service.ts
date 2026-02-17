@@ -3,6 +3,7 @@
 
 import { Pool } from "pg"
 import { queryClinicMemory, storeClinicMemory } from "./agent/memory"
+import { nova } from "./nova/orchestrator"
 
 const pool = new Pool({
   connectionString: process.env.DATABASE_URL,
@@ -139,7 +140,7 @@ export function calculateCost(tokens: number, providerKey: string): number {
   return (tokens / 1000) * provider.costPer1KTokens
 }
 
-// Main AI generation function
+// Main AI generation function (Now powered by Nova Orchestrator)
 export async function generateAIResponse(
   prompt: string,
   options: {
@@ -150,6 +151,7 @@ export async function generateAIResponse(
     provider?: keyof typeof AI_PROVIDERS
     clinicId?: string
     userId?: string
+    quality?: "cheap" | "balanced" | "premium" | "auto"
   } = {}
 ) {
   const {
@@ -157,73 +159,43 @@ export async function generateAIResponse(
     context = "",
     maxTokens = 500,
     temperature = 0.7,
-    provider = (process.env.AI_PROVIDER as keyof typeof AI_PROVIDERS) || "together_free",
     clinicId,
     userId,
+    quality = "auto"
   } = options
 
-  // Get API key
-  const apiKey = getProviderApiKey(provider)
-  if (!apiKey && provider !== "together_free") {
-    throw new Error(`API key required for provider: ${provider}`)
+  if (!clinicId) {
+    throw new Error("clinicId is now required for AI orchestration")
   }
 
-  const providerConfig = AI_PROVIDERS[provider]
-
-  // Build full prompt with context
-  const fullPrompt = context
-    ? `Context: ${context}\n\nUser: ${prompt}`
-    : prompt
-
   try {
-    // Make API call
-    const response = await fetch(providerConfig.apiUrl, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: `Bearer ${apiKey}`,
-      },
-      body: JSON.stringify({
-        model: providerConfig.model,
-        messages: [
-          { role: "system", content: systemPrompt },
-          { role: "user", content: fullPrompt },
-        ],
-        max_tokens: maxTokens,
-        temperature: temperature,
-      }),
+    const result = await nova.run({
+      clinic_id: clinicId,
+      user_id: userId,
+      task_type: "general", // Can be dynamic based on systemPrompt
+      prompt: prompt,
+      context: [systemPrompt, context].filter(Boolean),
+      quality: quality,
+      max_tokens: maxTokens,
+      temperature: temperature
     })
 
-    if (!response.ok) {
-      const error = await response.text()
-      throw new Error(`AI API error: ${error}`)
-    }
-
-    const data = await response.json()
-    const text = data.choices?.[0]?.message?.content || ""
-    const tokensUsed = data.usage?.total_tokens || estimateTokens(fullPrompt + text)
-    const cost = calculateCost(tokensUsed, provider)
-
-    // Log AI usage if clinicId provided
-    if (clinicId) {
-      await logAIUsage(clinicId, userId, prompt, text, tokensUsed, cost, provider)
-    }
-
     return {
-      text,
-      tokensUsed,
-      cost,
-      provider: providerConfig.name,
+      text: result.result,
+      tokensUsed: result.tokens_used,
+      cost: result.cost_actual,
+      provider: result.provider,
+      requestId: result.request_id,
+      error: result.error
     }
   } catch (error) {
-    console.error("AI generation error:", error)
-    // Return fallback response
+    console.error("Nova call failed, falling back to basic handling:", error)
     return {
       text: generateFallbackResponse(prompt),
       tokensUsed: 0,
       cost: 0,
       provider: "fallback",
-      error: error instanceof Error ? error.message : "Unknown error",
+      error: error instanceof Error ? error.message : "Unknown error"
     }
   }
 }
