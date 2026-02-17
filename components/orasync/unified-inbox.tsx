@@ -5,6 +5,7 @@ import { ThreadList } from "./inbox/thread-list"
 import { ChatInterface } from "./inbox/chat-interface"
 import { PatientSidebar } from "./inbox/patient-sidebar"
 import { InboxStatsHeader } from "./inbox/inbox-stats-header"
+import { InboxQuickActions } from "./inbox/inbox-quick-actions"
 import { useUser } from "@/hooks/use-user"
 import type { Thread, Message, Patient } from "@/types/inbox"
 import { Loader2 } from "lucide-react"
@@ -150,8 +151,11 @@ export default function UnifiedInbox() {
       {/* Inbox Statistics Header */}
       <InboxStatsHeader />
 
+      {/* Quick Action Buttons */}
+      <InboxQuickActions />
+
       {/* Main Inbox Interface */}
-      <div className="flex h-[calc(100vh-20rem)] w-full bg-background border border-border/50 rounded-2xl overflow-hidden shadow-2xl">
+      <div className="flex h-[calc(100vh-26rem)] w-full bg-background border border-border/50 rounded-2xl overflow-hidden shadow-2xl">
         {/* Left Sidebar: Threads */}
         <div className="w-80 flex-shrink-0 min-w-[300px] border-r border-border/40">
           <ThreadList

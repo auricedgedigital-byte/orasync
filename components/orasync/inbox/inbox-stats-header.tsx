@@ -5,6 +5,7 @@ import { useUser } from "@/hooks/use-user"
 import { Card } from "@/components/ui/card"
 import { Mail, MessageSquare, Calendar, CheckCircle2 } from "lucide-react"
 import { cn } from "@/lib/utils"
+import { ChannelPreviewCards } from "./channel-preview-cards"
 
 interface InboxStats {
     totalMessages: number
@@ -49,12 +50,14 @@ export function InboxStatsHeader() {
 
     if (loading) {
         return (
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
-                {[1, 2, 3, 4].map((i) => (
-                    <Card key={i} className="glass-card p-6 animate-pulse">
-                        <div className="h-16 bg-muted/20 rounded" />
-                    </Card>
-                ))}
+            <div className="space-y-6">
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+                    {[1, 2, 3, 4].map((i) => (
+                        <Card key={i} className="glass-card p-6 animate-pulse">
+                            <div className="h-16 bg-muted/20 rounded" />
+                        </Card>
+                    ))}
+                </div>
             </div>
         )
     }
@@ -96,54 +99,62 @@ export function InboxStatsHeader() {
     ]
 
     return (
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
-            {metrics.map((metric, index) => (
-                <Card
-                    key={index}
-                    className={cn(
-                        "glass-card relative overflow-hidden group hover:scale-[1.02] transition-all duration-300 cursor-pointer",
-                        "border-border/50 hover:border-primary/30"
-                    )}
-                >
-                    {/* Background gradient glow */}
-                    <div className={cn(
-                        "absolute inset-0 bg-gradient-to-br opacity-0 group-hover:opacity-100 transition-opacity duration-500",
-                        metric.bgGradient
-                    )} />
+        <div className="space-y-6">
+            {/* Metrics Cards */}
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+                {metrics.map((metric, index) => (
+                    <Card
+                        key={index}
+                        className={cn(
+                            "glass-card relative overflow-hidden group hover:scale-[1.02] transition-all duration-300 cursor-pointer",
+                            "border-border/50 hover:border-primary/30"
+                        )}
+                    >
+                        {/* Background gradient glow */}
+                        <div className={cn(
+                            "absolute inset-0 bg-gradient-to-br opacity-0 group-hover:opacity-100 transition-opacity duration-500",
+                            metric.bgGradient
+                        )} />
 
-                    <div className="relative p-6">
-                        <div className="flex items-start justify-between mb-4">
-                            <div className={cn(
-                                "p-3 rounded-xl bg-background/80 backdrop-blur-sm shadow-lg",
-                                "group-hover:scale-110 transition-transform duration-300"
-                            )}>
-                                <metric.icon className={cn("h-6 w-6", metric.iconColor)} />
+                        <div className="relative p-6">
+                            <div className="flex items-start justify-between mb-4">
+                                <div className={cn(
+                                    "p-3 rounded-xl bg-background/80 backdrop-blur-sm shadow-lg",
+                                    "group-hover:scale-110 transition-transform duration-300"
+                                )}>
+                                    <metric.icon className={cn("h-6 w-6", metric.iconColor)} />
+                                </div>
+
+                                {metric.badge && (
+                                    <span className="px-2 py-1 rounded-full bg-destructive/20 text-destructive text-xs font-bold animate-pulse">
+                                        New
+                                    </span>
+                                )}
                             </div>
 
-                            {metric.badge && (
-                                <span className="px-2 py-1 rounded-full bg-destructive/20 text-destructive text-xs font-bold animate-pulse">
-                                    New
-                                </span>
-                            )}
+                            <div className="space-y-1">
+                                <h3 className="text-3xl font-black tracking-tight text-foreground">
+                                    {metric.value}
+                                </h3>
+                                <p className="text-sm font-bold text-muted-foreground uppercase tracking-wide">
+                                    {metric.label}
+                                </p>
+                                <p className="text-xs text-muted-foreground/70 font-medium">
+                                    {metric.description}
+                                </p>
+                            </div>
                         </div>
 
-                        <div className="space-y-1">
-                            <h3 className="text-3xl font-black tracking-tight text-foreground">
-                                {metric.value}
-                            </h3>
-                            <p className="text-sm font-bold text-muted-foreground uppercase tracking-wide">
-                                {metric.label}
-                            </p>
-                            <p className="text-xs text-muted-foreground/70 font-medium">
-                                {metric.description}
-                            </p>
-                        </div>
-                    </div>
+                        {/* Shine effect on hover */}
+                        <div className="absolute inset-0 -translate-x-full group-hover:translate-x-full transition-transform duration-1000 bg-gradient-to-r from-transparent via-white/5 to-transparent" />
+                    </Card>
+                ))}
+            </div>
 
-                    {/* Shine effect on hover */}
-                    <div className="absolute inset-0 -translate-x-full group-hover:translate-x-full transition-transform duration-1000 bg-gradient-to-r from-transparent via-white/5 to-transparent" />
-                </Card>
-            ))}
+            {/* Channel Preview Cards */}
+            {stats?.channels && stats.channels.length > 0 && (
+                <ChannelPreviewCards channels={stats.channels} />
+            )}
         </div>
     )
 }
