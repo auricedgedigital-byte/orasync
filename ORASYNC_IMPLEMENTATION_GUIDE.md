@@ -181,6 +181,113 @@ When provider credentials are missing or trial credits are insufficient:
 5. Monitor usage_logs table for analytics and debugging
 6. Set up alerts for campaigns that pause due to insufficient credits
 
+## Phase 9: AI Specialized Agents
+
+### Ad Creative Assistant
+**POST** `/api/v1/clinics/[cid]/ad-creative`
+
+Request (without confirm):
+```json
+{
+  "goal": "Attract new patients for teeth whitening",
+  "target_audience": "Adults 25-45 interested in cosmetic dentistry",
+  "platforms": ["facebook", "instagram"]
+}
+```
+
+Response:
+```json
+{
+  "requires_confirmation": true,
+  "estimate": {
+    "tokens": 150,
+    "credits_cost": 2,
+    "description": "This will generate ad copy and image prompts"
+  }
+}
+```
+
+Request (with confirm: true):
+```json
+{
+  "goal": "Attract new patients for teeth whitening",
+  "target_audience": "Adults 25-45 interested in cosmetic dentistry",
+  "platforms": ["facebook", "instagram"],
+  "confirm": true
+}
+```
+
+Response:
+```json
+{
+  "success": true,
+  "ad_creative": {
+    "copies": [{"platform": "facebook", "text": "..."}],
+    "image_prompt": "...",
+    "suggested_visuals": "..."
+  }
+}
+```
+
+### Clinical SOAP Note Assistant
+**POST** `/api/v1/clinics/[cid]/clinical-soap`
+
+Request:
+```json
+{
+  "raw_notes": "Patient presented with chief complaint of mild sensitivity...",
+  "patient_context": "New patient, first visit",
+  "confirm": true
+}
+```
+
+Response:
+```json
+{
+  "success": true,
+  "soap_note": {
+    "subjective": "...",
+    "objective": "...",
+    "assessment": "...",
+    "plan": "..."
+  }
+}
+```
+
+### Nova Router
+The AI infrastructure routes requests based on task complexity:
+- `ad_creative` → Google AI (premium)
+- `clinical_soap` → Google AI (premium)
+- `classification` → OpenRouter
+- `generate_email` → Google AI → OpenRouter fallback
+- `chatbot_response` → OpenRouter → Google AI fallback
+
+## Phase 10: Reputation Management
+
+### Database Tables
+- `reputation_settings` - Per-clinic settings for review requests
+- `reviews` - Stores all patient reviews with public/private classification
+- `review_requests` - Tracks sent review request campaigns
+
+### Settings API
+**GET** `/api/v1/clinics/[cid]/reputation/settings`
+**PUT** `/api/v1/clinics/[cid]/reputation/settings`
+
+Settings include:
+- `auto_request_enabled` - Auto-send review requests after appointments
+- `rating_threshold` - Rating below this triggers private intercept (default: 3)
+- `email_enabled` / `sms_enabled` - Channel preferences
+- `request_template_email` / `request_template_sms` - Customizable templates
+
+### Review Intercept Logic
+- Rating < 3 stars → Marked as private (`is_public: false`) → Routed to staff attention
+- Rating >= 3 stars → Marked as public → Can be shared externally
+
+### API Endpoints
+- `POST /api/v1/clinics/[cid]/reputation/request` - Send review request to patient
+- `GET /api/v1/clinics/[cid]/reputation/attention` - Get reviews needing staff attention
+- `POST /api/v1/clinics/[cid]/reputation/reviews/[reviewId]/respond` - Staff response to review
+
 ## Future Enhancements
 
 - LLM integration for AI suggestions (OpenAI/Claude)

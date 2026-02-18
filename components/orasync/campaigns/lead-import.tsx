@@ -163,6 +163,7 @@ Jane,Smith,jane.smith@example.com,+19876543210,1985-05-20,"456 Oak Ave, City, St
                     type="file"
                     accept=".csv"
                     className="hidden"
+                    title="Upload Patient CSV"
                     onChange={(e) => {
                         if (e.target.files && e.target.files[0]) {
                             handleFileSelect(e.target.files[0])

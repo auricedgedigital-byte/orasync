@@ -15,7 +15,17 @@ export class Router {
         "marketing_strategy": ["googleai", "openrouter"],
         "analytics_insight": ["googleai", "openrouter"],
         "chatbot_response": ["openrouter", "googleai"],
+        "ad_creative": ["googleai"],
+        "clinical_soap": ["googleai"],
         "default": ["googleai", "openrouter"]
+    }
+
+    private isComplexRequest(request: AIRequest): boolean {
+        // High token count or specific specialized tasks
+        const totalTokens = (request.prompt?.length || 0) / 4 + (request.max_tokens || 1000)
+        const specializedTasks = ["ad_creative", "clinical_soap", "analytics_insight"]
+
+        return totalTokens > 3000 || specializedTasks.includes(request.task_type)
     }
 
     selectProvider(request: AIRequest): AIProvider {
@@ -25,7 +35,6 @@ export class Router {
 
         // Rule 1: Explicit quality request
         if (quality === "premium") {
-            // Find the first provider in the chain that can handle premium (Google AI in our case)
             return this.providers["googleai"]
         }
 
@@ -33,7 +42,13 @@ export class Router {
             return this.providers["openrouter"]
         }
 
-        // Rule 2: Dynamic selection based on task and health (simplified health here)
+        // Rule 2: Complexity-based routing override (Auto mode)
+        if (quality === "auto" && this.isComplexRequest(request)) {
+            console.log(`NovaRouter: Routing complex task ${taskType} to premium provider`)
+            return this.providers["googleai"]
+        }
+
+        // Rule 3: Dynamic selection based on task and health
         for (const providerName of fallbackChain) {
             const provider = this.providers[providerName]
             if (provider) return provider

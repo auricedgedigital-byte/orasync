@@ -10,16 +10,13 @@ import {
   ArrowRight,
   CheckCircle2,
   Users,
-  BarChart3,
   Zap,
   MessageSquare,
-  Calendar,
-  MoveUpRight,
-  Shield,
-  Star as StarIcon,
-  Play,
   Globe,
-  Heart
+  Star as StarIcon,
+  Shield,
+  Play,
+  Sparkles
 } from "lucide-react"
 
 export default function LandingPage() {
@@ -34,18 +31,18 @@ export default function LandingPage() {
   }
 
   return (
-    <div className="min-h-screen bg-background text-foreground transition-colors duration-500 selection:bg-primary/20 selection:text-primary">
+    <div className="min-h-screen bg-[#f8fafc] text-[#0f172a] selection:bg-primary/20 selection:text-primary">
       {/* Navigation */}
-      <nav className="fixed top-0 w-full z-50 border-b border-border/40 bg-background/60 backdrop-blur-xl">
+      <nav className="fixed top-0 w-full z-50 border-b border-slate-100 bg-white/80 backdrop-blur-xl transition-all duration-500">
         <div className="max-w-7xl mx-auto px-6 lg:px-10 h-20 flex items-center justify-between">
-          <OrasyncLogo className="w-9 h-9" textClassName="text-2xl" />
+          <OrasyncLogo className="w-9 h-9" textClassName="text-2xl font-black tracking-tighter" />
 
-          <div className="hidden md:flex items-center gap-8">
-            {["Features", "Testimonials", "Pricing"].map((item) => (
+          <div className="hidden md:flex items-center gap-10">
+            {["About Us", "Features", "Pricing", "Blog"].map((item) => (
               <a
                 key={item}
-                href={`#${item.toLowerCase()}`}
-                className="text-sm font-semibold text-muted-foreground hover:text-foreground transition-colors tracking-tight"
+                href={`#${item.toLowerCase().replace(" ", "-")}`}
+                className="text-sm font-black text-slate-400 hover:text-primary transition-all tracking-tight uppercase tracking-[0.1em]"
               >
                 {item}
               </a>
@@ -54,255 +51,182 @@ export default function LandingPage() {
 
           <div className="flex items-center gap-4">
             <Link href="/auth/login">
-              <Button variant="ghost" className="font-bold text-sm rounded-xl">
-                Log in
-              </Button>
-            </Link>
-            <Link href="/auth/login">
-              <Button className="font-black text-sm px-6 rounded-xl shadow-lg shadow-primary/20 hover:scale-105 active:scale-95 transition-all">
-                GET STARTED
+              <Button className="font-black text-xs px-8 h-12 rounded-2xl bg-primary hover:bg-primary/90 text-white shadow-xl shadow-primary/20 transition-all hover:scale-[1.05] uppercase tracking-widest">
+                Start Growing
               </Button>
             </Link>
           </div>
         </div>
       </nav>
 
-      {/* Hero Section */}
-      <section className="relative pt-32 pb-24 lg:pt-48 lg:pb-32 overflow-hidden flex items-center justify-center">
-        {/* Background Dental Image Layer */}
-        <div className="absolute inset-0 z-0">
-          <div className="absolute inset-0 bg-gradient-to-b from-background via-background/80 to-background z-10" />
-          <Image
-            src="/placeholder.jpg"
-            alt="Dental Clinic"
-            fill
-            className="object-cover opacity-30 grayscale-[20%]"
-            priority
-          />
-        </div>
-
-        <div className="container relative z-20 max-w-7xl px-6">
-          <div className="flex flex-col items-center text-center">
-            {/* Announcement Badge */}
-            <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-primary/10 border border-primary/20 mb-8 animate-in fade-in slide-in-from-bottom-4 duration-700">
-              <span className="relative flex h-2 w-2">
-                <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-primary opacity-75"></span>
-                <span className="relative inline-flex rounded-full h-2 w-2 bg-primary"></span>
-              </span>
-              <span className="text-[10px] font-black tracking-[0.2em] text-primary uppercase">OraSync Revenue Engine v2.0</span>
-            </div>
-
-            {/* Main Glassmorphic Card */}
-            <div className="max-w-4xl p-10 lg:p-16 rounded-[2.5rem] bg-card/40 backdrop-blur-2xl border border-white/10 shadow-[0_0_80px_rgba(var(--primary),0.05)] animate-in zoom-in-95 duration-1000">
-              <h1 className="text-5xl md:text-7xl lg:text-[5.5rem] font-black tracking-tighter leading-[0.95] mb-8">
-                Reclaim <span className="text-primary italic">Time</span> & <br />
-                <span className="bg-gradient-to-r from-primary to-ai-secondary bg-clip-text text-transparent">Revenue</span> for Your <br />
-                Dental Practice.
-              </h1>
-
-              <p className="max-w-2xl mx-auto text-lg md:text-xl text-muted-foreground font-medium mb-12">
-                The AI-powered Dental Operating System. Reactivate lost patients, automate unified messaging, and grow your reputation—all on autopilot.
-              </p>
-
-              <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
-                <Link href="/auth/login" className="w-full sm:w-auto">
-                  <Button size="lg" className="w-full sm:w-auto h-14 px-8 rounded-2xl font-black text-lg tracking-tight shadow-xl shadow-primary/30 hover:scale-[1.03] transition-all">
-                    Get Started Free
-                  </Button>
-                </Link>
-                <div className="text-sm font-bold text-muted-foreground">
-                  Your Credit Balance: <span className="text-primary">$50 Trial</span>
-                </div>
+      {/* Structured Single Column Flow */}
+      <main>
+        {/* Core Hero Section */}
+        <section className="relative pt-40 pb-0 lg:pt-64 overflow-hidden bg-white">
+          <div className="container max-w-5xl px-6 mx-auto text-center space-y-12 animate-in fade-in slide-in-from-bottom-8 duration-1000">
+            <div className="space-y-6">
+              <div className="inline-flex items-center gap-3 px-5 py-2.5 bg-primary/5 rounded-full border border-primary/10">
+                <Sparkles className="h-4 w-4 text-primary" />
+                <span className="text-[10px] font-black text-primary uppercase tracking-[0.3em]">The New Standard in Dental OS</span>
               </div>
+              <h1 className="text-6xl md:text-8xl font-black tracking-tighter leading-[0.9] text-slate-900">
+                Automate <span className="text-primary italic">Growth</span><br />
+                Reclaim <span className="text-primary">Revenue</span>
+              </h1>
+              <p className="max-w-2xl mx-auto text-xl md:text-2xl text-slate-400 font-bold leading-relaxed tracking-tight group">
+                Fill empty clinical chairs with the <span className="text-slate-600 transition-colors group-hover:text-primary">Nova Soul</span> autonomous engine.
+              </p>
             </div>
 
-            {/* Trusted By Section */}
-            <div className="mt-20 w-full animate-in fade-in duration-1000 delay-500">
-              <p className="text-[10px] font-black uppercase tracking-[0.3em] text-muted-foreground mb-8">TRUSTED BY LEADING DENTISTS</p>
-              <div className="flex overflow-hidden relative group">
-                <div className="flex animate-marquee whitespace-nowrap gap-16 grayscale opacity-40 group-hover:opacity-100 transition-opacity">
-                  {["SMILESTUDIO", "DENTALCORP", "ORTHOFLOW", "PREMIERCARE", "CITYDENTAL", "ELITEORTHO"].map(brand => (
-                    <span key={brand} className="text-2xl font-black tracking-tighter">{brand}</span>
-                  ))}
+            <div className="flex flex-col sm:flex-row items-center justify-center gap-8">
+              <Link href="/auth/login">
+                <Button size="lg" className="h-20 px-12 rounded-[2rem] font-black text-xl tracking-tight shadow-[0_20px_50px_-10px_rgba(var(--primary),0.3)] bg-primary hover:bg-primary/95 transition-all hover:scale-[1.05] active:scale-95 group">
+                  Start Your Expedition
+                  <ArrowRight className="ml-4 h-6 w-6 group-hover:translate-x-2 transition-transform" />
+                </Button>
+              </Link>
+              <div className="flex items-center gap-4 text-left">
+                <div className="w-12 h-12 rounded-2xl bg-slate-50 border border-slate-100 flex items-center justify-center">
+                  <Zap className="h-5 w-5 text-primary" />
                 </div>
-                {/* Secondary for infinite loop */}
-                <div className="flex absolute top-0 animate-marquee2 whitespace-nowrap gap-16 grayscale opacity-40 group-hover:opacity-100 transition-opacity ml-16">
-                  {["SMILESTUDIO", "DENTALCORP", "ORTHOFLOW", "PREMIERCARE", "CITYDENTAL", "ELITEORTHO"].map(brand => (
-                    <span key={`${brand}-2`} className="text-2xl font-black tracking-tighter">{brand}</span>
-                  ))}
+                <div>
+                  <p className="text-[10px] font-black text-slate-300 uppercase tracking-widest">Pre-Loaded Grant</p>
+                  <p className="text-lg font-black text-primary">50 AI Credits</p>
                 </div>
               </div>
             </div>
           </div>
-        </div>
-      </section>
 
-      {/* Testimonial Section - Designs Reference */}
-      <section className="py-24 bg-muted/30">
-        <div className="max-w-7xl mx-auto px-6 lg:px-10">
-          <div className="grid md:grid-cols-3 gap-8">
-            {[
-              {
-                name: "Dr. Anya Sharma",
-                quote: "OraSync's AI brought back patients I thought were lost forever. Our bookings increased by 30% in a month!",
-                image: "https://api.dicebear.com/7.x/avataaars/svg?seed=Anya"
-              },
-              {
-                name: "Dr. Mark Davis",
-                quote: "The unified inbox is a game-changer. No more missed messages from different platforms. It saves my front desk hours daily.",
-                image: "https://api.dicebear.com/7.x/avataaars/svg?seed=Mark"
-              },
-              {
-                name: "Dr. Kenji Tanaka",
-                quote: "My online reputation has never been better. OraSync automates review requests, and patients are actually responding!",
-                image: "https://api.dicebear.com/7.x/avataaars/svg?seed=Kenji"
-              }
-            ].map((t, idx) => (
-              <div key={idx} className="p-8 rounded-[2rem] bg-background border border-border/50 shadow-sm relative overflow-hidden group hover:-translate-y-1 transition-all">
-                <div className="flex items-center gap-4 mb-6">
-                  <div className="w-14 h-14 rounded-full overflow-hidden border-2 border-primary/20">
-                    <img src={t.image} alt={t.name} />
-                  </div>
-                  <div>
-                    <h4 className="font-bold text-sm tracking-tight">{t.name}</h4>
-                    <div className="flex text-amber-400">
-                      {[1, 2, 3, 4, 5].map(i => <StarIcon key={i} className="w-3 h-3 fill-current" />)}
+          {/* Seamless Continuation - The "Other Part" (Hero Image) */}
+          <div className="relative mt-24 max-w-7xl mx-auto px-6 lg:px-10">
+            <div className="relative w-full aspect-[21/10] lg:aspect-[21/9] rounded-t-[4rem] overflow-hidden shadow-[0_-40px_100px_-20px_rgba(0,0,0,0.1)] border-t border-x border-slate-100 animate-in fade-in slide-in-from-bottom-20 duration-1000 delay-500">
+              <Image
+                src="/hero.png"
+                alt="High-Fidelity Practice Environment"
+                fill
+                className="object-cover"
+                priority
+              />
+              <div className="absolute inset-x-0 bottom-0 h-1/2 bg-gradient-to-t from-white via-white/50 to-transparent" />
+
+              {/* Security Float Badge */}
+              <div className="absolute top-12 left-12 p-8 bg-white/60 backdrop-blur-3xl rounded-[2.5rem] border border-white/40 shadow-2xl hidden lg:flex items-center gap-5">
+                <div className="h-16 w-16 rounded-2xl bg-primary/20 flex items-center justify-center">
+                  <Shield className="h-8 w-8 text-primary" />
+                </div>
+                <div className="text-left">
+                  <h4 className="font-black text-slate-900 text-xl leading-tight uppercase tracking-tighter">HIPAA Sovereign</h4>
+                  <p className="text-[10px] font-black text-slate-500 uppercase tracking-[0.2em]">Enterprise Standard 2.4</p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        {/* Practice Network Sequence */}
+        <section className="py-32 bg-white relative z-10 border-b border-slate-50">
+          <div className="container max-w-7xl px-6 mx-auto">
+            <p className="text-center text-[10px] font-black uppercase tracking-[0.6em] text-slate-300 mb-20 italic">Driving the performance of world-class clinics</p>
+            <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-20 items-center justify-items-center opacity-30 grayscale hover:grayscale-0 hover:opacity-100 transition-all duration-1000 cursor-default">
+              {[1, 2, 3, 4, 5, 6].map((i) => (
+                <div key={i} className="flex flex-col items-center gap-3">
+                  <div className="w-12 h-12 rounded-2xl bg-slate-100 group-hover:bg-primary/20 transition-all mb-2" />
+                  <span className="font-black text-slate-200 tracking-tighter text-xs uppercase">CLINIC NODE {i}</span>
+                </div>
+              ))}
+            </div>
+          </div>
+        </section>
+
+        {/* Feature Narrative - Continuous flow into the Intelligence Engine */}
+        <section className="py-40 bg-slate-50/50">
+          <div className="container max-w-7xl px-6 lg:px-10 mx-auto">
+            <div className="grid lg:grid-cols-2 gap-32 items-center">
+              <div className="relative h-[750px] rounded-[5rem] overflow-hidden shadow-[0_50px_100px_-20px_rgba(0,0,0,0.15)] border-[12px] border-white">
+                <Image src="/dentist.png" alt="Clinical Precision" fill className="object-cover" />
+                <div className="absolute inset-0 bg-gradient-to-t from-slate-900/70 via-transparent to-transparent" />
+                <div className="absolute bottom-16 left-16 right-16 p-10 bg-white/20 backdrop-blur-3xl rounded-[3rem] border border-white/30 shadow-2xl">
+                  <p className="text-white text-2xl font-black italic tracking-tight leading-snug">"Orasync has completely overhauled our practice ROI. It's the partner we've always needed for re-engagement."</p>
+                  <div className="mt-6 flex items-center gap-4">
+                    <div className="w-12 h-12 rounded-2xl bg-primary shadow-lg shadow-primary/40" />
+                    <div>
+                      <p className="text-white text-base font-black uppercase tracking-widest">Dr. Sarah Jenkins</p>
+                      <p className="text-white/70 text-[10px] font-black tracking-[0.2em] uppercase">Founder, Smile Studio</p>
                     </div>
                   </div>
                 </div>
-                <p className="text-muted-foreground font-medium leading-relaxed italic text-sm">"{t.quote}"</p>
               </div>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      {/* Key Features & Benefits */}
-      <section id="features" className="py-32 overflow-hidden relative">
-        <div className="absolute top-1/2 left-0 w-[500px] h-[500px] bg-primary/5 blur-[120px] rounded-full pointer-events-none" />
-        <div className="max-w-7xl mx-auto px-6 lg:px-10">
-          <div className="text-center mb-24">
-            <h2 className="text-[10px] font-black tracking-[0.4em] text-primary uppercase mb-6">FEATURES</h2>
-            <h3 className="text-4xl lg:text-6xl font-black tracking-tighter">Smart solutions to optimize <br /> every patient touchpoint.</h3>
-          </div>
-
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-            {[
-              {
-                title: "Reactivation Campaigns",
-                desc: "Automated text & email to dormant patients. Seamlessly fill empty chairs.",
-                icon: Zap,
-                benefit: "+25% average revenue boost"
-              },
-              {
-                title: "Unified Inbox",
-                desc: "Centralize all messages (SMS, email, social). Respond faster from one dashboard.",
-                icon: MessageSquare,
-                benefit: "Zero missed communications"
-              },
-              {
-                title: "AI Chatbot",
-                desc: "24/7 scheduling & FAQs for patients. Handles inquiries after hours.",
-                icon: Globe,
-                benefit: "60% reduction in phone calls"
-              },
-              {
-                title: "Reputation Management",
-                desc: "Automate review requests & monitor feedback. Attract more new patients.",
-                icon: StarIcon,
-                benefit: "Attract more new patients"
-              }
-            ].map((feature, i) => (
-              <div key={i} className="group p-8 rounded-[2rem] bg-card/50 backdrop-blur-md border border-border/50 hover:border-primary/40 hover:bg-card transition-all duration-500 flex flex-col items-center text-center">
-                <div className="w-14 h-14 rounded-2xl bg-primary/10 flex items-center justify-center mb-8 group-hover:scale-110 transition-transform">
-                  <feature.icon className="w-7 h-7 text-primary" />
+              <div className="space-y-20">
+                <div className="space-y-8">
+                  <div className="inline-flex items-center gap-3 px-5 py-2.5 bg-primary/10 rounded-full border border-primary/20">
+                    <Sparkles className="h-5 w-5 text-primary" />
+                    <span className="text-[12px] font-black text-primary uppercase tracking-[0.2em]">The Intelligence Engine</span>
+                  </div>
+                  <h2 className="text-6xl lg:text-8xl font-black tracking-tighter leading-[0.9] text-slate-900">
+                    Autonomous <br /><span className="text-primary italic">Clinical Precision</span>
+                  </h2>
+                  <p className="text-2xl text-slate-400 font-bold leading-relaxed tracking-tight max-w-xl">Nova handles the weight of clinical communication so your team can focus on the patient experience.</p>
                 </div>
-                <h4 className="text-xl font-black tracking-tight mb-4">{feature.title}</h4>
-                <p className="text-muted-foreground text-sm font-medium mb-6 leading-relaxed">{feature.desc}</p>
-                <div className="mt-auto px-3 py-1.5 rounded-full bg-primary/5 border border-primary/10 text-[10px] font-black text-primary uppercase tracking-widest">
-                  Benefit: {feature.benefit}
+
+                <div className="space-y-12">
+                  {[
+                    { title: "Smart Reactivations", desc: "Autonomous sequences that re-ignite dormant patient pipelines on autopilot.", icon: Users },
+                    { title: "Unified Command Hub", desc: "A high-fidelity cockpit for SMS, WhatsApp, and Web Chat integration.", icon: MessageSquare },
+                    { title: "Reputation Guardian", desc: "Automate your social proof with clinical review generation and monitoring.", icon: StarIcon }
+                  ].map((f, i) => (
+                    <div key={i} className="flex gap-10 group">
+                      <div className="h-20 w-20 rounded-[2rem] bg-white shadow-xl flex items-center justify-center border border-slate-100 group-hover:border-primary/50 transition-all flex-shrink-0 group-hover:scale-110 group-hover:-rotate-3">
+                        <f.icon className="h-8 w-8 text-primary" />
+                      </div>
+                      <div className="space-y-2 pt-4">
+                        <h4 className="text-3xl font-black text-slate-900 tracking-tighter group-hover:text-primary transition-colors">{f.title}</h4>
+                        <p className="text-xl font-bold text-slate-400 leading-relaxed group-hover:text-slate-500 transition-colors">{f.desc}</p>
+                      </div>
+                    </div>
+                  ))}
                 </div>
               </div>
+            </div>
+          </div>
+        </section>
+
+        {/* Global CTA Climax */}
+        <section className="py-64 bg-white relative overflow-hidden">
+          <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[1000px] h-[1000px] bg-primary/5 blur-[160px] rounded-full" />
+          <div className="container max-w-5xl px-6 mx-auto text-center space-y-16 relative z-10 animate-in fade-in zoom-in-95 duration-1000">
+            <div className="space-y-6">
+              <h2 className="text-6xl md:text-9xl font-black tracking-tighter text-slate-900 leading-[0.85]">Ready to start<br /><span className="text-primary italic">Your Ascension?</span></h2>
+              <p className="text-3xl text-slate-400 font-bold max-w-2xl mx-auto tracking-tight">Join the elite network of dental leaders scaling with Orasync.</p>
+            </div>
+
+            <div className="flex flex-col items-center gap-10">
+              <Link href="/auth/login">
+                <Button size="lg" className="h-24 px-20 lg:px-24 rounded-[3rem] font-black text-3xl shadow-[0_30px_100px_-20px_rgba(var(--primary),0.5)] bg-primary hover:bg-primary/95 transition-all hover:scale-[1.05] active:scale-95">
+                  Claim Your Seat
+                  <ArrowRight className="ml-8 h-10 w-10" />
+                </Button>
+              </Link>
+              <div className="flex flex-col items-center gap-4">
+                <div className="flex -space-x-5">
+                  {[1, 2, 3, 4, 5].map(i => <div key={i} className="w-14 h-14 rounded-full bg-slate-100 border-8 border-white shadow-xl" />)}
+                </div>
+                <span className="text-[12px] font-black text-slate-300 uppercase tracking-[0.4em]">Integrated across 500+ clinics worldwide</span>
+              </div>
+            </div>
+          </div>
+        </section>
+      </main>
+
+      {/* Footer */}
+      <footer className="py-24 border-t border-slate-50 bg-slate-50/50 relative z-20">
+        <div className="container max-w-7xl px-6 lg:px-10 mx-auto flex flex-col md:flex-row justify-between items-center gap-16">
+          <OrasyncLogo className="w-10 h-10 opacity-40 grayscale hover:grayscale-0 hover:opacity-100 transition-all duration-700" textClassName="text-2xl font-black opacity-40 tracking-tighter" />
+          <div className="flex gap-16">
+            {["Terms", "Privacy", "HIPAA"].map(l => (
+              <a key={l} href="#" className="text-[12px] font-black uppercase tracking-[0.3em] text-slate-300 hover:text-primary transition-all">{l}</a>
             ))}
           </div>
-        </div>
-      </section>
-
-      {/* Trust Indicators */}
-      <section className="py-12 border-y border-border/40 bg-secondary/20">
-        <div className="max-w-7xl mx-auto px-6 flex flex-wrap justify-center gap-12">
-          {[
-            { icon: Shield, label: "HIPAA Compliant" },
-            { icon: Zap, label: "99.9% Uptime" },
-            { icon: Users, label: "24/7 Support" }
-          ].map((item, i) => (
-            <div key={i} className="flex items-center gap-2 text-xs font-black uppercase tracking-[0.2em] text-muted-foreground">
-              <item.icon className="w-4 h-4 text-primary" />
-              {item.label}
-            </div>
-          ))}
-        </div>
-      </section>
-
-      {/* Flexible Billing & Plans */}
-      <section id="pricing" className="py-32 relative">
-        <div className="max-w-7xl mx-auto px-6 lg:px-10">
-          <div className="text-center mb-16">
-            <h3 className="text-4xl lg:text-5xl font-black tracking-tighter mb-6">Ready to Transform Your Practice?</h3>
-            <Link href="/auth/login">
-              <Button size="lg" className="h-14 px-10 rounded-2xl font-black shadow-xl shadow-primary/20 hover:scale-105 transition-all">
-                Get Started Free
-              </Button>
-            </Link>
-            <p className="mt-4 text-xs font-bold text-muted-foreground tracking-widest">Your Credit Balance: $50 Trial</p>
-          </div>
-
-          <div className="max-w-4xl mx-auto grid grid-cols-1 md:grid-cols-2 gap-8 text-center">
-            <div className="p-10 rounded-[3rem] bg-card/60 backdrop-blur-xl border border-border/50 hover:border-primary/20 transition-all">
-              <h4 className="text-xl font-black mb-2 tracking-tight">Starter Credit Pack</h4>
-              <p className="text-muted-foreground text-sm mb-6">Ideal for small clinics testing the waters.</p>
-              <div className="text-4xl font-black mb-6">$45<span className="text-lg text-muted-foreground">/month</span></div>
-              <ul className="text-sm font-semibold space-y-3 mb-8 text-left max-w-[200px] mx-auto">
-                <li className="flex gap-2"><CheckCircle2 className="w-4 h-4 text-green-500" /> 1,000 Credits</li>
-                <li className="flex gap-2"><CheckCircle2 className="w-4 h-4 text-green-500" /> All features included</li>
-                <li className="flex gap-2"><CheckCircle2 className="w-4 h-4 text-green-500" /> AI Nova basic access</li>
-              </ul>
-              <Button variant="outline" className="w-full rounded-xl font-bold">Choose Starter</Button>
-            </div>
-
-            <div className="p-10 rounded-[3rem] bg-primary text-primary-foreground shadow-2xl shadow-primary/30 relative overflow-hidden group hover:scale-[1.02] transition-all">
-              <div className="absolute top-0 right-0 bg-white/20 px-3 py-1 rounded-bl-2xl text-[10px] font-black uppercase tracking-widest">Best Value</div>
-              <h4 className="text-xl font-black mb-2 tracking-tight">Growth Subscription</h4>
-              <p className="opacity-80 text-sm mb-6">Perfect for high-growth practices.</p>
-              <div className="text-4xl font-black mb-6">$199<span className="opacity-70 text-lg font-bold">/month</span></div>
-              <ul className="text-sm font-bold space-y-3 mb-8 text-left max-w-[200px] mx-auto">
-                <li className="flex gap-2"><CheckCircle2 className="w-4 h-4 text-white" /> 5,000 Credits</li>
-                <li className="flex gap-2"><CheckCircle2 className="w-4 h-4 text-white" /> Priority AI Nova</li>
-                <li className="flex gap-2"><CheckCircle2 className="w-4 h-4 text-white" /> Advanced analytics</li>
-              </ul>
-              <Button className="w-full rounded-xl bg-white text-primary hover:bg-white/90 font-black">Choose Growth</Button>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* Simple Footer */}
-      <footer className="py-20 border-t border-border/40 bg-card/20">
-        <div className="max-w-7xl mx-auto px-6 lg:px-10 text-center">
-          <OrasyncLogo className="w-10 h-10 mx-auto mb-10" />
-          <div className="flex flex-wrap justify-center gap-10 text-sm font-bold text-muted-foreground uppercase tracking-widest mb-16">
-            <a href="#" className="hover:text-primary transition-colors">Product</a>
-            <a href="#" className="hover:text-primary transition-colors">Solutions</a>
-            <a href="#" className="hover:text-primary transition-colors">Resources</a>
-            <a href="#" className="hover:text-primary transition-colors">Company</a>
-          </div>
-          <p className="text-[10px] font-black tracking-[0.4em] text-muted-foreground mb-8 uppercase">© 2024 ORASYNC. ALL RIGHTS RESERVED.</p>
-          <div className="flex justify-center gap-6 opacity-60">
-            {/* Simple social icon placeholders */}
-            <div className="w-8 h-8 rounded-full bg-border" />
-            <div className="w-8 h-8 rounded-full bg-border" />
-            <div className="w-8 h-8 rounded-full bg-border" />
-          </div>
+          <p className="text-[12px] font-black uppercase tracking-[0.2em] text-slate-200">© 2026 Orasync Laboratory. High Fidelity Growth.</p>
         </div>
       </footer>
     </div>

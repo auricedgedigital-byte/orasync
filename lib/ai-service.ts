@@ -172,7 +172,7 @@ export async function generateAIResponse(
     const result = await nova.run({
       clinic_id: clinicId,
       user_id: userId,
-      task_type: "general", // Can be dynamic based on systemPrompt
+      task_type: "general",
       prompt: prompt,
       context: [systemPrompt, context].filter(Boolean),
       quality: quality,
@@ -200,74 +200,14 @@ export async function generateAIResponse(
   }
 }
 
-// Log AI usage to database
-async function logAIUsage(
-  clinicId: string,
-  userId: string | undefined,
-  prompt: string,
-  response: string,
-  tokens: number,
-  cost: number,
-  provider: string
-) {
-  try {
-    await pool.query(
-      `INSERT INTO usage_logs (clinic_id, user_id, action_type, amount, details, created_at)
-       VALUES ($1, $2, $3, $4, $5, NOW())`,
-      [
-        clinicId,
-        userId || null,
-        "ai_suggestion",
-        tokens,
-        JSON.stringify({
-          provider,
-          cost,
-          prompt_preview: prompt.substring(0, 100),
-          response_preview: response.substring(0, 100),
-        }),
-      ]
-    )
-  } catch (error) {
-    console.error("Failed to log AI usage:", error)
-  }
-}
-
-// Get API key from environment
-function getProviderApiKey(provider: string): string {
-  const keyMap: Record<string, string> = {
-    together_free: process.env.TOGETHER_API_KEY || "",
-    together_paid: process.env.TOGETHER_API_KEY || "",
-    openai: process.env.OPENAI_API_KEY || "",
-    opencode_free: process.env.OPENCODE_API_KEY || "",
-    opencode_paid: process.env.OPENCODE_API_KEY || "",
-  }
-  return keyMap[provider] || ""
-}
-
 // Generate fallback responses when AI fails
 function generateFallbackResponse(prompt: string): string {
   const lowerPrompt = prompt.toLowerCase()
-
-  if (lowerPrompt.includes("reactivat") || lowerPrompt.includes("haven't visit")) {
-    return "Hi! We noticed it's been a while since your last visit. Regular checkups are important for maintaining your oral health. We'd love to see you again - would you like to schedule an appointment?"
-  }
-
-  if (lowerPrompt.includes("reminder") || lowerPrompt.includes("appointment")) {
-    return "This is a friendly reminder of your upcoming dental appointment. Please arrive 10 minutes early. If you need to reschedule, please call us as soon as possible."
-  }
-
-  if (lowerPrompt.includes("review") || lowerPrompt.includes("feedback")) {
-    return "Thank you for trusting us with your dental care! If you had a positive experience, we'd appreciate a brief review. It helps other patients find quality dental care."
-  }
-
-  if (lowerPrompt.includes("campaign") || lowerPrompt.includes("suggest")) {
-    return "I'd recommend starting with a reactivation campaign targeting patients who haven't visited in 6-12 months. This typically yields 15-25% response rates and can generate significant revenue."
-  }
-
+  if (lowerPrompt.includes("reactivat")) return "Hi! We noticed it's been a while since your last visit. We'd love to see you again - would you like to schedule an appointment?"
   return "I'm here to help! What can I assist you with today?"
 }
 
-// Structured action generator for AI agent tools
+// Structured action generator
 export async function generateStructuredAction(
   userInput: string,
   context: {
@@ -277,156 +217,49 @@ export async function generateStructuredAction(
     recentCampaigns?: any[]
   }
 ) {
-  const systemPrompt = `${SYSTEM_PROMPTS.nova}
-
-When the user wants to perform an action, respond with a structured JSON action plan in this format:
-{
-  "action": "action_name",
-  "parameters": { ...action-specific params },
-  "explain": "human-readable explanation of what will happen",
-  "estimated_credits": { "type": "amount", ... },
-  "requires_confirmation": true/false
-}
-
-Available actions:
-- create_campaign: Create a new reactivation campaign
-- start_campaign: Start an existing campaign
-- create_order: Purchase credit pack
-- send_message: Send a message to a patient
-- schedule_appointment: Book an appointment
-- import_leads: Import patient list
-
-Always estimate credit costs when applicable. Never proceed without user confirmation for purchases or bulk sends.`
-
-  // Retrieve clinic memory for context
-  const memory = await queryClinicMemory(context.clinicId, userInput)
-  const memoryContext = memory.length > 0
-    ? `\nRelevant clinic history: ${JSON.stringify(memory)}`
-    : ""
-
-  const fullContext = JSON.stringify(context) + memoryContext
+  const systemPrompt = `${SYSTEM_PROMPTS.nova}\n\nReturn a structured JSON action plan.`
   const response = await generateAIResponse(userInput, {
     systemPrompt,
-    context: fullContext,
-    provider: "together_free",
+    quality: "balanced",
     clinicId: context.clinicId,
     userId: context.userId,
   })
 
   try {
-    // Try to parse structured JSON from response
     const jsonMatch = response.text.match(/\{[\s\S]*\}/)
-    if (jsonMatch) {
-      const action = JSON.parse(jsonMatch[0])
-      return {
-        ...response,
-        structured: action,
-      }
-    }
-  } catch {
-    // If JSON parsing fails, return text response
-  }
-
+    if (jsonMatch) return { ...response, structured: JSON.parse(jsonMatch[0]) }
+  } catch { }
   return response
 }
 
 // Patient reactivation message generator
-export async function generateReactivationMessage(
-  patient: {
-    firstName: string
-    lastName: string
-    lastVisit?: string
-    lastTreatment?: string
-  },
-  clinicId: string
-) {
-  const prompt = `Generate a personalized reactivation message for ${patient.firstName} ${patient.lastName}${patient.lastVisit ? ` who last visited on ${patient.lastVisit}` : ''}${patient.lastTreatment ? ` for ${patient.lastTreatment}` : ''}.`
-
-  return generateAIResponse(prompt, {
-    systemPrompt: SYSTEM_PROMPTS.reactivation,
-    provider: "together_free",
-    clinicId,
-  })
+export async function generateReactivationMessage(patient: any, clinicId: string) {
+  const prompt = `Generate a personalized reactivation message for ${patient.firstName} ${patient.lastName}.`
+  return generateAIResponse(prompt, { systemPrompt: SYSTEM_PROMPTS.reactivation, quality: "cheap", clinicId })
 }
 
 // Appointment reminder generator
-export async function generateAppointmentReminder(
-  appointment: {
-    patientName: string
-    date: string
-    time: string
-    treatment: string
-  },
-  clinicId: string
-) {
-  const prompt = `Create an appointment reminder for ${appointment.patientName} scheduled for ${appointment.treatment} on ${appointment.date} at ${appointment.time}.`
-
-  return generateAIResponse(prompt, {
-    systemPrompt: SYSTEM_PROMPTS.reminder,
-    provider: "together_free",
-    clinicId,
-  })
+export async function generateAppointmentReminder(appointment: any, clinicId: string) {
+  const prompt = `Create an appointment reminder for ${appointment.patientName}.`
+  return generateAIResponse(prompt, { systemPrompt: SYSTEM_PROMPTS.reminder, quality: "cheap", clinicId })
 }
 
 // Review request generator
-export async function generateReviewRequest(
-  patient: {
-    firstName: string
-    treatment?: string
-  },
-  clinicId: string
-) {
-  const prompt = `Write a review request for ${patient.firstName}${patient.treatment ? ` who recently had ${patient.treatment}` : ''}.`
-
-  return generateAIResponse(prompt, {
-    systemPrompt: SYSTEM_PROMPTS.review,
-    maxTokens: 200,
-    provider: "together_free",
-    clinicId,
-  })
+export async function generateReviewRequest(patient: any, clinicId: string) {
+  const prompt = `Write a review request for ${patient.firstName}.`
+  return generateAIResponse(prompt, { systemPrompt: SYSTEM_PROMPTS.review, quality: "cheap", clinicId })
 }
 
 // Analytics insight generator
-export async function generateAnalyticsInsight(
-  data: {
-    patientCount: number
-    reactivationRate: number
-    avgRevenue: number
-    campaignCount: number
-  },
-  clinicId: string
-) {
-  const prompt = `Analyze this practice data: ${data.patientCount} patients, ${data.reactivationRate}% reactivation rate, $${data.avgRevenue} average revenue, ${data.campaignCount} campaigns run. Provide 3 actionable insights.`
-
-  return generateAIResponse(prompt, {
-    systemPrompt: SYSTEM_PROMPTS.analytics,
-    provider: "together_free",
-    clinicId,
-  })
+export async function generateAnalyticsInsight(data: any, clinicId: string) {
+  const prompt = `Analyze practice data and provide 3 actionable insights: ${JSON.stringify(data)}`
+  return generateAIResponse(prompt, { systemPrompt: SYSTEM_PROMPTS.analytics, quality: "premium", clinicId })
 }
 
 // Chatbot response generator
-export async function generateChatbotResponse(
-  message: string,
-  context: {
-    clinicId: string
-    patientName?: string
-    conversationHistory?: string[]
-  }
-) {
-  const historyContext = context.conversationHistory
-    ? `Previous messages: ${context.conversationHistory.join('\n')}\n\n`
-    : ''
-
-  const prompt = `${historyContext}Patient message: ${message}`
-
-  return generateAIResponse(prompt, {
-    systemPrompt: SYSTEM_PROMPTS.chatbot,
-    context: context.patientName ? `Patient name: ${context.patientName}` : undefined,
-    maxTokens: 300,
-    provider: "together_free",
-    clinicId: context.clinicId,
-  })
+export async function generateChatbotResponse(message: string, context: any) {
+  const prompt = `Patient message: ${message}`
+  return generateAIResponse(prompt, { systemPrompt: SYSTEM_PROMPTS.chatbot, quality: "balanced", clinicId: context.clinicId })
 }
 
 export default {

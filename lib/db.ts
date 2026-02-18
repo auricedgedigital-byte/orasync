@@ -800,3 +800,213 @@ export async function getReviews(clinicId: string) {
     return []
   }
 }
+
+export async function getReputationSettings(clinicId: string) {
+  try {
+    const result = await pool.query(
+      `SELECT * FROM reputation_settings WHERE clinic_id = $1`,
+      [clinicId]
+    )
+    return result.rows[0] || null
+  } catch (error) {
+    console.error("Error fetching reputation settings:", error)
+    return null
+  }
+}
+
+export async function saveReputationSettings(
+  clinicId: string,
+  settings: {
+    auto_request_enabled?: boolean
+    rating_threshold?: number
+    email_enabled?: boolean
+    sms_enabled?: boolean
+    request_template_email?: string
+    request_template_sms?: string
+    public_review_platforms?: string[]
+  }
+) {
+  try {
+    const existing = await getReputationSettings(clinicId)
+    
+    if (existing) {
+      const result = await pool.query(
+        `UPDATE reputation_settings 
+         SET auto_request_enabled = COALESCE($2, auto_request_enabled),
+             rating_threshold = COALESCE($3, rating_threshold),
+             email_enabled = COALESCE($4, email_enabled),
+             sms_enabled = COALESCE($5, sms_enabled),
+             request_template_email = COALESCE($6, request_template_email),
+             request_template_sms = COALESCE($7, request_template_sms),
+             public_review_platforms = COALESCE($8, public_review_platforms),
+             updated_at = NOW()
+         WHERE clinic_id = $1
+         RETURNING *`,
+        [
+          clinicId,
+          settings.auto_request_enabled,
+          settings.rating_threshold,
+          settings.email_enabled,
+          settings.sms_enabled,
+          settings.request_template_email,
+          settings.request_template_sms,
+          settings.public_review_platforms
+        ]
+      )
+      return result.rows[0]
+    } else {
+      const result = await pool.query(
+        `INSERT INTO reputation_settings (clinic_id, auto_request_enabled, rating_threshold, email_enabled, sms_enabled, request_template_email, request_template_sms, public_review_platforms)
+         VALUES ($1, $2, $3, $4, $5, $6, $7, $8)
+         RETURNING *`,
+        [
+          clinicId,
+          settings.auto_request_enabled ?? true,
+          settings.rating_threshold ?? 3,
+          settings.email_enabled ?? true,
+          settings.sms_enabled ?? true,
+          settings.request_template_email ?? 'We hope you had a great experience! Would you take a moment to share your feedback?',
+          settings.request_template_sms ?? 'We\'d love your feedback! {{review_link}}',
+          settings.public_review_platforms ?? ['google', 'facebook']
+        ]
+      )
+      return result.rows[0]
+    }
+  } catch (error) {
+    console.error("Error saving reputation settings:", error)
+    return null
+  }
+}
+
+export async function createReview(
+  clinicId: string,
+  review: {
+    patient_id?: string
+    author_name: string
+    author_email?: string
+    author_phone?: string
+    rating: number
+    content?: string
+    platform?: string
+    source?: string
+  }
+) {
+  const client = await pool.connect()
+  try {
+    await client.query("BEGIN")
+    
+    const needsAttention = review.rating < 3
+    const isPublic = !needsAttention
+    
+    const result = await client.query(
+      `INSERT INTO reviews (clinic_id, patient_id, author_name, author_email, author_phone, rating, content, platform, is_public, needs_attention, source)
+       VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11)
+       RETURNING *`,
+      [
+        clinicId,
+        review.patient_id || null,
+        review.author_name,
+        review.author_email || null,
+        review.author_phone || null,
+        review.rating,
+        review.content || null,
+        review.platform || 'manual',
+        isPublic,
+        needsAttention,
+        review.source || 'manual'
+      ]
+    )
+    
+    await client.query("COMMIT")
+    return result.rows[0]
+  } catch (error) {
+    await client.query("ROLLBACK")
+    console.error("Error creating review:", error)
+    return null
+  } finally {
+    client.release()
+  }
+}
+
+export async function respondToReview(
+  reviewId: string,
+  userId: string,
+  responseText: string
+) {
+  try {
+    const result = await pool.query(
+      `UPDATE reviews 
+       SET is_responded = true, 
+           response_text = $2, 
+           responded_by = $3, 
+           responded_at = NOW(),
+           needs_attention = false,
+           updated_at = NOW()
+       WHERE id = $1
+       RETURNING *`,
+      [reviewId, responseText, userId]
+    )
+    return result.rows[0]
+  } catch (error) {
+    console.error("Error responding to review:", error)
+    return null
+  }
+}
+
+export async function getReviewsNeedingAttention(clinicId: string) {
+  try {
+    const result = await pool.query(
+      `SELECT r.*, p.first_name as patient_first_name, p.last_name as patient_last_name
+       FROM reviews r
+       LEFT JOIN patients p ON r.patient_id = p.id
+       WHERE r.clinic_id = $1 AND r.needs_attention = true
+       ORDER BY r.rating ASC, r.created_at DESC`,
+      [clinicId]
+    )
+    return result.rows
+  } catch (error) {
+    console.error("Error fetching reviews needing attention:", error)
+    return []
+  }
+}
+
+export async function createReviewRequest(
+  clinicId: string,
+  request: {
+    patient_id: string
+    channel: 'email' | 'sms'
+    review_link?: string
+  }
+) {
+  try {
+    const result = await pool.query(
+      `INSERT INTO review_requests (clinic_id, patient_id, channel, status, review_link)
+       VALUES ($1, $2, $3, 'pending', $4)
+       RETURNING *`,
+      [clinicId, request.patient_id, request.channel, request.review_link || null]
+    )
+    return result.rows[0]
+  } catch (error) {
+    console.error("Error creating review request:", error)
+    return null
+  }
+}
+
+export async function updateReviewRequestStatus(
+  requestId: string,
+  status: 'sent' | 'failed' | 'completed'
+) {
+  try {
+    const result = await pool.query(
+      `UPDATE review_requests 
+       SET status = $2, request_sent_at = NOW()
+       WHERE id = $1
+       RETURNING *`,
+      [requestId, status]
+    )
+    return result.rows[0]
+  } catch (error) {
+    console.error("Error updating review request:", error)
+    return null
+  }
+}

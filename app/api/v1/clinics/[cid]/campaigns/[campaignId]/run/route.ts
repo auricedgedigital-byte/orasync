@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { Pool } from 'pg'
+import { enqueueJob } from '@/lib/db'
 
 const pool = new Pool({
     connectionString: process.env.DATABASE_URL,
@@ -15,33 +16,35 @@ export async function POST(
         const clinicId = params.cid
         const campaignId = params.campaignId
 
-        // Update campaign status to 'running'
-        await pool.query(
-            `UPDATE campaigns 
-       SET status = 'running', started_at = NOW(), progress = 0
-       WHERE id = $1 AND clinic_id = $2 AND status = 'draft'`,
-            [campaignId, clinicId]
-        )
+        // 1. Enqueue initialization job
+        const jobResult = await enqueueJob(clinicId, "campaign_start", {
+            campaign_id: campaignId,
+            clinic_id: clinicId
+        })
 
-        // Trigger immediate processing by calling the cron endpoint
+        if (!jobResult.success) {
+            throw new Error(jobResult.error || "Failed to enqueue campaign start job")
+        }
+
+        // 2. Trigger immediate processing via cron endpoint (optional optimization)
         try {
             const cronSecret = process.env.CRON_SECRET || 'default-secret'
             const baseUrl = process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3000'
 
-            await fetch(`${baseUrl}/api/cron/process-campaigns`, {
+            fetch(`${baseUrl}/api/cron/process-campaigns`, {
                 method: 'POST',
                 headers: {
                     'Authorization': `Bearer ${cronSecret}`
                 }
-            })
+            }).catch(e => console.error("Cron trigger error:", e))
         } catch (triggerError) {
             console.error('Failed to trigger campaign processing:', triggerError)
-            // Non-fatal - cron will pick it up eventually
         }
 
         return NextResponse.json({
             status: 'queued',
-            estimated_time: '1-2 minutes'
+            job_id: jobResult.jobId,
+            estimated_time: 'Ready for initialization'
         })
 
     } catch (error) {

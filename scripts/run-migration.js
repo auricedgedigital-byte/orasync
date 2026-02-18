@@ -28,20 +28,17 @@ const client = new Client({
     ssl: connectionString.includes('localhost') ? false : { rejectUnauthorized: false },
 });
 
-async function runMigration() {
+async function runMigration(fileName = '021-campaign-sequence-support.sql') {
     try {
         console.log("Connecting to database...");
         await client.connect();
         console.log("Connected successfully.");
 
-        const sqlPath = path.resolve(__dirname, '020-complete-production-schema.sql');
+        const sqlPath = path.resolve(__dirname, fileName);
         console.log(`Reading migration file: ${sqlPath}`);
         const sql = fs.readFileSync(sqlPath, 'utf8');
 
-        console.log("Executing SQL migration...");
-        // Split by semicolons for safer execution if needed, but pg can often handle blocks.
-        // However, simplest is to run the whole block if it's transaction-safe or idempotent-ish.
-        // Our script uses IF NOT EXISTS, so should be safe.
+        console.log(`Executing SQL migration from ${fileName}...`);
         await client.query(sql);
 
         console.log("Migration executed successfully!");

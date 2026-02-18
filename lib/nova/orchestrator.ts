@@ -2,6 +2,8 @@ import { AIRequest, AIResponse, AIProvider } from "./types/ai.types"
 import { novaRouter } from "./core/router"
 import { QuotaManager } from "./core/quota"
 import { Pool } from "pg"
+import { novaCircuit } from "./core/circuit"
+import { novaCache } from "./core/cache"
 
 const pool = new Pool({
     connectionString: process.env.DATABASE_URL,
@@ -14,11 +16,32 @@ export class NovaOrchestrator {
     async run(request: AIRequest): Promise<AIResponse> {
         const requestId = Math.random().toString(36).substring(7)
 
-        // 1. Select initial provider
+        // 1. Check Cache
+        const cacheKey = novaCache.generateKey(request.prompt, request.context)
+        const cachedResponse = novaCache.get(cacheKey)
+        if (cachedResponse) {
+            console.log("Nova: Returning cached response", requestId)
+            return {
+                ...cachedResponse,
+                request_id: requestId,
+                is_cached: true
+            }
+        }
+
+        // 2. Select initial provider
         let provider = novaRouter.selectProvider(request)
 
+        // 3. Circuit Breaker Check
+        if (novaCircuit.isOpen(provider.name)) {
+            console.warn(`Nova: Provider ${provider.name} circuit is open, rotating...`)
+            const fallbacks = novaRouter.getFallbackChain(provider.name)
+            if (fallbacks.length > 0) {
+                provider = fallbacks[0]
+            }
+        }
+
         try {
-            // 2. Budget check (Pre-flight)
+            // 4. Budget check (Pre-flight)
             const estimatedTokens = provider.estimateTokens(request.prompt)
             const hasQuota = await this.quotaManager.checkQuota(request.clinic_id, estimatedTokens, request.quality || "cheap")
 
@@ -27,14 +50,15 @@ export class NovaOrchestrator {
                 provider = novaRouter.selectProvider({ ...request, quality: "cheap" })
             }
 
-            // 3. Execution with fallback loop
+            // 5. Execution with fallback loop
             let response: AIResponse
             try {
                 response = await provider.run(request)
+                novaCircuit.recordSuccess(provider.name)
             } catch (error) {
+                novaCircuit.recordFailure(provider.name)
                 console.error(`Provider ${provider.name} failed, trying fallback...`, error)
 
-                // Circuit breaker / manual fallback to another provider
                 const fallbacks = novaRouter.getFallbackChain(provider.name)
                 if (fallbacks.length === 0) throw error
 
@@ -42,7 +66,7 @@ export class NovaOrchestrator {
                 response = await provider.run(request)
             }
 
-            // 4. Update usage logs and decrement balance
+            // 6. Update usage logs and decrement balance
             await this.quotaManager.consumeQuota(
                 request.clinic_id,
                 request.user_id,
@@ -56,6 +80,9 @@ export class NovaOrchestrator {
                     cost_actual: response.cost_actual
                 }
             )
+
+            // 7. Store in Cache
+            novaCache.set(cacheKey, response)
 
             return {
                 ...response,
