@@ -104,9 +104,9 @@ export default function LandingPage() {
                   <p className="text-lg font-black text-primary">50 AI Credits</p>
                 </div>
               </div>
-              <Link href="/api/audit">
+              <Link href="https://auricedge.site/audit" target="_blank" rel="noopener noreferrer">
                 <Button size="lg" variant="outline" className="h-20 px-10 rounded-[2rem] font-black text-lg tracking-tight border-primary/30 text-primary hover:bg-primary/10 transition-all hover:scale-[1.05] active:scale-95">
-                  Free Audit
+                  Get Your Free Dental Practice Audit
                   <Sparkles className="ml-3 h-5 w-5" />
                 </Button>
               </Link>

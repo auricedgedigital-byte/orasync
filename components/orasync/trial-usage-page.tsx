@@ -1,11 +1,13 @@
 "use client"
 
 import { useState, useEffect } from "react"
+import { useUser } from "@/hooks/use-user"
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer, LineChart, Line } from "recharts"
+import { Loader2 } from "lucide-react"
 
 interface UsageLog {
   id: string
@@ -28,14 +30,17 @@ const ACTION_LABELS: Record<string, string> = {
 }
 
 export function TrialUsagePage() {
+  const { user } = useUser()
   const [usageLogs, setUsageLogs] = useState<UsageLog[]>([])
   const [loading, setLoading] = useState(true)
   const [chartData, setChartData] = useState<Array<{ date: string; [key: string]: number | string }>>([])
 
+  const clinicId = user?.clinic_id || user?.id || "demo"
+
   useEffect(() => {
     const fetchUsageLogs = async () => {
       try {
-        const response = await fetch("/api/v1/clinics/clinic-001/usage-logs?limit=100")
+        const response = await fetch(`/api/v1/clinics/${clinicId}/usage-logs?limit=100`)
         if (response.ok) {
           const data = await response.json()
           setUsageLogs(data.logs || [])
@@ -48,11 +53,14 @@ export function TrialUsagePage() {
       }
     }
 
-    fetchUsageLogs()
-  }, [])
+    if (clinicId) {
+      fetchUsageLogs()
+    } else {
+      setLoading(false)
+    }
+  }, [clinicId])
 
   const processChartData = (logs: UsageLog[]) => {
-    // Group by date and action type
     const grouped: Record<string, Record<string, number>> = {}
 
     logs.forEach((log) => {
@@ -83,6 +91,23 @@ export function TrialUsagePage() {
     {} as Record<string, number>,
   )
 
+  if (loading) {
+    return (
+      <div className="space-y-6">
+        <div>
+          <h1 className="text-2xl font-bold text-foreground">Trial Usage</h1>
+          <p className="text-muted-foreground">Track your credit usage and historical activity</p>
+        </div>
+        <Card>
+          <CardContent className="pt-6 flex items-center justify-center py-12">
+            <Loader2 className="h-6 w-6 animate-spin mr-2" />
+            <p className="text-muted-foreground">Loading usage data...</p>
+          </CardContent>
+        </Card>
+      </div>
+    )
+  }
+
   return (
     <div className="space-y-6">
       <div>
@@ -97,20 +122,27 @@ export function TrialUsagePage() {
           <TabsTrigger value="topup">Top Up</TabsTrigger>
         </TabsList>
 
-        {/* Overview Tab */}
         <TabsContent value="overview" className="space-y-6">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            {Object.entries(totalByAction).map(([action, total]) => (
-              <Card key={action}>
-                <CardHeader className="pb-3">
-                  <CardTitle className="text-base">{action}</CardTitle>
-                </CardHeader>
-                <CardContent>
-                  <div className="text-3xl font-bold">{total}</div>
-                  <p className="text-xs text-muted-foreground mt-1">Total used</p>
+            {Object.keys(totalByAction).length > 0 ? (
+              Object.entries(totalByAction).map(([action, total]) => (
+                <Card key={action}>
+                  <CardHeader className="pb-3">
+                    <CardTitle className="text-base">{action}</CardTitle>
+                  </CardHeader>
+                  <CardContent>
+                    <div className="text-3xl font-bold">{total}</div>
+                    <p className="text-xs text-muted-foreground mt-1">Total used</p>
+                  </CardContent>
+                </Card>
+              ))
+            ) : (
+              <Card className="col-span-2">
+                <CardContent className="pt-6 text-center py-12">
+                  <p className="text-muted-foreground">No usage data yet. Start using Orasync features!</p>
                 </CardContent>
               </Card>
-            ))}
+            )}
           </div>
 
           {chartData.length > 0 && (
@@ -132,7 +164,7 @@ export function TrialUsagePage() {
                         key={action}
                         type="monotone"
                         dataKey={action}
-                        stroke={`hsl(${(index * 360) / Object.keys(totalByAction).length}, 70%, 50%)`}
+                        stroke={`hsl(${(index * 360) / Math.max(Object.keys(totalByAction).length, 1)}, 70%, 50%)`}
                       />
                     ))}
                   </LineChart>
@@ -142,17 +174,10 @@ export function TrialUsagePage() {
           )}
         </TabsContent>
 
-        {/* History Tab */}
         <TabsContent value="history" className="space-y-4">
-          {loading ? (
+          {usageLogs.length === 0 ? (
             <Card>
-              <CardContent className="pt-6">
-                <p className="text-muted-foreground">Loading usage history...</p>
-              </CardContent>
-            </Card>
-          ) : usageLogs.length === 0 ? (
-            <Card>
-              <CardContent className="pt-6">
+              <CardContent className="pt-6 text-center py-12">
                 <p className="text-muted-foreground">No usage history yet</p>
               </CardContent>
             </Card>
@@ -177,7 +202,6 @@ export function TrialUsagePage() {
           )}
         </TabsContent>
 
-        {/* Top Up Tab */}
         <TabsContent value="topup" className="space-y-6">
           <Card>
             <CardHeader>

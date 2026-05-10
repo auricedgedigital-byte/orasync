@@ -2,45 +2,23 @@
 
 import { useEffect } from "react"
 import { useRouter, useSearchParams } from "next/navigation"
-import { createClient } from "@supabase/supabase-js"
+import { signIn, useSession } from "next-auth/react"
 
 export const dynamic = "force-dynamic"
 
 export default function AuthCallbackPage() {
   const router = useRouter()
   const searchParams = useSearchParams()
+  const { data: session, status } = useSession()
 
   useEffect(() => {
-    const handleCallback = async () => {
-      // Create Supabase client only on client side
-      const supabase = createClient(
-        process.env.NEXT_PUBLIC_SUPABASE_URL!,
-        process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
-      )
-
-      // Let Supabase handle the OAuth callback automatically
-      const { data, error } = await supabase.auth.getSession()
-
-      if (error) {
-        console.error("Auth callback error:", error)
-        router.push(`/auth/login?error=${encodeURIComponent(error.message)}`)
-        return
-      }
-
-      // Wait a moment for session to be fully restored
-      setTimeout(() => {
-        if (data.session) {
-          const next = searchParams.get('next') || '/dashboard'
-          router.replace(next)
-        } else {
-          // If no session after timeout, redirect to login
-          router.push('/auth/login?error=no_session')
-        }
-      }, 500) // Small delay to ensure session is restored
+    if (status === "authenticated" && session?.user) {
+      const next = searchParams.get('next') || '/dashboard'
+      router.replace(next)
+    } else if (status === "unauthenticated") {
+      router.replace('/auth/login?error=auth_failed')
     }
-
-    handleCallback()
-  }, [router, searchParams])
+  }, [status, session, router, searchParams])
 
   return (
     <div className="min-h-screen flex items-center justify-center">

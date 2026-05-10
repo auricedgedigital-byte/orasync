@@ -1,5 +1,10 @@
+import Layout from "@/components/kokonutui/layout"
 import Integrations from "@/components/orasync/integrations"
 
 export default function IntegrationsPage() {
-  return <Integrations />
+  return (
+    <Layout>
+      <Integrations />
+    </Layout>
+  )
 }
