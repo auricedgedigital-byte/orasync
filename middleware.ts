@@ -39,6 +39,7 @@ export function middleware(request: NextRequest) {
     "/auth/login",
     "/auth/signup",
     "/auth/forgot-password",
+    "/auth/callback",
     "/login",
     "/signup"
   ]
