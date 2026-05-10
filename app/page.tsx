@@ -60,7 +60,7 @@ export default function LandingPage() {
                 Start Growing
               </Button>
             </Link>
-            <Link href="/api/audit">
+            <Link href="https://auricedge.site/audit" target="_blank" rel="noopener noreferrer">
               <Button variant="outline" className="font-black text-xs px-6 h-12 rounded-2xl border-primary/30 text-primary hover:bg-primary/10 hover:border-primary/50 transition-all uppercase tracking-widest">
                 Start Audit
               </Button>

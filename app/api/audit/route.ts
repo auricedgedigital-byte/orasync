@@ -59,7 +59,22 @@ export async function GET(request: NextRequest) {
 export async function POST(request: NextRequest) {
   try {
     const body = await request.json()
-    const { practice_name, contact_email, phone, website, specialty, services } = body
+    const { 
+      practice_name, 
+      contact_email, 
+      phone = null, 
+      website = null, 
+      specialty = null, 
+      services = null,
+      source = "landing_page" 
+    } = body
+
+    if (!practice_name || !contact_email) {
+      return NextResponse.json(
+        { error: "Practice name and contact email are required" },
+        { status: 400 }
+      )
+    }
 
     // Determine backend URL
     const backendUrl = process.env.AURICEDGE_CORE_URL || "https://auricedge-core.onrender.com"
@@ -81,6 +96,7 @@ export async function POST(request: NextRequest) {
             website,
             specialty,
             services,
+            source,
             submitted_at: new Date().toISOString(),
           }),
           signal: AbortSignal.timeout(10000),
