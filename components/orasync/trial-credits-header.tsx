@@ -5,6 +5,7 @@ import { Card } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { AlertCircle, Zap } from "lucide-react"
 import { UpgradeModal } from "./upgrade-modal"
+import { useUser } from "@/hooks/use-user"
 
 interface TrialCredits {
   reactivation_emails: number
@@ -43,12 +44,17 @@ const CREDIT_LIMITS: CreditLimit = {
 }
 
 export function TrialCreditsHeader() {
+  const { user } = useUser()
   const [credits, setCredits] = useState<TrialCredits | null>(null)
   const [showUpgradeModal, setShowUpgradeModal] = useState(false)
   const [lowCreditWarning, setLowCreditWarning] = useState<string | null>(null)
-  const [clinicId, setClinicId] = useState<string>("00000000-0000-0000-0000-000000000001") // Test clinic UUID
+  
+  // Use actual clinic ID from user session, with fallback
+  const clinicId = user?.clinic_id || user?.id || "00000000-0000-0000-0000-000000000001"
 
   const fetchCredits = useCallback(async () => {
+    if (!clinicId) return
+    
     try {
       const response = await fetch(`/api/v1/clinics/${clinicId}/trial-check`)
       if (response.ok) {
@@ -62,6 +68,7 @@ export function TrialCreditsHeader() {
   }, [clinicId])
 
   useEffect(() => {
+    if (!clinicId) return
     fetchCredits()
     const interval = setInterval(fetchCredits, 30000)
     return () => clearInterval(interval)

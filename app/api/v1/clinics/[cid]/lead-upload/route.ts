@@ -1,8 +1,11 @@
 import { type NextRequest, NextResponse } from "next/server"
-import { neon } from "@neondatabase/serverless"
 import { checkAndDecrementCredits } from "@/lib/db"
 
-const sql = neon(process.env.DATABASE_URL || "")
+async function getSql() {
+  const { neon } = await import("@neondatabase/serverless")
+  if (!process.env.DATABASE_URL) return null
+  return neon(process.env.DATABASE_URL)
+}
 
 function normalizePhone(phone: string): string {
   return phone.replace(/\D/g, "").slice(-10)
@@ -34,6 +37,11 @@ export async function POST(request: NextRequest, { params }: { params: { cid: st
         },
         { status: 402 },
       )
+    }
+
+    const sql = await getSql()
+    if (!sql) {
+      return NextResponse.json({ error: "Database not configured" }, { status: 500 })
     }
 
     let createdCount = 0

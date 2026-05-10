@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server'
-import { getClient } from '@/lib/supabase'
+import { createClient } from '@supabase/supabase-js'
 
 const DENTAL_RESPONSES = {
   greeting: [
@@ -87,19 +87,24 @@ export async function POST(request: NextRequest) {
     
     const { response, sentiment } = getResponse(message)
     
-    // Log the conversation for analytics
-    const supabase = getClient()
-    try {
-      await supabase.from('ai_conversations').insert({
-        user_message: message,
-        bot_response: response,
-        sentiment: sentiment,
-        context: context || 'dental_assistant',
-        created_at: new Date().toISOString()
-      })
-    } catch (logError) {
-      console.error('Failed to log conversation:', logError)
-      // Continue even if logging fails
+    // Log the conversation for analytics - with graceful fallback if Supabase not configured
+    if (process.env.NEXT_PUBLIC_SUPABASE_URL && process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY) {
+      try {
+        const supabase = createClient(
+          process.env.NEXT_PUBLIC_SUPABASE_URL,
+          process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY
+        )
+        await supabase.from('ai_conversations').insert({
+          user_message: message,
+          bot_response: response,
+          sentiment: sentiment,
+          context: context || 'dental_assistant',
+          created_at: new Date().toISOString()
+        })
+      } catch (logError) {
+        console.error('Failed to log conversation:', logError)
+        // Continue even if logging fails
+      }
     }
 
     return NextResponse.json({
