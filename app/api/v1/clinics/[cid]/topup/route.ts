@@ -1,7 +1,10 @@
 import { type NextRequest, NextResponse } from "next/server"
-import { neon } from "@neondatabase/serverless"
 
-const sql = neon(process.env.DATABASE_URL || "")
+async function getSql() {
+  const { neon } = await import("@neondatabase/serverless")
+  if (!process.env.DATABASE_URL) return null
+  return neon(process.env.DATABASE_URL)
+}
 
 export async function POST(request: NextRequest, { params }: { params: { cid: string } }) {
   try {
@@ -37,11 +40,16 @@ export async function POST(request: NextRequest, { params }: { params: { cid: st
       return NextResponse.json({ error: "Invalid pack type" }, { status: 400 })
     }
 
+    const sql = await getSql()
+    if (!sql) {
+      return NextResponse.json({ error: "Database not configured" }, { status: 500 })
+    }
+
     const result = await sql.transaction(async (tx) => {
       for (const [creditKey, creditAmount] of Object.entries(credits)) {
         await tx`
           UPDATE trial_credits 
-          SET ${creditKey} = ${creditKey} + ${creditAmount}, modified_at = NOW()
+          SET ${creditKey as any} = ${creditKey as any} + ${creditAmount}, modified_at = NOW()
           WHERE clinic_id = ${clinicId}
         `
       }

@@ -1,7 +1,10 @@
 import { type NextRequest, NextResponse } from "next/server"
-import { neon } from "@neondatabase/serverless"
 
-const sql = neon(process.env.DATABASE_URL || "")
+async function getSql() {
+  const { neon } = await import("@neondatabase/serverless")
+  if (!process.env.DATABASE_URL) return null
+  return neon(process.env.DATABASE_URL)
+}
 
 export async function POST(request: NextRequest, { params }: { params: { cid: string } }) {
   try {
@@ -11,6 +14,11 @@ export async function POST(request: NextRequest, { params }: { params: { cid: st
 
     if (!channels || !Array.isArray(channels)) {
       return NextResponse.json({ error: "Missing channels array" }, { status: 400 })
+    }
+
+    const sql = await getSql()
+    if (!sql) {
+      return NextResponse.json({ error: "Database not configured" }, { status: 500 })
     }
 
     // Estimate recipient count

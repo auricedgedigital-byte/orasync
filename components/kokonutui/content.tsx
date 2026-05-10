@@ -5,22 +5,24 @@ import { useUser } from "@/hooks/use-user"
 import { useEffect, useState } from "react"
 import {
   Calendar,
-  Users,
   TrendingUp,
   MessageSquare,
-  DollarSign,
   Clock,
-  UserCheck,
-  Star,
-  Activity,
-  Phone,
   ChevronRight,
   Zap,
   Megaphone,
+  Users,
+  Star,
 } from "@/components/icons"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import MetricCard from "./metric-card"
+
+interface TrialCredits {
+  reactivation_emails: number
+  reactivation_sms: number
+  campaigns_started: number
+}
 
 interface DashboardData {
   todayAppointments: number
@@ -38,31 +40,49 @@ interface DashboardData {
     time: string
     type: string
   }>
+  campaigns?: Array<{
+    id: string
+    name: string
+    status: string
+    sent: number
+    opened: number
+  }>
 }
 
 export default function Content() {
   const router = useRouter()
   const { user, loading } = useUser()
   const [dashboardData, setDashboardData] = useState<DashboardData | null>(null)
+  const [credits, setCredits] = useState<TrialCredits | null>(null)
   const [dataLoading, setDataLoading] = useState(true)
 
   const handleScheduleAppointment = () => router.push("/appointments")
   const handleAddPatient = () => router.push("/patient-crm")
-  const handleSendCampaign = () => router.push("/patient-engagement")
+  const handleSendCampaign = () => router.push("/campaign-builder")
   const handleViewAnalytics = () => router.push("/analytics-reporting")
   const handlePatientRecords = () => router.push("/patient-crm")
   const handleReviewRequests = () => router.push("/reputation-management")
 
-  // Fetch real dashboard data
+  // Fetch real dashboard data and credits
   useEffect(() => {
     if (!user) return
 
-    const fetchDashboardData = async () => {
+    const clinicId = user.clinic_id || user.id
+
+    const fetchData = async () => {
       try {
-        const response = await fetch(`/api/v1/clinics/${user.id}/dashboard`)
+        // Fetch dashboard data
+        const response = await fetch(`/api/v1/clinics/${clinicId}/dashboard`)
         if (response.ok) {
           const data = await response.json()
           setDashboardData(data)
+        }
+
+        // Fetch credits
+        const creditsResponse = await fetch(`/api/v1/clinics/${clinicId}/trial-check`)
+        if (creditsResponse.ok) {
+          const creditsData = await creditsResponse.json()
+          setCredits(creditsData.remaining)
         }
       } catch (error) {
         console.error('Failed to fetch dashboard data:', error)
@@ -71,7 +91,7 @@ export default function Content() {
       }
     }
 
-    fetchDashboardData()
+    fetchData()
   }, [user])
 
   if (loading || dataLoading) {
@@ -93,8 +113,12 @@ export default function Content() {
     newLeads: 0,
     patientSatisfaction: 0,
     appointments: [],
-    recentActivity: []
+    recentActivity: [],
   }
+
+  const totalCredits = credits 
+    ? credits.reactivation_emails + credits.reactivation_sms
+    : 5000
 
   const appointmentDetails = (
     <div className="space-y-4">
@@ -200,13 +224,31 @@ export default function Content() {
         <div className="flex items-center gap-4 bg-card/40 backdrop-blur-md p-2 rounded-2xl border border-border/50">
           <div className="flex items-center gap-2 px-4 py-2 bg-primary/10 rounded-xl border border-primary/20">
             <Zap className="w-4 h-4 text-primary fill-primary" />
-            <span className="text-sm font-black text-primary">5,000 Credits</span>
+            <span className="text-sm font-black text-primary">{totalCredits.toLocaleString()} Credits</span>
           </div>
           <Button variant="ghost" size="icon" className="h-10 w-10 rounded-xl hover:bg-muted/50">
             <Clock className="w-5 h-5 text-muted-foreground" />
           </Button>
         </div>
       </div>
+
+      {/* Credits Breakdown */}
+      {credits && (
+        <div className="grid grid-cols-3 gap-4">
+          <Card className="bg-gradient-to-r from-primary/5 to-transparent border-primary/20 p-4">
+            <div className="text-xs font-bold uppercase tracking-wider text-muted-foreground mb-1">Email Credits</div>
+            <div className="text-2xl font-black text-primary">{credits.reactivation_emails}</div>
+          </Card>
+          <Card className="bg-gradient-to-r from-blue-500/5 to-transparent border-blue-500/20 p-4">
+            <div className="text-xs font-bold uppercase tracking-wider text-muted-foreground mb-1">SMS Credits</div>
+            <div className="text-2xl font-black text-blue-500">{credits.reactivation_sms}</div>
+          </Card>
+          <Card className="bg-gradient-to-r from-green-500/5 to-transparent border-green-500/20 p-4">
+            <div className="text-xs font-bold uppercase tracking-wider text-muted-foreground mb-1">Campaigns</div>
+            <div className="text-2xl font-black text-green-500">{credits.campaigns_started}</div>
+          </Card>
+        </div>
+      )}
 
       {/* Performance Section */}
       <section className="space-y-4">
@@ -305,38 +347,56 @@ export default function Content() {
                   <tr>
                     <th className="px-8 py-5 text-xs font-bold uppercase tracking-wider text-muted-foreground">Campaign Name</th>
                     <th className="px-6 py-5 text-xs font-bold uppercase tracking-wider text-muted-foreground">Status</th>
-                    <th className="px-6 py-5 text-xs font-bold uppercase tracking-wider text-muted-foreground">Progress</th>
                     <th className="px-6 py-5 text-xs font-bold uppercase tracking-wider text-muted-foreground">Sent</th>
                     <th className="px-6 py-5 text-xs font-bold uppercase tracking-wider text-muted-foreground">Opened</th>
                     <th className="px-8 py-5 text-xs font-bold uppercase tracking-wider text-muted-foreground">Actions</th>
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-border/40">
-                  {[
-                    { name: 'Summer Sale Email', status: 'Running', progress: '65%', sent: '5,000', opened: '2,500' },
-                    { name: 'Webinar Invitation', status: 'Completed', progress: '100%', sent: '5,000', opened: '1,000' },
-                    { name: 'Customer Feedback', status: 'Draft', progress: '10%', sent: '600', opened: '60' },
-                  ].map((row, i) => (
-                    <tr key={i} className="hover:bg-muted/20 transition-colors">
-                      <td className="px-8 py-6 font-bold text-sm">{row.name}</td>
-                      <td className="px-6 py-6">
-                        <span className={`px-3 py-1 rounded-full text-[10px] font-black uppercase tracking-widest ${row.status === 'Running' ? 'bg-green-500/10 text-green-500' :
-                          row.status === 'Completed' ? 'bg-primary/10 text-primary' :
-                            'bg-muted text-muted-foreground'
-                          }`}>
-                          {row.status}
-                        </span>
-                      </td>
-                      <td className="px-6 py-6 font-medium text-xs text-muted-foreground">{row.progress}</td>
-                      <td className="px-6 py-6 font-bold text-sm">{row.sent}</td>
-                      <td className="px-6 py-6 font-bold text-sm text-foreground/70">{row.opened}</td>
-                      <td className="px-8 py-6">
-                        <Button variant="ghost" size="icon" className="h-8 w-8 rounded-lg hover:bg-muted/50">
-                          <ChevronRight className="h-4 h-4" />
-                        </Button>
-                      </td>
-                    </tr>
-                  ))}
+                  {data.campaigns && data.campaigns.length > 0 ? (
+                    data.campaigns.map((campaign, i) => (
+                      <tr key={i} className="hover:bg-muted/20 transition-colors">
+                        <td className="px-8 py-6 font-bold text-sm">{campaign.name}</td>
+                        <td className="px-6 py-6">
+                          <span className={`px-3 py-1 rounded-full text-[10px] font-black uppercase tracking-widest ${campaign.status === 'active' ? 'bg-green-500/10 text-green-500' : 'bg-muted text-muted-foreground'}`}>
+                            {campaign.status}
+                          </span>
+                        </td>
+                        <td className="px-6 py-6 font-bold text-sm">{campaign.sent.toLocaleString()}</td>
+                        <td className="px-6 py-6 font-bold text-sm text-foreground/70">{campaign.opened.toLocaleString()}</td>
+                        <td className="px-8 py-6">
+                          <Button variant="ghost" size="icon" className="h-8 w-8 rounded-lg hover:bg-muted/50" onClick={() => router.push(`/campaign-builder?id=${campaign.id}`)}>
+                            <ChevronRight className="h-4 h-4" />
+                          </Button>
+                        </td>
+                      </tr>
+                    ))
+                  ) : (
+                    [
+                      { name: 'Summer Sale Email', status: 'active', sent: '5,000', opened: '2,500' },
+                      { name: 'Webinar Invitation', status: 'completed', sent: '5,000', opened: '1,000' },
+                      { name: 'Customer Feedback', status: 'draft', sent: '600', opened: '60' },
+                    ].map((row, i) => (
+                      <tr key={i} className="hover:bg-muted/20 transition-colors">
+                        <td className="px-8 py-6 font-bold text-sm">{row.name}</td>
+                        <td className="px-6 py-6">
+                          <span className={`px-3 py-1 rounded-full text-[10px] font-black uppercase tracking-widest ${row.status === 'active' ? 'bg-green-500/10 text-green-500' :
+                            row.status === 'completed' ? 'bg-primary/10 text-primary' :
+                              'bg-muted text-muted-foreground'
+                            }`}>
+                            {row.status}
+                          </span>
+                        </td>
+                        <td className="px-6 py-6 font-bold text-sm">{row.sent}</td>
+                        <td className="px-6 py-6 font-bold text-sm text-foreground/70">{row.opened}</td>
+                        <td className="px-8 py-6">
+                          <Button variant="ghost" size="icon" className="h-8 w-8 rounded-lg hover:bg-muted/50">
+                            <ChevronRight className="h-4 h-4" />
+                          </Button>
+                        </td>
+                      </tr>
+                    ))
+                  )}
                 </tbody>
               </table>
             </CardContent>
@@ -382,7 +442,7 @@ export default function Content() {
                 "I've identified 12 dormant patients who are likely to book a check-up if reached today via SMS."
               </p>
               <div className="pt-2">
-                <Button size="sm" className="rounded-xl text-xs font-black px-6 bg-primary text-primary-foreground shadow-lg shadow-primary/20">
+                <Button size="sm" className="rounded-xl text-xs font-black px-6 bg-primary text-primary-foreground shadow-lg shadow-primary/20" onClick={handleSendCampaign}>
                   Engage Leads
                 </Button>
               </div>
