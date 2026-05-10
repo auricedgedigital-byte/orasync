@@ -64,17 +64,19 @@ export default function UnifiedInbox() {
     if (!selectedThreadId || !user?.id) return
 
     const fetchData = async () => {
+      const clinicId = user?.clinic_id || user?.id
+      if (!clinicId) return
       setMessagesLoading(true)
       try {
         const thread = threads.find(t => t.id === selectedThreadId)
-        const msgRes = await fetch(`/api/v1/clinics/${user.id}/inbox/${selectedThreadId}`)
+        const msgRes = await fetch(`/api/v1/clinics/${clinicId}/inbox/${selectedThreadId}`)
         if (msgRes.ok) {
           const data = await msgRes.json()
           setMessages(data)
         }
 
         if (thread?.patient_id) {
-          const patientRes = await fetch(`/api/v1/clinics/${user.id}/patients/${thread.patient_id}`)
+          const patientRes = await fetch(`/api/v1/clinics/${clinicId}/patients/${thread.patient_id}`)
           if (patientRes.ok) {
             const patientData = await patientRes.json()
             setCurrentPatient(patientData)

@@ -29,6 +29,9 @@ interface DashboardData {
   netProduction: number
   newLeads: number
   patientSatisfaction: number
+  totalCampaigns: number
+  activeCampaigns: number
+  messagesSent: number
   appointments: Array<{
     time: string
     patient: string
@@ -112,6 +115,9 @@ export default function Content() {
     netProduction: 0,
     newLeads: 0,
     patientSatisfaction: 0,
+    totalCampaigns: 0,
+    activeCampaigns: 0,
+    messagesSent: 0,
     appointments: [],
     recentActivity: [],
   }
@@ -218,7 +224,7 @@ export default function Content() {
             Dashboard
           </h1>
           <p className="text-muted-foreground font-medium text-lg">
-            Welcome back, <span className="text-primary font-bold">{user?.user_metadata?.full_name || user?.email?.split('@')[0] || 'Doctor'}</span>.
+            Welcome back, <span className="text-primary font-bold">{user?.name || user?.email?.split('@')[0] || 'Doctor'}</span>.
           </p>
         </div>
         <div className="flex items-center gap-4 bg-card/40 backdrop-blur-md p-2 rounded-2xl border border-border/50">
@@ -256,7 +262,7 @@ export default function Content() {
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
           <MetricCard
             title="Total Campaigns"
-            value="42"
+            value={data.totalCampaigns.toString()}
             subtitle="+12% from last month"
             icon={Megaphone}
             detailsContent={productionDetails}
@@ -264,7 +270,7 @@ export default function Content() {
           />
           <MetricCard
             title="Active Campaigns"
-            value="8"
+            value={data.activeCampaigns.toString()}
             subtitle="Currently running"
             icon={Zap}
             detailsContent={productionDetails}
@@ -272,7 +278,7 @@ export default function Content() {
           />
           <MetricCard
             title="Messages Sent"
-            value="15,400"
+            value={data.messagesSent.toLocaleString()}
             subtitle="98% delivery rate"
             icon={MessageSquare}
             detailsContent={productionDetails}
@@ -280,7 +286,7 @@ export default function Content() {
           />
           <MetricCard
             title="Bookings"
-            value="315"
+            value={data.todayAppointments.toString()}
             subtitle="Confirmed patients"
             icon={Calendar}
             detailsContent={appointmentDetails}

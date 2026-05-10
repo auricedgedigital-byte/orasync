@@ -6,7 +6,10 @@ import {
   getNewLeadsCount,
   getPatientSatisfaction,
   getRecentActivity,
-  getAIInsights
+  getAIInsights,
+  getTotalCampaigns,
+  getActiveCampaigns,
+  getMessagesSentCount
 } from '@/lib/dashboard-service'
 
 export async function GET(
@@ -24,7 +27,10 @@ export async function GET(
       newLeads,
       satisfaction,
       recentActivity,
-      aiInsights
+      aiInsights,
+      totalCampaigns,
+      activeCampaigns,
+      messagesSent
     ] = await Promise.all([
       getTodayAppointments(clinicId),
       getTodaySchedule(clinicId),
@@ -32,7 +38,10 @@ export async function GET(
       getNewLeadsCount(clinicId),
       getPatientSatisfaction(clinicId),
       getRecentActivity(clinicId, 10),
-      getAIInsights(clinicId)
+      getAIInsights(clinicId),
+      getTotalCampaigns(clinicId),
+      getActiveCampaigns(clinicId),
+      getMessagesSentCount(clinicId)
     ])
 
     const dashboardData = {
@@ -46,7 +55,10 @@ export async function GET(
         time: activity.time,
         type: activity.icon
       })),
-      aiInsights
+      aiInsights,
+      totalCampaigns,
+      activeCampaigns,
+      messagesSent
     }
 
     return NextResponse.json(dashboardData)

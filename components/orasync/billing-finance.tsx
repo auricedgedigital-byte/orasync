@@ -49,9 +49,10 @@ export default function BillingFinance() {
 
   useEffect(() => {
     const fetchData = async () => {
-      if (!user?.id) return
+      const clinicId = user?.clinic_id || user?.id
+      if (!clinicId) return
       try {
-        const res = await fetch(`/api/v1/clinics/${user.id}/billing`)
+        const res = await fetch(`/api/v1/clinics/${clinicId}/billing`)
         if (res.ok) {
           const data = await res.json()
           setCredits(data.credits)

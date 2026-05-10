@@ -27,9 +27,10 @@ export default function ReputationManagement() {
 
   useEffect(() => {
     const fetchReviews = async () => {
-      if (!user?.id) return
+      const clinicId = user?.clinic_id || user?.id
+      if (!clinicId) return
       try {
-        const res = await fetch(`/api/v1/clinics/${user.id}/reputation/reviews`)
+        const res = await fetch(`/api/v1/clinics/${clinicId}/reputation/reviews`)
         if (res.ok) {
           const data = await res.json()
           setReviews(data.reviews || [])

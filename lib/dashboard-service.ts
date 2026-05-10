@@ -120,6 +120,45 @@ export async function getRecentActivity(clinicId: string, limit = 10) {
   }
 }
 
+export async function getTotalCampaigns(clinicId: string) {
+  try {
+    const result = await pool.query(
+      "SELECT COUNT(*) FROM campaigns WHERE clinic_id = $1",
+      [clinicId]
+    )
+    return parseInt(result.rows[0]?.count || "0")
+  } catch (error) {
+    console.error("Error getting total campaigns:", error)
+    return 0
+  }
+}
+
+export async function getActiveCampaigns(clinicId: string) {
+  try {
+    const result = await pool.query(
+      "SELECT COUNT(*) FROM campaigns WHERE clinic_id = $1 AND status = 'active'",
+      [clinicId]
+    )
+    return parseInt(result.rows[0]?.count || "0")
+  } catch (error) {
+    console.error("Error getting active campaigns:", error)
+    return 0
+  }
+}
+
+export async function getMessagesSentCount(clinicId: string) {
+  try {
+    const result = await pool.query(
+      "SELECT SUM(amount) FROM usage_logs WHERE clinic_id = $1 AND action_type IN ('reactivation_emails', 'reactivation_sms', 'reactivation_whatsapp')",
+      [clinicId]
+    )
+    return parseInt(result.rows[0]?.sum || "0")
+  } catch (error) {
+    console.error("Error getting messages sent count:", error)
+    return 0
+  }
+}
+
 export async function getAIInsights(clinicId: string) {
   try {
     // Get inactive patients count
