@@ -6,6 +6,8 @@ import { useUser } from "@/hooks/use-user"
 import { Button } from "@/components/ui/button"
 import OrasyncLogo from "@/components/orasync/logo"
 import Image from "next/image"
+import { useState } from "react"
+import { toast } from "sonner"
 import {
   ArrowRight,
   CheckCircle2,
@@ -22,6 +24,9 @@ import {
 export default function LandingPage() {
   const router = useRouter()
   const { user, loading } = useUser()
+  const [auditPracticeName, setAuditPracticeName] = useState("")
+  const [auditEmail, setAuditEmail] = useState("")
+  const [isSubmittingAudit, setIsSubmittingAudit] = useState(false)
 
   if (loading) return null
 
@@ -150,51 +155,109 @@ export default function LandingPage() {
         </section>
 
         {/* Feature Narrative - Continuous flow into the Intelligence Engine */}
-        <section className="py-40 bg-slate-50/50">
-          <div className="container max-w-7xl px-6 lg:px-10 mx-auto">
-            <div className="grid lg:grid-cols-2 gap-32 items-center">
-              <div className="relative h-[750px] rounded-[5rem] overflow-hidden shadow-[0_50px_100px_-20px_rgba(0,0,0,0.15)] border-[12px] border-white">
-                <Image src="/dentist.png" alt="Clinical Precision" fill className="object-cover" />
-                <div className="absolute inset-0 bg-gradient-to-t from-slate-900/70 via-transparent to-transparent" />
-                <div className="absolute bottom-16 left-16 right-16 p-10 bg-white/20 backdrop-blur-3xl rounded-[3rem] border border-white/30 shadow-2xl">
-                  <p className="text-white text-2xl font-black italic tracking-tight leading-snug">"Orasync has completely overhauled our practice ROI. It's the partner we've always needed for re-engagement."</p>
-                  <div className="mt-6 flex items-center gap-4">
-                    <div className="w-12 h-12 rounded-2xl bg-primary shadow-lg shadow-primary/40" />
-                    <div>
-                      <p className="text-white text-base font-black uppercase tracking-widest">Dr. Sarah Jenkins</p>
-                      <p className="text-white/70 text-[10px] font-black tracking-[0.2em] uppercase">Founder, Smile Studio</p>
-                    </div>
-                  </div>
-                </div>
-              </div>
-              <div className="space-y-20">
-                <div className="space-y-8">
-                  <div className="inline-flex items-center gap-3 px-5 py-2.5 bg-primary/10 rounded-full border border-primary/20">
-                    <Sparkles className="h-5 w-5 text-primary" />
-                    <span className="text-[12px] font-black text-primary uppercase tracking-[0.2em]">The Intelligence Engine</span>
-                  </div>
-                  <h2 className="text-6xl lg:text-8xl font-black tracking-tighter leading-[0.9] text-slate-900">
-                    Autonomous <br /><span className="text-primary italic">Clinical Precision</span>
-                  </h2>
-                  <p className="text-2xl text-slate-400 font-bold leading-relaxed tracking-tight max-w-xl">Nova handles the weight of clinical communication so your team can focus on the patient experience.</p>
-                </div>
+        <section className="py-40 bg-slate-50/50" id="features">
+...
+        </section>
 
-                <div className="space-y-12">
-                  {[
-                    { title: "Smart Reactivations", desc: "Autonomous sequences that re-ignite dormant patient pipelines on autopilot.", icon: Users },
-                    { title: "Unified Command Hub", desc: "A high-fidelity cockpit for SMS, WhatsApp, and Web Chat integration.", icon: MessageSquare },
-                    { title: "Reputation Guardian", desc: "Automate your social proof with clinical review generation and monitoring.", icon: StarIcon }
-                  ].map((f, i) => (
-                    <div key={i} className="flex gap-10 group">
-                      <div className="h-20 w-20 rounded-[2rem] bg-white shadow-xl flex items-center justify-center border border-slate-100 group-hover:border-primary/50 transition-all flex-shrink-0 group-hover:scale-110 group-hover:-rotate-3">
-                        <f.icon className="h-8 w-8 text-primary" />
-                      </div>
-                      <div className="space-y-2 pt-4">
-                        <h4 className="text-3xl font-black text-slate-900 tracking-tighter group-hover:text-primary transition-colors">{f.title}</h4>
-                        <p className="text-xl font-bold text-slate-400 leading-relaxed group-hover:text-slate-500 transition-colors">{f.desc}</p>
-                      </div>
+        {/* Audit Section */}
+        <section className="py-40 bg-white" id="audit">
+          <div className="container max-w-7xl px-6 lg:px-10 mx-auto">
+            <div className="bg-slate-900 rounded-[4rem] p-12 md:p-20 overflow-hidden relative">
+              <div className="absolute top-0 right-0 w-[50%] h-full bg-primary/10 blur-[120px] rounded-full translate-x-1/2 -translate-y-1/2" />
+              
+              <div className="relative z-10 grid lg:grid-cols-2 gap-16 items-center">
+                <div className="space-y-8">
+                  <div className="inline-flex items-center gap-3 px-5 py-2.5 bg-primary/20 rounded-full border border-primary/30">
+                    <Shield className="h-5 w-5 text-primary" />
+                    <span className="text-[12px] font-black text-primary uppercase tracking-[0.2em]">Practice Intelligence</span>
+                  </div>
+                  <h2 className="text-5xl md:text-7xl font-black tracking-tighter text-white leading-[0.9]">
+                    Get Your <br /><span className="text-primary italic">Free Practice Audit</span>
+                  </h2>
+                  <p className="text-xl text-slate-400 font-bold leading-relaxed tracking-tight">
+                    Our Nova engine will analyze your current patient pipeline and identify exactly how much revenue is sitting dormant in your practice.
+                  </p>
+                  <ul className="space-y-4">
+                    {[
+                      "Patient Reactivation Potential",
+                      "Schedule Gap Analysis",
+                      "Reputation Benchmarking",
+                      "ROI Projections"
+                    ].map((item, i) => (
+                      <li key={i} className="flex items-center gap-3 text-slate-300 font-bold">
+                        <CheckCircle2 className="h-5 w-5 text-primary" />
+                        {item}
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+                
+                <div className="bg-white/5 backdrop-blur-xl rounded-[3rem] border border-white/10 p-10 space-y-8">
+                  <h3 className="text-2xl font-black text-white tracking-tight">Request Your Analysis</h3>
+                  <form className="space-y-4" onSubmit={async (e) => {
+                    e.preventDefault()
+                    if (!auditPracticeName || !auditEmail) {
+                      toast.error("Please fill in all fields")
+                      return
+                    }
+                    setIsSubmittingAudit(true)
+                    try {
+                      const res = await fetch("/api/audit", {
+                        method: "POST",
+                        headers: { "Content-Type": "application/json" },
+                        body: JSON.stringify({
+                          practice_name: auditPracticeName,
+                          contact_email: auditEmail,
+                          source: "landing_page_audit"
+                        })
+                      })
+                      if (res.ok) {
+                        toast.success("Audit Requested!", {
+                          description: "Our engine is analyzing your practice. We will email you the results shortly."
+                        })
+                        setAuditPracticeName("")
+                        setAuditEmail("")
+                      } else {
+                        throw new Error("Failed to submit")
+                      }
+                    } catch (error) {
+                      toast.error("Submission failed. Please try again.")
+                    } finally {
+                      setIsSubmittingAudit(false)
+                    }
+                  }}>
+                    <div className="space-y-2">
+                      <label className="text-[10px] font-black text-slate-500 uppercase tracking-widest ml-1">Practice Name</label>
+                      <input 
+                        type="text" 
+                        required
+                        className="w-full h-14 bg-white/5 border border-white/10 rounded-2xl px-6 text-white focus:outline-none focus:border-primary transition-colors" 
+                        placeholder="e.g. Skyline Dental" 
+                        value={auditPracticeName}
+                        onChange={(e) => setAuditPracticeName(e.target.value)}
+                      />
                     </div>
-                  ))}
+                    <div className="space-y-2">
+                      <label className="text-[10px] font-black text-slate-500 uppercase tracking-widest ml-1">Contact Email</label>
+                      <input 
+                        type="email" 
+                        required
+                        className="w-full h-14 bg-white/5 border border-white/10 rounded-2xl px-6 text-white focus:outline-none focus:border-primary transition-colors" 
+                        placeholder="doctor@practice.com" 
+                        value={auditEmail}
+                        onChange={(e) => setAuditEmail(e.target.value)}
+                      />
+                    </div>
+                    <Button 
+                      type="submit"
+                      disabled={isSubmittingAudit}
+                      className="w-full h-16 rounded-2xl bg-primary text-white font-black text-lg shadow-xl shadow-primary/20 mt-4 group"
+                    >
+                      {isSubmittingAudit ? "Analyzing..." : "Run Diagnostic"}
+                      {!isSubmittingAudit && <ArrowRight className="ml-3 h-5 w-5 group-hover:translate-x-1 transition-transform" />}
+                    </Button>
+                  </form>
+                  <p className="text-center text-[10px] font-black text-slate-500 uppercase tracking-widest">No credit card required. HIPAA Compliant.</p>
                 </div>
               </div>
             </div>

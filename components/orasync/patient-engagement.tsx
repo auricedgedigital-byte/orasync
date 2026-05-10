@@ -46,9 +46,10 @@ export default function PatientEngagement() {
   const { scrollToSection } = useScrollToSection()
 
   const fetchCampaigns = async () => {
-    if (!user?.id) return
+    const clinicId = user?.clinic_id || user?.id
+    if (!clinicId) return
     try {
-      const res = await fetch(`/api/v1/clinics/${user.id}/campaigns`)
+      const res = await fetch(`/api/v1/clinics/${clinicId}/campaigns`)
       if (res.ok) {
         const data = await res.json()
         // Map DB fields to UI fields if necessary

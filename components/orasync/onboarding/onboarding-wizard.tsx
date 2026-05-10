@@ -58,10 +58,9 @@ export function OnboardingWizard() {
 
     useEffect(() => {
         if (user) {
-            // In this app, user.id is often used as clinic_id if not specified
-            // but we'll try to get it from profile soon. For now using user.id
-            setClinicId(user.id)
-            setFormData(prev => ({ ...prev, clinicName: user.user_metadata?.full_name || "" }))
+            // In our next-auth config, we've added clinic_id to the user object
+            setClinicId(user.clinic_id || user.id)
+            setFormData(prev => ({ ...prev, clinicName: user.name || "" }))
         }
     }, [user])
 
