@@ -1,9 +1,11 @@
 import { type NextRequest, NextResponse } from "next/server"
 import { getReviewsNeedingAttention } from "@/lib/db"
 
-export async function GET(request: NextRequest, { params }: { params: { cid: string } }) {
+export async function GET(request: NextRequest, { params }: { params: Promise<{ cid: string }> }) {
   try {
-    const clinicId = params.cid
+    const resolvedParams = await params
+
+    const clinicId = resolvedParams.cid
     const reviews = await getReviewsNeedingAttention(clinicId)
     return NextResponse.json({ reviews })
   } catch (error) {

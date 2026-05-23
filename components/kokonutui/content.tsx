@@ -70,18 +70,16 @@ export default function Content() {
   useEffect(() => {
     if (!user) return
 
-    const clinicId = user.clinic_id || user.id
+    const clinicId = (user as Record<string, unknown>).clinic_id || user.id
 
     const fetchData = async () => {
       try {
-        // Fetch dashboard data
         const response = await fetch(`/api/v1/clinics/${clinicId}/dashboard`)
         if (response.ok) {
           const data = await response.json()
           setDashboardData(data)
         }
 
-        // Fetch credits
         const creditsResponse = await fetch(`/api/v1/clinics/${clinicId}/trial-check`)
         if (creditsResponse.ok) {
           const creditsData = await creditsResponse.json()

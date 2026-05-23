@@ -15,10 +15,11 @@ interface FilterCondition {
 
 export async function POST(
     request: NextRequest,
-    { params }: { params: { cid: string } }
+    { params }: { params: Promise<{ cid: string }> }
 ) {
     try {
-        const clinicId = params.cid
+        const resolvedParams = await params
+        const clinicId = resolvedParams.cid
         const { conditions } = await request.json() as { conditions: FilterCondition[] }
 
         if (!conditions || conditions.length === 0) {

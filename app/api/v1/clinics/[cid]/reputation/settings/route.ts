@@ -1,9 +1,11 @@
 import { type NextRequest, NextResponse } from "next/server"
 import { getReputationSettings, saveReputationSettings } from "@/lib/db"
 
-export async function GET(request: NextRequest, { params }: { params: { cid: string } }) {
+export async function GET(request: NextRequest, { params }: { params: Promise<{ cid: string }> }) {
   try {
-    const clinicId = params.cid
+    const resolvedParams = await params
+
+    const clinicId = resolvedParams.cid
     const settings = await getReputationSettings(clinicId)
     
     if (!settings) {
@@ -25,9 +27,9 @@ export async function GET(request: NextRequest, { params }: { params: { cid: str
   }
 }
 
-export async function PUT(request: NextRequest, { params }: { params: { cid: string } }) {
+export async function PUT(request: NextRequest, { params }: { params: Promise<{ cid: string }> }) {
   try {
-    const clinicId = params.cid
+    const clinicId = resolvedParams.cid
     const body = await request.json()
     
     const {

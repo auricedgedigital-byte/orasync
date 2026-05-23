@@ -14,10 +14,11 @@ import {
 
 export async function GET(
   request: NextRequest,
-  { params }: { params: { cid: string } }
+  { params }: { params: Promise<{ cid: string }> }
 ) {
   try {
-    const clinicId = params.cid
+        const resolvedParams = await params
+    const clinicId = resolvedParams.cid
 
     // Fetch all dashboard data in parallel for performance
     const [

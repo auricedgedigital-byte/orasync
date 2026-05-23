@@ -1,8 +1,10 @@
 import { type NextRequest, NextResponse } from "next/server"
 import { getCampaigns, createCampaign } from "@/lib/db"
 
-export async function POST(request: NextRequest, { params }: { params: { cid: string } }) {
+export async function POST(request: NextRequest, { params }: { params: Promise<{ cid: string }> }) {
   try {
+    const resolvedParams = await params
+
     const body = await request.json()
     const { name, segment_criteria, channels, batch_size, sends_per_minute, drip_sequence, a_b_test, status = 'draft' } = body
 
@@ -10,7 +12,7 @@ export async function POST(request: NextRequest, { params }: { params: { cid: st
       return NextResponse.json({ error: "Missing required fields" }, { status: 400 })
     }
 
-    const clinicId = params.cid
+    const clinicId = resolvedParams.cid
 
     // Transform UI payload to DB schema (020)
     // channels in UI is string[], but DB wants Record<string, boolean> or similar JSONB
@@ -47,9 +49,9 @@ export async function POST(request: NextRequest, { params }: { params: { cid: st
   }
 }
 
-export async function GET(request: NextRequest, { params }: { params: { cid: string } }) {
+export async function GET(request: NextRequest, { params }: { params: Promise<{ cid: string }> }) {
   try {
-    const clinicId = params.cid
+    const clinicId = resolvedParams.cid
     const campaigns = await getCampaigns(clinicId)
     return NextResponse.json({ campaigns })
   } catch (error) {

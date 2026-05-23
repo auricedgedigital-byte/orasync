@@ -8,10 +8,11 @@ const pool = new Pool({
 
 export async function POST(
     request: NextRequest,
-    { params }: { params: { cid: string } }
+    { params }: { params: Promise<{ cid: string }> }
 ) {
     try {
-        const clinicId = params.cid
+        const resolvedParams = await params
+        const clinicId = resolvedParams.cid
         const { name, description, conditions } = await request.json()
 
         const result = await pool.query(
@@ -34,10 +35,11 @@ export async function POST(
 
 export async function GET(
     request: NextRequest,
-    { params }: { params: { cid: string } }
+    { params }: { params: Promise<{ cid: string }> }
 ) {
     try {
-        const clinicId = params.cid
+        const resolvedParams = await params
+        const clinicId = resolvedParams.cid
 
         const result = await pool.query(
             `SELECT id, name, description, filters, created_at

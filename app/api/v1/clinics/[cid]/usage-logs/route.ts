@@ -1,12 +1,14 @@
 import { type NextRequest, NextResponse } from "next/server"
 import { getUsageLogs, logUsage } from "@/lib/db"
 
-export async function GET(request: NextRequest, { params }: { params: { cid: string } }) {
+export async function GET(request: NextRequest, { params }: { params: Promise<{ cid: string }> }) {
   try {
+    const resolvedParams = await params
+
     const { searchParams } = new URL(request.url)
     const limit = Number.parseInt(searchParams.get("limit") || "100", 10)
 
-    const clinicId = params.cid
+    const clinicId = resolvedParams.cid
     const logs = await getUsageLogs(clinicId, limit)
 
     return NextResponse.json({ logs })
@@ -16,9 +18,9 @@ export async function GET(request: NextRequest, { params }: { params: { cid: str
   }
 }
 
-export async function POST(request: NextRequest, { params }: { params: { cid: string } }) {
+export async function POST(request: NextRequest, { params }: { params: Promise<{ cid: string }> }) {
   try {
-    const clinicId = params.cid
+    const clinicId = resolvedParams.cid
     const body = await request.json()
     const { user_id, action_type, amount, related_id, details } = body
 

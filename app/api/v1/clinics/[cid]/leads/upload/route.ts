@@ -25,10 +25,11 @@ interface ImportError {
 
 export async function POST(
     request: NextRequest,
-    { params }: { params: { cid: string } }
+    { params }: { params: Promise<{ cid: string }> }
 ) {
     try {
-        const clinicId = params.cid
+        const resolvedParams = await params
+        const clinicId = resolvedParams.cid
         const { leads } = await request.json() as { leads: LeadRow[] }
 
         if (!leads || leads.length === 0) {

@@ -3,10 +3,11 @@ import { getMessages, createMessage } from "@/lib/db"
 
 export async function GET(
     request: NextRequest,
-    { params }: { params: { cid: string; threadId: string } }
+    { params }: { params: Promise<{ cid: string; threadId: string }> }
 ) {
     try {
-        const messages = await getMessages(params.threadId)
+        const resolvedParams = await params
+        const messages = await getMessages(resolvedParams.threadId)
         return NextResponse.json(messages)
     } catch (error) {
         console.error("Error in messages API:", error)
@@ -16,9 +17,10 @@ export async function GET(
 
 export async function POST(
     request: NextRequest,
-    { params }: { params: { cid: string; threadId: string } }
+    { params }: { params: Promise<{ cid: string; threadId: string }> }
 ) {
     try {
+        const resolvedParams = await params
         const body = await request.json()
         const { content, senderType, userId } = body
 
@@ -26,7 +28,7 @@ export async function POST(
             return NextResponse.json({ error: "Missing required fields" }, { status: 400 })
         }
 
-        const message = await createMessage(params.cid, params.threadId, senderType, content, userId)
+        const message = await createMessage(resolvedParams.cid, resolvedParams.threadId, senderType, content, userId)
 
         if (!message) {
             return NextResponse.json({ error: "Failed to create message" }, { status: 500 })

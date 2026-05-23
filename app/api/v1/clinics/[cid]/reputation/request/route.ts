@@ -39,9 +39,11 @@ async function sendSMS(to: string, body: string): Promise<boolean> {
   return true
 }
 
-export async function POST(request: NextRequest, { params }: { params: { cid: string } }) {
+export async function POST(request: NextRequest, { params }: { params: Promise<{ cid: string }> }) {
   try {
-    const clinicId = params.cid
+    const resolvedParams = await params
+
+    const clinicId = resolvedParams.cid
     const body = await request.json()
     const { patient_id, channel = 'email', custom_message, user_id } = body
 

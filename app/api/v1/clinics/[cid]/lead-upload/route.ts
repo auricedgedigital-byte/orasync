@@ -15,9 +15,11 @@ function normalizeEmail(email: string): string {
   return email.toLowerCase().trim()
 }
 
-export async function POST(request: NextRequest, { params }: { params: { cid: string } }) {
+export async function POST(request: NextRequest, { params }: { params: Promise<{ cid: string }> }) {
   try {
-    const clinicId = params.cid
+    const resolvedParams = await params
+
+    const clinicId = resolvedParams.cid
     const body = await request.json()
     const { leads } = body
 
