@@ -1,13 +1,15 @@
 import { type NextRequest, NextResponse } from "next/server"
 import { checkAndDecrementCredits, getTrialCreditsWithDefaults } from "@/lib/db"
 
-export async function GET(request: NextRequest, { params }: { params: { cid: string } }) {
+export async function GET(request: NextRequest, { params }: { params: Promise<{ cid: string }> }) {
   try {
+    const resolvedParams = await params
+
     const { searchParams } = new URL(request.url)
     const action = searchParams.get("action")
     const amount = searchParams.get("amount")
 
-    const clinicId = params.cid
+    const clinicId = resolvedParams.cid
 
     if (!action || !amount) {
       const credits = await getTrialCreditsWithDefaults(clinicId)

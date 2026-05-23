@@ -9,11 +9,12 @@ const pool = new Pool({
 // Get campaign stats
 export async function GET(
     request: NextRequest,
-    { params }: { params: { cid: string; campaignId: string } }
+    { params }: { params: Promise<{ cid: string; campaignId: string }> }
 ) {
     try {
-        const clinicId = params.cid
-        const campaignId = params.campaignId
+        const resolvedParams = await params
+        const clinicId = resolvedParams.cid
+        const campaignId = resolvedParams.campaignId
 
         const result = await pool.query(
             `SELECT 

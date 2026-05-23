@@ -1,9 +1,11 @@
 import { type NextRequest, NextResponse } from "next/server"
 import { checkAndDecrementCredits } from "@/lib/db"
 
-export async function POST(request: NextRequest, { params }: { params: { cid: string } }) {
+export async function POST(request: NextRequest, { params }: { params: Promise<{ cid: string }> }) {
   try {
-    const clinicId = params.cid
+    const resolvedParams = await params
+
+    const clinicId = resolvedParams.cid
 
     const creditCheck = await checkAndDecrementCredits(clinicId, "chatbot_installs", 1)
 

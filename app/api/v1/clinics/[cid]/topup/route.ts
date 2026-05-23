@@ -6,9 +6,11 @@ async function getSql() {
   return neon(process.env.DATABASE_URL)
 }
 
-export async function POST(request: NextRequest, { params }: { params: { cid: string } }) {
+export async function POST(request: NextRequest, { params }: { params: Promise<{ cid: string }> }) {
   try {
-    const clinicId = params.cid
+    const resolvedParams = await params
+
+    const clinicId = resolvedParams.cid
     const body = await request.json()
     const { pack_type, amount, user_id } = body
 

@@ -3,10 +3,11 @@ import { getPatientById } from "@/lib/db"
 
 export async function GET(
     request: NextRequest,
-    { params }: { params: { cid: string; patientId: string } }
+    { params }: { params: Promise<{ cid: string; patientId: string }> }
 ) {
     try {
-        const patient = await getPatientById(params.cid, params.patientId)
+        const resolvedParams = await params
+        const patient = await getPatientById(resolvedParams.cid, resolvedParams.patientId)
         if (!patient) {
             return NextResponse.json({ error: "Patient not found" }, { status: 404 })
         }

@@ -2,9 +2,11 @@ import { type NextRequest, NextResponse } from "next/server"
 import { checkAndDecrementCredits, logUsage } from "@/lib/db"
 import { generateSOAPNote, type SOAPRequest } from "@/lib/nova/specialized/clinical-soap"
 
-export async function POST(request: NextRequest, { params }: { params: { cid: string } }) {
+export async function POST(request: NextRequest, { params }: { params: Promise<{ cid: string }> }) {
   try {
-    const clinicId = params.cid
+    const resolvedParams = await params
+
+    const clinicId = resolvedParams.cid
     const body = await request.json()
     const { 
       raw_notes, 
@@ -88,7 +90,7 @@ export async function POST(request: NextRequest, { params }: { params: { cid: st
   }
 }
 
-export async function GET(request: NextRequest, { params }: { params: { cid: string } }) {
+export async function GET(request: NextRequest, { params }: { params: Promise<{ cid: string }> }) {
   try {
     const { searchParams } = new URL(request.url)
     const raw_notes = searchParams.get("raw_notes")

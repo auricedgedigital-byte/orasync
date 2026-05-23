@@ -8,10 +8,11 @@ const pool = new Pool({
 
 export async function GET(
     request: NextRequest,
-    { params }: { params: { cid: string } }
+    { params }: { params: Promise<{ cid: string }> }
 ) {
     try {
-        const clinicId = params.cid
+        const resolvedParams = await params
+        const clinicId = resolvedParams.cid
 
         // Fetch inbox statistics in parallel
         const [totalMessagesResult, unreadResult, responsesResult, bookingsResult, channelBreakdown] = await Promise.all([

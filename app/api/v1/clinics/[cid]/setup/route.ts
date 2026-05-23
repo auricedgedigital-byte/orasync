@@ -7,11 +7,13 @@ const pool = new Pool({
     ssl: { rejectUnauthorized: false },
 })
 
-export async function POST(request: NextRequest, { params }: { params: { cid: string } }) {
-    const clinicId = params.cid
+export async function POST(request: NextRequest, { params }: { params: Promise<{ cid: string }> }) {
+    const clinicId = resolvedParams.cid
     const client = await pool.connect()
 
     try {
+    const resolvedParams = await params
+
         const body = await request.json()
         const {
             clinicName,

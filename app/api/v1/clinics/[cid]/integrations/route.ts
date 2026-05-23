@@ -1,8 +1,10 @@
 import { type NextRequest, NextResponse } from "next/server"
 import { saveIntegration, getIntegration } from "@/lib/db"
 
-export async function POST(request: NextRequest, { params }: { params: { cid: string } }) {
+export async function POST(request: NextRequest, { params }: { params: Promise<{ cid: string }> }) {
   try {
+    const resolvedParams = await params
+
     const body = await request.json()
     const { provider_name, credentials, status } = body
 
@@ -10,7 +12,7 @@ export async function POST(request: NextRequest, { params }: { params: { cid: st
       return NextResponse.json({ error: "Missing provider_name or credentials" }, { status: 400 })
     }
 
-    const clinicId = params.cid
+    const clinicId = resolvedParams.cid
     const result = await saveIntegration(clinicId, provider_name, credentials, status || "connected")
 
     return NextResponse.json(result, { status: 201 })
@@ -20,7 +22,7 @@ export async function POST(request: NextRequest, { params }: { params: { cid: st
   }
 }
 
-export async function GET(request: NextRequest, { params }: { params: { cid: string } }) {
+export async function GET(request: NextRequest, { params }: { params: Promise<{ cid: string }> }) {
   try {
     const { searchParams } = new URL(request.url)
     const provider = searchParams.get("provider")
@@ -29,7 +31,7 @@ export async function GET(request: NextRequest, { params }: { params: { cid: str
       return NextResponse.json({ error: "Missing provider parameter" }, { status: 400 })
     }
 
-    const clinicId = params.cid
+    const clinicId = resolvedParams.cid
     const result = await getIntegration(clinicId, provider)
 
     return NextResponse.json(result || { status: "disconnected" })

@@ -25,7 +25,7 @@ async function getPayPalAccessToken() {
   }
 }
 
-export async function POST(request: NextRequest, { params }: { params: { cid: string } }) {
+export async function POST(request: NextRequest, { params }: { params: Promise<{ cid: string }> }) {
   try {
     const body = await request.json()
     const { pack_type, amount, currency = "USD" } = body

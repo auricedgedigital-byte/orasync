@@ -2,9 +2,11 @@ import { type NextRequest, NextResponse } from "next/server"
 import { checkAndDecrementCredits, logUsage } from "@/lib/db"
 import { generateAdCreative, type AdCreativeRequest } from "@/lib/nova/specialized/ad-creative"
 
-export async function POST(request: NextRequest, { params }: { params: { cid: string } }) {
+export async function POST(request: NextRequest, { params }: { params: Promise<{ cid: string }> }) {
   try {
-    const clinicId = params.cid
+    const resolvedParams = await params
+
+    const clinicId = resolvedParams.cid
     const body = await request.json()
     const { 
       goal, 
@@ -91,7 +93,7 @@ export async function POST(request: NextRequest, { params }: { params: { cid: st
   }
 }
 
-export async function GET(request: NextRequest, { params }: { params: { cid: string } }) {
+export async function GET(request: NextRequest, { params }: { params: Promise<{ cid: string }> }) {
   try {
     const { searchParams } = new URL(request.url)
     const goal = searchParams.get("goal")

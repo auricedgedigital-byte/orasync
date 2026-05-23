@@ -28,9 +28,7 @@ export default function LandingPage() {
   const [auditEmail, setAuditEmail] = useState("")
   const [isSubmittingAudit, setIsSubmittingAudit] = useState(false)
 
-  if (loading) return null
-
-  if (user) {
+  if (user && !loading) {
     router.push("/dashboard")
     return null
   }
@@ -154,9 +152,41 @@ export default function LandingPage() {
           </div>
         </section>
 
-        {/* Feature Narrative - Continuous flow into the Intelligence Engine */}
+        {/* Feature Narrative */}
         <section className="py-40 bg-slate-50/50" id="features">
-...
+          <div className="container max-w-7xl px-6 lg:px-10 mx-auto">
+            <div className="text-center mb-24 space-y-6">
+              <div className="inline-flex items-center gap-3 px-5 py-2.5 bg-primary/5 rounded-full border border-primary/10">
+                <Zap className="h-4 w-4 text-primary" />
+                <span className="text-[10px] font-black text-primary uppercase tracking-[0.3em]">Intelligence Engine</span>
+              </div>
+              <h2 className="text-5xl md:text-7xl font-black tracking-tighter text-slate-900 leading-[0.9]">
+                Every Feature<br /><span className="text-primary italic">Built for Growth</span>
+              </h2>
+              <p className="text-xl text-slate-400 font-bold max-w-2xl mx-auto tracking-tight">
+                AI-powered tools that work autonomously to fill chairs, retain patients, and grow revenue.
+              </p>
+            </div>
+
+            <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
+              {[
+                { icon: MessageSquare, title: "Unified Inbox", desc: "WhatsApp, SMS, email, and web chat — all in one AI-powered inbox that responds instantly." },
+                { icon: Users, title: "Patient CRM", desc: "Full patient profiles with treatment history, AI summaries, and intelligent reactivation." },
+                { icon: Zap, title: "Smart Campaigns", desc: "Automated multi-channel campaigns that re-engage dormant patients and drive bookings." },
+                { icon: StarIcon, title: "Reputation Engine", desc: "Automated review requests, sentiment analysis, and negative feedback interception." },
+                { icon: Globe, title: "Online Presence", desc: "SEO optimization, website builder, and local search visibility tools — powered by AI." },
+                { icon: Shield, title: "HIPAA Compliant", desc: "Enterprise-grade security with audit trails, encryption, and full HIPAA compliance." },
+              ].map((feature, i) => (
+                <div key={i} className="group p-10 rounded-[2.5rem] border border-slate-100 bg-white hover:shadow-2xl hover:border-primary/20 transition-all duration-500 space-y-6">
+                  <div className="w-14 h-14 rounded-2xl bg-primary/5 group-hover:bg-primary/10 flex items-center justify-center transition-colors">
+                    <feature.icon className="h-6 w-6 text-primary" />
+                  </div>
+                  <h3 className="text-2xl font-black text-slate-900 tracking-tight">{feature.title}</h3>
+                  <p className="text-slate-400 font-bold leading-relaxed">{feature.desc}</p>
+                </div>
+              ))}
+            </div>
+          </div>
         </section>
 
         {/* Audit Section */}

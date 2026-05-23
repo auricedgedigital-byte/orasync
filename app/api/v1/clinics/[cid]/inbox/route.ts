@@ -7,14 +7,15 @@ import { Pool } from "pg"
 
 export async function GET(
     request: NextRequest,
-    { params }: { params: { cid: string } }
+    { params }: { params: Promise<{ cid: string }> }
 ) {
     try {
+        const resolvedParams = await params
         const searchParams = request.nextUrl.searchParams
         const filterChannel = searchParams.get("channel") || "all"
         const searchTerm = searchParams.get("search") || ""
 
-        const threads = await getThreads(params.cid, 50, filterChannel, searchTerm)
+        const threads = await getThreads(resolvedParams.cid, 50, filterChannel, searchTerm)
 
         return NextResponse.json(threads)
     } catch (error) {

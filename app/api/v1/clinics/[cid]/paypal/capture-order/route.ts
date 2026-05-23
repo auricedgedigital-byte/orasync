@@ -7,6 +7,8 @@ const PAYPAL_API_URL = process.env.PAYPAL_API_URL || "https://api-m.sandbox.payp
 
 async function getPayPalAccessToken() {
   try {
+    const resolvedParams = await params
+
     const auth = Buffer.from(`${PAYPAL_CLIENT_ID}:${PAYPAL_SECRET}`).toString("base64")
 
     const response = await fetch(`${PAYPAL_API_URL}/v1/oauth2/token`, {
@@ -26,7 +28,7 @@ async function getPayPalAccessToken() {
   }
 }
 
-export async function POST(request: NextRequest, { params }: { params: { cid: string } }) {
+export async function POST(request: NextRequest, { params }: { params: Promise<{ cid: string }> }) {
   try {
     const body = await request.json()
     const { order_id, pack_type, user_id } = body
@@ -35,7 +37,7 @@ export async function POST(request: NextRequest, { params }: { params: { cid: st
       return NextResponse.json({ error: "Missing order_id or pack_type" }, { status: 400 })
     }
 
-    const clinicId = params.cid
+    const clinicId = resolvedParams.cid
 
     // Get internal order record using PayPal order ID
     const orderRecord = await getOrderByPayPalOrderId(order_id)

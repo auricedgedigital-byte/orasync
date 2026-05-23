@@ -3,11 +3,12 @@ import { respondToReview, getReviewsNeedingAttention } from "@/lib/db"
 
 export async function POST(
   request: NextRequest,
-  { params }: { params: { cid: string; reviewId: string } }
+  { params }: { params: Promise<{ cid: string; reviewId: string }> }
 ) {
   try {
-    const clinicId = params.cid
-    const reviewId = params.reviewId
+        const resolvedParams = await params
+    const clinicId = resolvedParams.cid
+    const reviewId = resolvedParams.reviewId
     const body = await request.json()
     const { response_text, user_id } = body
 

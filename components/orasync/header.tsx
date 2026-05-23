@@ -34,7 +34,7 @@ export function Header() {
     }
 
     const clinicName = user?.name ? `${user.name.split(" ")[0]}'s Clinic` : "My Dental Practice"
-    const clinicId = user?.clinic_id || user?.id || "demo"
+    const clinicId = (user as Record<string, unknown> | null)?.clinic_id as string || user?.id || "demo"
 
     return (
         <header className="sticky top-0 z-40 w-full border-b border-slate-200 dark:border-white/5 bg-white/80 dark:bg-[#020617]/80 backdrop-blur-xl transition-colors duration-500">

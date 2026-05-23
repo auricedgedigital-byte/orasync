@@ -7,9 +7,11 @@ const pool = new Pool({
     ssl: process.env.DATABASE_URL?.includes("postgres") ? { rejectUnauthorized: false } : undefined,
 })
 
-export async function GET(request: NextRequest, { params }: { params: { cid: string } }) {
+export async function GET(request: NextRequest, { params }: { params: Promise<{ cid: string }> }) {
     try {
-        const clinicId = params.cid
+    const resolvedParams = await params
+
+        const clinicId = resolvedParams.cid
 
         const credits = await getTrialCreditsWithDefaults(clinicId)
 
