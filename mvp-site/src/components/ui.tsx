@@ -1,4 +1,4 @@
-import { Link, useLocation } from "@tanstack/react-router";
+import { Link, useLocation, useNavigate } from "@tanstack/react-router";
 import type { ReactNode } from "react";
 import { useEffect, useState } from "react";
 import {
@@ -102,6 +102,11 @@ export function Icon({ name, size = 18 }: { name: string; size?: number }) {
         <path d="M4 6h16M4 12h16M4 18h16" />
       </>
     ),
+    close: (
+      <>
+        <path d="m6 6 12 12M18 6 6 18" />
+      </>
+    ),
     check: <path d="m5 12 4 4L19 6" />,
     shield: (
       <>
@@ -120,9 +125,29 @@ export function AppShell({ children }: { children: ReactNode }) {
 
   useEffect(() => setSetup(readPracticeSetup()), [location.pathname]);
 
+  useEffect(() => {
+    if (!mobileOpen) return;
+    const onKeyDown = (event: KeyboardEvent) => {
+      if (event.key === "Escape") setMobileOpen(false);
+    };
+    window.addEventListener("keydown", onKeyDown);
+    return () => window.removeEventListener("keydown", onKeyDown);
+  }, [mobileOpen]);
+
   return (
     <div className="min-h-dvh bg-[#f6f8fb] text-slate-900">
-      <aside className={`app-sidebar ${mobileOpen ? "app-sidebar-open" : ""}`}>
+      {mobileOpen && (
+        <button
+          type="button"
+          className="mobile-backdrop"
+          aria-label="Close navigation"
+          onClick={() => setMobileOpen(false)}
+        />
+      )}
+      <aside
+        id="primary-navigation"
+        className={`app-sidebar ${mobileOpen ? "app-sidebar-open" : ""}`}
+      >
         <div className="flex items-center justify-between px-6 py-5">
           <Link
             to="/"
@@ -132,11 +157,12 @@ export function AppShell({ children }: { children: ReactNode }) {
             <Logo />
           </Link>
           <button
+            type="button"
             className="mobile-close"
             onClick={() => setMobileOpen(false)}
             aria-label="Close navigation"
           >
-            <Icon name="menu" />
+            <Icon name="close" />
           </button>
         </div>
         <div className="mx-5 mb-6 rounded-2xl border border-slate-200/80 bg-white p-3 shadow-sm">
@@ -190,9 +216,12 @@ export function AppShell({ children }: { children: ReactNode }) {
       <div className="app-main">
         <header className="app-header">
           <button
+            type="button"
             className="mobile-menu"
             onClick={() => setMobileOpen(true)}
             aria-label="Open navigation"
+            aria-controls="primary-navigation"
+            aria-expanded={mobileOpen}
           >
             <Icon name="menu" />
           </button>
@@ -290,23 +319,17 @@ export function Button({
 }
 
 export function ResetDemoButton() {
-  const navigate = useNavigateSafe();
+  const navigate = useNavigate();
   return (
     <Button
+      type="button"
       variant="secondary"
       onClick={() => {
         resetPracticeSetup();
-        navigate("/setup");
+        navigate({ to: "/setup" });
       }}
     >
       Reset demo workspace
     </Button>
   );
-}
-
-function useNavigateSafe() {
-  const [navigate] = useState(() => async (to: string) => {
-    window.location.assign(to);
-  });
-  return navigate;
 }

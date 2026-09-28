@@ -16,13 +16,25 @@ export function readPracticeSetup(): PracticeSetup | null {
     const raw = window.localStorage.getItem(DEMO_STORAGE_KEY);
     if (!raw) return null;
     const parsed = JSON.parse(raw) as Partial<PracticeSetup>;
-    if (!parsed.practiceName || !parsed.completedAt) return null;
+    if (
+      typeof parsed.practiceName !== "string" ||
+      !parsed.practiceName.trim() ||
+      typeof parsed.completedAt !== "string"
+    ) {
+      return null;
+    }
     return {
-      practiceName: parsed.practiceName,
-      location: parsed.location ?? "",
-      contact: parsed.contact ?? "",
-      timezone: parsed.timezone ?? "America/New_York",
-      bookingDestination: parsed.bookingDestination ?? "",
+      practiceName: parsed.practiceName.trim(),
+      location: typeof parsed.location === "string" ? parsed.location : "",
+      contact: typeof parsed.contact === "string" ? parsed.contact : "",
+      timezone:
+        typeof parsed.timezone === "string"
+          ? parsed.timezone
+          : "America/New_York",
+      bookingDestination:
+        typeof parsed.bookingDestination === "string"
+          ? parsed.bookingDestination
+          : "",
       completedAt: parsed.completedAt,
     };
   } catch {
@@ -39,7 +51,11 @@ export function savePracticeSetup(
   };
 
   if (typeof window !== "undefined") {
-    window.localStorage.setItem(DEMO_STORAGE_KEY, JSON.stringify(next));
+    try {
+      window.localStorage.setItem(DEMO_STORAGE_KEY, JSON.stringify(next));
+    } catch {
+      // Private browsing and storage policies can make localStorage unavailable.
+    }
   }
 
   return next;
@@ -47,6 +63,10 @@ export function savePracticeSetup(
 
 export function resetPracticeSetup() {
   if (typeof window !== "undefined") {
-    window.localStorage.removeItem(DEMO_STORAGE_KEY);
+    try {
+      window.localStorage.removeItem(DEMO_STORAGE_KEY);
+    } catch {
+      // Reset remains safe even when browser storage is unavailable.
+    }
   }
 }

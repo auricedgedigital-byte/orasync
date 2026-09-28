@@ -5,13 +5,7 @@ import {
   savePracticeSetup,
   type PracticeSetup,
 } from "~/lib/demo";
-import {
-  Button,
-  EmptyState,
-  Icon,
-  PageHeader,
-  ResetDemoButton,
-} from "~/components/ui";
+import { Button, Icon, PageHeader, ResetDemoButton } from "~/components/ui";
 
 export function SetupScreen() {
   const navigate = useNavigate();
@@ -493,20 +487,79 @@ export function AreaScreen({ area }: { area: keyof typeof areaCopy }) {
       {area === "workflows" ? (
         <WorkflowPreview />
       ) : (
-        <EmptyState
-          icon={copy.icon}
-          title={copy.emptyTitle}
-          description={copy.emptyDescription}
-          action={
-            <Link to="/settings" className="button button-secondary">
-              View demo settings <Icon name="arrow" size={15} />
-            </Link>
-          }
-        />
+        <DemoAreaPreview area={area} copy={copy} />
       )}
     </>
   );
 }
+function DemoAreaPreview({
+  area,
+  copy,
+}: {
+  area: "patients" | "leads" | "conversations";
+  copy: (typeof areaCopy)[keyof typeof areaCopy];
+}) {
+  const rows = {
+    patients: [
+      ["Jamie Rivera", "Recall follow-up", "Review queue"],
+      ["Morgan Lee", "No visit in 90 days", "Needs review"],
+      ["Taylor Brooks", "Preference captured", "Ready to plan"],
+    ],
+    leads: [
+      ["Website inquiry", "Cosmetic consultation", "New"],
+      ["Referral example", "Routine exam", "Contacted"],
+      ["Call-tracking sample", "New patient", "Booked signal"],
+    ],
+    conversations: [
+      ["Sample conversation A", "Opt-in check", "Review only"],
+      ["Sample conversation B", "Appointment question", "Not connected"],
+      ["Sample conversation C", "Follow-up example", "Draft only"],
+    ],
+  }[area];
+
+  return (
+    <section className="panel">
+      <div className="panel-heading">
+        <div>
+          <p className="eyebrow">Preview records</p>
+          <h2>{copy.emptyTitle}</h2>
+          <p className="mt-2 max-w-2xl text-sm leading-6 text-slate-500">
+            These fictional examples show the shape of this workspace. They are
+            not patient records, live leads, or external messages.
+          </p>
+        </div>
+        <span className="demo-tag">Demo samples</span>
+      </div>
+      <div
+        className="demo-table"
+        role="table"
+        aria-label={`${copy.title} demo samples`}
+      >
+        {rows.map(([name, detail, status]) => (
+          <div className="demo-row" role="row" key={name}>
+            <div className="row-icon" aria-hidden="true">
+              <Icon name={copy.icon} size={17} />
+            </div>
+            <div className="min-w-0 flex-1" role="cell">
+              <strong>{name}</strong>
+              <small>{detail}</small>
+            </div>
+            <span className="soft-chip" role="cell">
+              {status}
+            </span>
+          </div>
+        ))}
+      </div>
+      <div className="mt-5 flex flex-wrap items-center gap-3">
+        <Link to="/settings" className="button button-secondary">
+          View demo settings <Icon name="arrow" size={15} />
+        </Link>
+        <span className="text-xs text-slate-400">No external sync enabled</span>
+      </div>
+    </section>
+  );
+}
+
 function WorkflowPreview() {
   return (
     <div className="workflow-card">

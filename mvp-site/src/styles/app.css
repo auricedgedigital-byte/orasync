@@ -24,6 +24,13 @@
   a {
     transition: all 160ms ease;
   }
+  button:focus-visible,
+  a:focus-visible,
+  input:focus-visible,
+  select:focus-visible {
+    outline: 3px solid rgb(45 212 191 / 0.45);
+    outline-offset: 2px;
+  }
 }
 
 @layer components {
@@ -240,6 +247,18 @@
   .soft-chip {
     @apply rounded-full bg-slate-100 px-3 py-1.5 text-xs font-medium text-slate-500;
   }
+  .demo-table {
+    @apply mt-6 divide-y divide-slate-100 border-y border-slate-100;
+  }
+  .demo-row {
+    @apply flex items-center gap-3 py-4;
+  }
+  .demo-row strong {
+    @apply block text-sm font-semibold text-slate-800;
+  }
+  .demo-row small {
+    @apply mt-1 block text-xs text-slate-400;
+  }
   .soon-label {
     @apply rounded-full bg-slate-100 px-2 py-0.5 text-[10px] uppercase tracking-[.1em] text-slate-400;
   }
@@ -311,12 +330,19 @@
     @apply mt-1.5 block text-[11px] font-normal leading-4 text-slate-400;
   }
   .mobile-menu,
-  .mobile-close {
+  .mobile-close,
+  .mobile-backdrop {
     @apply hidden;
+  }
+  .mobile-backdrop {
+    background: rgb(15 23 42 / 0.28);
   }
 }
 
 @media (max-width: 767px) {
+  .mobile-backdrop {
+    @apply fixed inset-0 z-20 block;
+  }
   .app-sidebar {
     transform: translateX(-100%);
     transition: transform 180ms ease;
