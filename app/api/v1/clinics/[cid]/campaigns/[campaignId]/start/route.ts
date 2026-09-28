@@ -1,10 +1,10 @@
 import { type NextRequest, NextResponse } from "next/server"
 import { startCampaign } from "@/lib/db"
 
-export async function POST(request: NextRequest, { params }: { params: { cid: string; campaign_id: string } }) {
+export async function POST(request: NextRequest, { params }: { params: { cid: string; campaignId: string } }) {
   try {
     const clinicId = params.cid
-    const campaignId = params.campaign_id
+    const campaignId = params.campaignId
 
     const result = await startCampaign(clinicId, campaignId)
 

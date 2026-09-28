@@ -1,0 +1,8 @@
+{
+  "name": "Orasync",
+  "description": "AI-Powered Dental Operating System with automated patient reactivation, marketing growth engine, and practice management.",
+  "prompt": "Orasync AI Dental Operating System",
+  "capabilities": [
+    "MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"
+  ]
+}
